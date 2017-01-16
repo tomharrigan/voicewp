@@ -33,7 +33,11 @@ class Alexa_News {
 		switch ( $intent ) {
 			case 'Latest':
 				$result = $this->endpoint_content();
-				$response->respond( $result['content'] )->withCard( 'Latest on Toms Blog' )->addSessionAttribute( 'post_ids', $result['ids'] );
+				$response
+					->respond( $result['content'] )
+					/* translators: %s: site title */
+					->withCard( sprintf( __( 'Latest on %s', 'alexawp' ), get_bloginfo( 'name' ) ) )
+					->addSessionAttribute( 'post_ids', $result['ids'] );
 				break;
 			case 'ReadPost':
 				if ( $post_number = $request->getSlot( 'PostNumberWord' ) ) {
