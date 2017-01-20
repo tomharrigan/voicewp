@@ -6,9 +6,11 @@ class Alexa_Briefing {
 	public function briefing_request() {
 
 		$briefing = get_posts( [
-			'posts_per_page' => 1,
-			'post_type' => 'alexawp-briefing',
+			'no_found_rows' => true,
 			'post_status' => 'publish',
+			'post_type' => 'alexawp-briefing',
+			'posts_per_page' => 1,
+			'suppress_filters' => false,
 		] );
 
 		if ( $briefing && ! empty( $briefing[0] ) ) {
