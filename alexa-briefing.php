@@ -6,23 +6,24 @@ class Alexa_Briefing {
 	public function briefing_request() {
 		$responses = [];
 
-		$briefings = get_posts( [
-			'meta_query' => [
-				[
-					'key' => 'alexawp_briefing_source',
-					'compare' => '!=',
-					'value' => '',
-				],
-			],
-			'no_found_rows' => true,
-			'post_status' => 'publish',
-			'post_type' => 'alexawp-briefing',
-			'posts_per_page' => 1,
-			'suppress_filters' => false,
-		] );
-
 		// This logic could be both abstracted and used with array_map().
-		foreach ( $briefings as $post ) {
+		foreach (
+			get_posts( [
+				'meta_query' => [
+					[
+						'key' => 'alexawp_briefing_source',
+						'compare' => '!=',
+						'value' => '',
+					],
+				],
+				'no_found_rows' => true,
+				'post_status' => 'publish',
+				'post_type' => 'alexawp-briefing',
+				'posts_per_page' => 1,
+				'suppress_filters' => false,
+			] )
+			as $post
+		) {
 			$response = [
 				'uid' => get_post_meta( $post->ID, 'alexawp_briefing_uuid', true ),
 				'updateDate' => get_post_modified_time( 'Y-m-d\TH:i:s.\0\Z', true, $post ),
