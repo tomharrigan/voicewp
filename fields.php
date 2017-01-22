@@ -120,7 +120,7 @@ function alexawp_fm_briefing_content() {
 				$warnings[] = __( 'Please make sure this is an MP3 upload.', 'alexawp' );
 			}
 
-			if ( isset( $attachment_metadata['length'] ) && $attachment_metadata['length'] > 600 ) {
+			if ( isset( $attachment_metadata['length'] ) && $attachment_metadata['length'] > ( 10 * MINUTE_IN_SECONDS ) ) {
 				$warnings[] = __( 'Audio should be under 10 minutes long.', 'alexawp' );
 			}
 
