@@ -42,8 +42,14 @@ class Alexa_Briefing {
 				break;
 
 				case 'audio_url' :
-					$response['streamUrl'] = esc_url_raw( get_post_meta( $post->ID, 'alexawp_briefing_audio_url', true ) );
+					$response['streamUrl'] = get_post_meta( $post->ID, 'alexawp_briefing_audio_url', true );
 				break;
+			}
+
+			$response['mainText'] = wp_strip_all_tags( strip_shortcodes( $response['mainText'] ) );
+
+			if ( isset( $response['streamUrl'] ) ) {
+				$response['streamUrl'] = esc_url_raw( $response['streamUrl'] );
 			}
 
 			$responses[] = $response;
