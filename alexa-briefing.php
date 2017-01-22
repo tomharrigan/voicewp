@@ -4,9 +4,9 @@
 
 class Alexa_Briefing {
 	public function briefing_request() {
-		$response = [];
+		$responses = [];
 
-		$briefing = get_posts( [
+		$briefings = get_posts( [
 			'meta_query' => [
 				[
 					'key' => 'alexawp_briefing_source',
@@ -21,9 +21,8 @@ class Alexa_Briefing {
 			'suppress_filters' => false,
 		] );
 
-		if ( $briefing ) {
-			$post = reset( $briefing );
-
+		// This logic could be both abstracted and used with array_map().
+		foreach ( $briefings as $post ) {
 			$response = [
 				'uid' => get_post_meta( $post->ID, 'alexawp_briefing_uuid', true ),
 				'updateDate' => get_post_modified_time( 'Y-m-d\TH:i:s.\0\Z', true, $post ),
@@ -45,8 +44,15 @@ class Alexa_Briefing {
 					$response['streamUrl'] = esc_url_raw( get_post_meta( $post->ID, 'alexawp_briefing_audio_url', true ) );
 				break;
 			}
+
+			$responses[] = $response;
 		}
 
-		return $response;
+		// Unclear whether an array with a single response is acceptable.
+		if ( count( $responses ) === 1 ) {
+			$responses = $responses[0];
+		}
+
+		return $responses;
 	}
 }
