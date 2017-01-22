@@ -30,7 +30,9 @@ class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
 				'parent_item_colon'  => __( 'Parent Briefing:', 'alexawp' ),
 				'menu_name'          => __( 'Briefings', 'alexawp' ),
 			),
-			'public' => true,
+			'public' => false,
+			'show_in_menu' => true,
+			'show_ui' => true,
 			'supports' => [ 'title' ],
 		] );
 	}
