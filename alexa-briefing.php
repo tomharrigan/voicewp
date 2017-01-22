@@ -4,8 +4,16 @@
 
 class Alexa_Briefing {
 	public function briefing_request() {
+		$response = [];
 
 		$briefing = get_posts( [
+			'meta_query' => [
+				[
+					'key' => 'alexawp_briefing_source',
+					'compare' => '!=',
+					'value' => '',
+				],
+			],
 			'no_found_rows' => true,
 			'post_status' => 'publish',
 			'post_type' => 'alexawp-briefing',
@@ -13,17 +21,32 @@ class Alexa_Briefing {
 			'suppress_filters' => false,
 		] );
 
-		if ( $briefing && ! empty( $briefing[0] ) ) {
+		if ( $briefing ) {
+			$post = reset( $briefing );
+
 			$response = [
-				'uid' => uniqid(),
-				'updateDate' => date( 'Y-m-d', $briefing[0]->post_modified ) . 'T' . date( 'H:i:s', $briefing[0]->post_modified ) . '.0Z',
-				'titleText' => $briefing[0]->post_title,
-				'mainText' => $briefing[0]->post_content,
+				'uid' => get_post_meta( $post->ID, 'alexawp_briefing_uuid', true ),
+				'updateDate' => get_post_modified_time( 'Y-m-d\TH:i:s.\0\Z', true, $post ),
+				'titleText' => get_the_title( $post ),
+				'mainText' => '',
 				'redirectionUrl' => home_url(),
 			];
+
+			switch ( get_post_meta( $post->ID, 'alexawp_briefing_source', true ) ) {
+				case 'text' :
+					$response['mainText'] = get_post_meta( $post->ID, 'alexawp_briefing_text', true );
+				break;
+
+				case 'attachment_id' :
+					$response['streamUrl'] = wp_get_attachment_url( get_post_meta( $post->ID, 'alexawp_briefing_attachment_id', true ) );
+				break;
+
+				case 'audio_url' :
+					$response['streamUrl'] = esc_url_raw( get_post_meta( $post->ID, 'alexawp_briefing_audio_url', true ) );
+				break;
+			}
 		}
 
 		return $response;
-
 	}
 }

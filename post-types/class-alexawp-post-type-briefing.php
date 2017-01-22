@@ -31,7 +31,7 @@ class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
 				'menu_name'          => __( 'Briefings', 'alexawp' ),
 			),
 			'public' => true,
-			'supports' => [ 'title', 'editor' ],
+			'supports' => [ 'title' ],
 		] );
 	}
 }
