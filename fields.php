@@ -66,7 +66,7 @@ function alexawp_fm_briefing_content() {
 			'selected_file_label' => __( 'Selected File:', 'alexawp' ),
 			'remove_media_label' => __( 'Remove Selection', 'alexawp' ),
 		] ),
-		new \Fieldmanager_Link( __( 'URL to an MP3', 'alexawp' ), [
+		new \Fieldmanager_Link( __( 'HTTPS URL to an MP3', 'alexawp' ), [
 			'name' => 'audio_url',
 			'attributes' => [
 				'style' => 'width: 100%;',
