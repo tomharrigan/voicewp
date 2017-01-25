@@ -89,27 +89,48 @@ function alexawp_fm_alexa_settings() {
 	$saved_invocation = ( ! empty( $alexawp_settings['news_invocation'] ) );
 
 	if ( $saved_invocation ) {
-		$utterances = "Latest Ask %s for the latest content\r";
-		$utterances .= "Latest Ask %s for the latest articles\r";
-		$utterances .= "Latest Ask %s for the latest stories\r";
-		$utterances .= "Latest Ask %s for the latest news\r";
-		$utterances .= "Latest Get the latest news from %s\r";
-		$utterances .= "Latest Get the latest stories from %s\r";
-		$utterances .= "Latest Get the latest content from %s\r";
-		$utterances .= "Latest Ask %s whats up\r";
-		$utterances .= "Latest Ask %s whats new\r";
-		$utterances .= "ReadPost Read the {PostNumber}\r";
-		$utterances .= "ReadPost Read the {PostNumber} post\r";
-		$utterances .= "ReadPost Read the {PostNumber} article\r";
-		$utterances .= "ReadPost Read the {PostNumber} story\r";
-		$utterances .= "ReadPost Read {PostNumber}\r";
-		$utterances .= "ReadPost Read the {PostNumberWord} post\r";
-		$utterances .= "ReadPost Read the {PostNumberWord} article\r";
-		$utterances .= "ReadPost Read the {PostNumberWord} story\r";
-		$utterances .= "ReadPost Read {PostNumberWord}";
+		$utterances = [
+			/* translators: 1: skill invocation name */
+			'Latest ' . sprintf( __( 'Ask %1$s for the latest content', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+			/* translators: 1: skill invocation name */
+			'Latest ' . sprintf( __( 'Ask %1$s for the latest articles', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+			/* translators: 1: skill invocation name */
+			'Latest ' . sprintf( __( 'Ask %1$s for the latest stories', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+			/* translators: 1: skill invocation name */
+			'Latest ' . sprintf( __( 'Ask %1$s for the latest news', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+			/* translators: 1: skill invocation name */
+			'Latest ' . sprintf( __( 'Get the latest news from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+			/* translators: 1: skill invocation name */
+			'Latest ' . sprintf( __( 'Get the latest stories from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+			/* translators: 1: skill invocation name */
+			'Latest ' . sprintf( __( 'Get the latest content from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+			/* translators: 1: skill invocation name */
+			'Latest ' . sprintf( __( 'Ask %1$s what\'s up', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+			/* translators: 1: skill invocation name */
+			'Latest ' . sprintf( __( 'Ask %1$s what\'s new', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+			/* translators: 1: cardinal number of the post to read */
+			'ReadPost ' . sprintf( __( 'Read the %1$s', 'alexawp' ), '{PostNumber}' ),
+			/* translators: 1: cardinal number of the post to read */
+			'ReadPost ' . sprintf( __( 'Read the %1$s post', 'alexawp' ), '{PostNumber}' ),
+			/* translators: 1: cardinal number of the post to read */
+			'ReadPost ' . sprintf( __( 'Read the %1$s article', 'alexawp' ), '{PostNumber}' ),
+			/* translators: 1: cardinal number of the post to read */
+			'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumber}' ),
+			/* translators: 1: cardinal number of the post to read */
+			'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumber}' ),
+			/* translators: 1: ordinal number of the post to read */
+			'ReadPost ' . sprintf( __( 'Read the %1$s post', 'alexawp' ), '{PostNumberWord}' ),
+			/* translators: 1: ordinal number of the post to read */
+			'ReadPost ' . sprintf( __( 'Read the %1$s article', 'alexawp' ), '{PostNumberWord}' ),
+			/* translators: 1: ordinal number of the post to read */
+			'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumberWord}' ),
+			/* translators: 1: ordinal number of the post to read */
+			'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumberWord}' ),
+		];
+
 		$children['news_utterances'] = new Fieldmanager_TextArea( [
 			'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'alexawp' ),
-			'default_value' => str_replace( '%s', $alexawp_settings['news_invocation'], $utterances ),
+			'default_value' => implode( "\r", $utterances ),
 			'skip_save' => true,
 			'attributes' => array_merge(
 				$readonly,
