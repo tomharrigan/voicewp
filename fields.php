@@ -78,6 +78,9 @@ function alexawp_fm_alexa_settings() {
 		'news_id' => new Fieldmanager_TextField( [
 			'label' => __( 'News skill ID', 'alexawp' ),
 			'description' => __( 'Add the application ID given by Amazon', 'alexawp' ),
+			'attributes' => [
+				'style' => 'width: 95%;',
+			],
 		] ),
 	];
 
