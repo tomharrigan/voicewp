@@ -70,6 +70,7 @@ add_action( 'fm_post_alexawp-skill', 'alexawp_fm_skill_fact_quote' );
  * Create a settings page for the news/post consumption skill
  */
 function alexawp_fm_alexa_settings() {
+	$readonly = [ 'readonly' => 'readonly' ];
 	$children = [
 		'news_invocation' => new Fieldmanager_TextField( [
 			'label' => __( 'What is the invocation name you will use for this skill?', 'alexawp' ),
@@ -78,12 +79,16 @@ function alexawp_fm_alexa_settings() {
 		'news_id' => new Fieldmanager_TextField( [
 			'label' => __( 'News skill ID', 'alexawp' ),
 			'description' => __( 'Add the application ID given by Amazon', 'alexawp' ),
+			'attributes' => [
+				'style' => 'width: 95%;',
+			],
 		] ),
 	];
 
 	$alexawp_settings = get_option( 'alexawp-settings' );
+	$saved_invocation = ( ! empty( $alexawp_settings['news_invocation'] ) );
 
-	if ( ! empty( $alexawp_settings['news_invocation'] ) ) {
+	if ( $saved_invocation ) {
 		$utterances = "Latest Ask %s for the latest content\r";
 		$utterances .= "Latest Ask %s for the latest articles\r";
 		$utterances .= "Latest Ask %s for the latest stories\r";
@@ -103,12 +108,75 @@ function alexawp_fm_alexa_settings() {
 		$utterances .= "ReadPost Read the {PostNumberWord} story\r";
 		$utterances .= "ReadPost Read {PostNumberWord}";
 		$children['news_utterances'] = new Fieldmanager_TextArea( [
-			'label' => __( 'Sample utterances', 'alexawp' ),
-			'description' => __( 'Here\'s a starting point for your utterances. This can be pasted into the developer portal for your skill.', 'alexawp' ),
+			'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'alexawp' ),
 			'default_value' => str_replace( '%s', $alexawp_settings['news_invocation'], $utterances ),
 			'skip_save' => true,
-			'attributes' => [ 'readonly' => 'readonly', 'style' => 'width: 95%; height: 300px' ],
+			'attributes' => array_merge(
+				$readonly,
+				[ 'style' => 'width: 95%; height: 300px;' ]
+			),
 		] );
+	}
+
+	$children['news_intent_schema'] = new \Fieldmanager_TextArea( [
+		'label' => __( 'The Intent Schema for your News skill. Add this to your news skill in the Amazon developer portal.', 'alexawp' ),
+		'default_value' => wp_json_encode(
+			[
+				'intents' => [
+					[
+						'intent' => 'Latest',
+					],
+					[
+						'intent' => 'ReadPost',
+						'slots'  => [
+							[
+								'name' => 'PostNumber',
+								'type' => 'AMAZON.NUMBER',
+							],
+							[
+								'name' => 'PostNumberWord',
+								'type' => 'ALEXAWP.POST_NUMBER_WORD',
+							],
+						],
+					],
+				],
+			],
+			JSON_PRETTY_PRINT
+		),
+		'skip_save' => true,
+		'attributes' => array_merge(
+			$readonly,
+			[ 'style' => 'width: 95%; height: 300px; font-family: monospace;' ]
+		),
+	] );
+
+	$children['custom_slot_types'] = new \Fieldmanager_Group( [
+		'label' => __( 'Custom Slot Types', 'alexawp' ),
+		'children' => [
+			new \Fieldmanager_Group( [
+				'description' => __( 'These slot types must be added to your news skill in the Amazon developer portal.', 'alexawp' ),
+				'children' => [
+					'type' => new \Fieldmanager_TextField( 'Type', [
+						'default_value' => 'ALEXAWP.POST_NUMBER_WORD',
+						'attributes' => array_merge(
+							$readonly,
+							[ 'style' => 'width: 50%; font-family: monospace' ]
+						),
+					] ),
+					'values' => new \Fieldmanager_TextArea( 'Values', [
+						'default_value' => "first\nsecond\nthird\nfourth\nfifth",
+						'attributes' => array_merge(
+							$readonly,
+							[ 'style' => 'width: 50%; height: 150px; font-family: monospace;' ]
+						),
+					] ),
+				],
+			] ),
+		],
+		'skip_save' => true,
+	] );
+
+	if ( $saved_invocation ) {
 		$children['remove_last_upload'] = new Fieldmanager_Checkbox( [
 			'label' => __( 'Remove last upload', 'alexawp' ),
 			'skip_save' => true,
