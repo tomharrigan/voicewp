@@ -107,7 +107,7 @@ class Alexa_News {
 		];
 	}
 
-	private function endpoint_content( $args = [] ) {
+	private function endpoint_content( $args ) {
 		$news_posts = get_posts( array_merge( $args, [
 			'no_found_rows' => true,
 			'post_status' => 'publish',
