@@ -71,6 +71,16 @@ add_action( 'fm_post_alexawp-skill', 'alexawp_fm_skill_fact_quote' );
  */
 function alexawp_fm_alexa_settings() {
 	$readonly = [ 'readonly' => 'readonly' ];
+
+	$news_post_types = alexawp_news_post_types();
+	// All public taxonomies associated with news post types. Could be abstracted into a function.
+	$eligible_news_taxonomy_objects = array_filter(
+		get_taxonomies( [ 'public' => true ], 'objects' ),
+		function ( $taxonomy ) use ( $news_post_types ) {
+			return array_intersect( $news_post_types, $taxonomy->object_type );
+		}
+	);
+
 	$children = [
 		'news_invocation' => new Fieldmanager_TextField( [
 			'label' => __( 'What is the invocation name you will use for this skill?', 'alexawp' ),
@@ -83,54 +93,99 @@ function alexawp_fm_alexa_settings() {
 				'style' => 'width: 95%;',
 			],
 		] ),
+		'latest_taxonomies' => new \Fieldmanager_Checkboxes( [
+			'label' => __( 'Allow people to ask for content from specific:', 'AlexaWP' ),
+			'options' => wp_list_pluck( $eligible_news_taxonomy_objects, 'label', 'name' ),
+		] ),
 	];
 
 	$alexawp_settings = get_option( 'alexawp-settings' );
 	$saved_invocation = ( ! empty( $alexawp_settings['news_invocation'] ) );
 
 	if ( $saved_invocation ) {
-		$utterances = [
-			/* translators: 1: skill invocation name */
-			'Latest ' . sprintf( __( 'Ask %1$s for the latest content', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-			/* translators: 1: skill invocation name */
-			'Latest ' . sprintf( __( 'Ask %1$s for the latest articles', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-			/* translators: 1: skill invocation name */
-			'Latest ' . sprintf( __( 'Ask %1$s for the latest stories', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-			/* translators: 1: skill invocation name */
-			'Latest ' . sprintf( __( 'Ask %1$s for the latest news', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-			/* translators: 1: skill invocation name */
-			'Latest ' . sprintf( __( 'Get the latest news from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-			/* translators: 1: skill invocation name */
-			'Latest ' . sprintf( __( 'Get the latest stories from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-			/* translators: 1: skill invocation name */
-			'Latest ' . sprintf( __( 'Get the latest content from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-			/* translators: 1: skill invocation name */
-			'Latest ' . sprintf( __( 'Ask %1$s what\'s up', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-			/* translators: 1: skill invocation name */
-			'Latest ' . sprintf( __( 'Ask %1$s what\'s new', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-			/* translators: 1: cardinal number of the post to read */
-			'ReadPost ' . sprintf( __( 'Read the %1$s', 'alexawp' ), '{PostNumber}' ),
-			/* translators: 1: cardinal number of the post to read */
-			'ReadPost ' . sprintf( __( 'Read the %1$s post', 'alexawp' ), '{PostNumber}' ),
-			/* translators: 1: cardinal number of the post to read */
-			'ReadPost ' . sprintf( __( 'Read the %1$s article', 'alexawp' ), '{PostNumber}' ),
-			/* translators: 1: cardinal number of the post to read */
-			'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumber}' ),
-			/* translators: 1: cardinal number of the post to read */
-			'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumber}' ),
-			/* translators: 1: ordinal number of the post to read */
-			'ReadPost ' . sprintf( __( 'Read the %1$s post', 'alexawp' ), '{PostNumberWord}' ),
-			/* translators: 1: ordinal number of the post to read */
-			'ReadPost ' . sprintf( __( 'Read the %1$s article', 'alexawp' ), '{PostNumberWord}' ),
-			/* translators: 1: ordinal number of the post to read */
-			'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumberWord}' ),
-			/* translators: 1: ordinal number of the post to read */
-			'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumberWord}' ),
-		];
-
 		$children['news_utterances'] = new Fieldmanager_TextArea( [
 			'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'alexawp' ),
-			'default_value' => implode( "\r", $utterances ),
+			'default_value' => implode(
+				"\r",
+				[
+					/* translators: 1: skill invocation name */
+					'Latest ' . sprintf( __( 'Ask %1$s for the latest content', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+					/* translators: 1: skill invocation name */
+					'Latest ' . sprintf( __( 'Ask %1$s for the latest articles', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+					/* translators: 1: skill invocation name */
+					'Latest ' . sprintf( __( 'Ask %1$s for the latest stories', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+					/* translators: 1: skill invocation name */
+					'Latest ' . sprintf( __( 'Ask %1$s for the latest news', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+					/* translators: 1: skill invocation name */
+					'Latest ' . sprintf( __( 'Get the latest news from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+					/* translators: 1: skill invocation name */
+					'Latest ' . sprintf( __( 'Get the latest stories from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+					/* translators: 1: skill invocation name */
+					'Latest ' . sprintf( __( 'Get the latest content from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+					/* translators: 1: skill invocation name */
+					'Latest ' . sprintf( __( 'Ask %1$s what\'s up', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+					/* translators: 1: skill invocation name */
+					'Latest ' . sprintf( __( 'Ask %1$s what\'s new', 'alexawp' ), $alexawp_settings['news_invocation'] ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s for the latest %2$s articles', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s for the latest %2$s content', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s for the latest %2$s news', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s for the latest %2$s stories', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s for %2$s articles', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s for %2$s content', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s for %2$s news', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s for %2$s stories', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s about %2$s articles', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s about %2$s content', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s about %2$s news', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Ask %1$s about %2$s stories', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Get the latest %2$s articles from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Get the latest %2$s content from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Get the latest %2$s news from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Get the latest %2$s stories from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Get %2$s articles from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Get %2$s content from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Get %2$s news from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: skill invocation name, 2: search term */
+					'Latest ' . sprintf( __( 'Get %2$s stories from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
+					/* translators: 1: cardinal number of the post to read */
+					'ReadPost ' . sprintf( __( 'Read the %1$s', 'alexawp' ), '{PostNumber}' ),
+					/* translators: 1: cardinal number of the post to read */
+					'ReadPost ' . sprintf( __( 'Read the %1$s post', 'alexawp' ), '{PostNumber}' ),
+					/* translators: 1: cardinal number of the post to read */
+					'ReadPost ' . sprintf( __( 'Read the %1$s article', 'alexawp' ), '{PostNumber}' ),
+					/* translators: 1: cardinal number of the post to read */
+					'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumber}' ),
+					/* translators: 1: cardinal number of the post to read */
+					'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumber}' ),
+					/* translators: 1: ordinal number of the post to read */
+					'ReadPost ' . sprintf( __( 'Read the %1$s post', 'alexawp' ), '{PostNumberWord}' ),
+					/* translators: 1: ordinal number of the post to read */
+					'ReadPost ' . sprintf( __( 'Read the %1$s article', 'alexawp' ), '{PostNumberWord}' ),
+					/* translators: 1: ordinal number of the post to read */
+					'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumberWord}' ),
+					/* translators: 1: ordinal number of the post to read */
+					'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumberWord}' ),
+				]
+			),
 			'skip_save' => true,
 			'attributes' => array_merge(
 				$readonly,
@@ -146,17 +201,23 @@ function alexawp_fm_alexa_settings() {
 				'intents' => [
 					[
 						'intent' => 'Latest',
+						'slots' => [
+							[
+								'name' => 'TermName',
+								'type' => 'ALEXAWP_TERM_NAME',
+							],
+						],
 					],
 					[
 						'intent' => 'ReadPost',
-						'slots'  => [
+						'slots' => [
 							[
 								'name' => 'PostNumber',
 								'type' => 'AMAZON.NUMBER',
 							],
 							[
 								'name' => 'PostNumberWord',
-								'type' => 'ALEXAWP.POST_NUMBER_WORD',
+								'type' => 'ALEXAWP_POST_NUMBER_WORD',
 							],
 						],
 					],
@@ -177,15 +238,40 @@ function alexawp_fm_alexa_settings() {
 			new \Fieldmanager_Group( [
 				'description' => __( 'These slot types must be added to your news skill in the Amazon developer portal.', 'alexawp' ),
 				'children' => [
-					'type' => new \Fieldmanager_TextField( 'Type', [
-						'default_value' => 'ALEXAWP.POST_NUMBER_WORD',
+					new \Fieldmanager_TextField( __( 'Type', 'alexawp' ), [
+						'default_value' => 'ALEXAWP_POST_NUMBER_WORD',
 						'attributes' => array_merge(
 							$readonly,
 							[ 'style' => 'width: 50%; font-family: monospace' ]
 						),
 					] ),
-					'values' => new \Fieldmanager_TextArea( 'Values', [
+					new \Fieldmanager_TextArea( __( 'Values', 'alexawp' ), [
 						'default_value' => "first\nsecond\nthird\nfourth\nfifth",
+						'attributes' => array_merge(
+							$readonly,
+							[ 'style' => 'width: 50%; height: 150px; font-family: monospace;' ]
+						),
+					] ),
+					new \Fieldmanager_TextField( __( 'Type', 'alexawp' ), [
+						'default_value' => 'ALEXAWP_TERM_NAME',
+						'attributes' => array_merge(
+							$readonly,
+							[ 'style' => 'width: 50%; font-family: monospace' ]
+						),
+					] ),
+					new \Fieldmanager_TextArea( __( 'Values', 'alexawp' ), [
+						'default_value' => implode(
+							"\n",
+							// Generate sample terms from all available taxonomies.
+							// We want someone to add this slot even if they haven't
+							// turned on taxonomies so it's already there if they do.
+							array_values( array_unique( array_map( 'strtolower', wp_list_pluck( get_terms( [
+								'number' => 100,
+								'order' => 'DESC',
+								'orderby' => 'count',
+								'taxonomy' => array_values( wp_list_pluck( $eligible_news_taxonomy_objects, 'name' ) ),
+							] ), 'name' ) ) ) )
+						),
 						'attributes' => array_merge(
 							$readonly,
 							[ 'style' => 'width: 50%; height: 150px; font-family: monospace;' ]
