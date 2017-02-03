@@ -94,7 +94,7 @@ function alexawp_fm_alexa_settings() {
 			],
 		] ),
 		'latest_taxonomies' => new \Fieldmanager_Checkboxes( [
-			'label' => __( 'Allow people to ask for content from specific:', 'AlexaWP' ),
+			'label' => __( 'Allow people to ask for content from specific:', 'alexawp' ),
 			'options' => wp_list_pluck( $eligible_news_taxonomy_objects, 'label', 'name' ),
 		] ),
 	];

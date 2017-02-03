@@ -67,7 +67,7 @@ class Alexa_News {
 				}
 
 				if ( $term_slot && ! $args['tax_query'] ) {
-					$response->respond( __( "Sorry! I couldn't find any news about that topic.", 'ahot' ) )->endSession();
+					$response->respond( __( "Sorry! I couldn't find any news about that topic.", 'alexawp' ) )->endSession();
 					break;
 				}
 
