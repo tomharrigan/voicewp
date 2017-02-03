@@ -32,7 +32,47 @@ class Alexa_News {
 
 		switch ( $intent ) {
 			case 'Latest':
-				$result = $this->endpoint_content();
+				$term_slot = strtolower( sanitize_text_field( $request->getSlot( 'TermName' ) ) );
+
+				$args = [
+					'post_type'      => alexawp_news_post_types(),
+					'posts_per_page' => max( 1, min( 100, count( $this->placement ) ) ),
+					'tax_query'      => [],
+				];
+
+				if ( $term_slot ) {
+					$news_taxonomies = alexawp_news_taxonomies();
+
+					if ( $news_taxonomies ) {
+						/*
+						 * TODO:
+						 *
+						 * Support for 'name__like'?
+						 * Support for an 'alias' meta field?
+						 * Support for excluding terms?
+						 */
+						$terms = get_terms( [
+							'name' => $term_slot,
+							'taxonomy' => $news_taxonomies,
+						] );
+
+						if ( $terms ) {
+							// 'term_taxonomy_id' query allows omitting 'taxonomy'.
+							$args['tax_query'][] = [
+								'terms' => wp_list_pluck( $terms, 'term_taxonomy_id' ),
+								'field' => 'term_taxonomy_id',
+							];
+						}
+					}
+				}
+
+				if ( $term_slot && ! $args['tax_query'] ) {
+					$response->respond( __( "Sorry! I couldn't find any news about that topic.", 'alexawp' ) )->endSession();
+					break;
+				}
+
+				$result = $this->endpoint_content( $args );
+
 				$response
 					->respond( $result['content'] )
 					/* translators: %s: site title */
@@ -67,17 +107,17 @@ class Alexa_News {
 		];
 	}
 
-	private function endpoint_content() {
-		$args = [
-			'post_type' => apply_filters( 'alexawp_post_types', [ 'post' ] ),
-			'posts_per_page' => 5,
+	private function endpoint_content( $args ) {
+		$news_posts = get_posts( array_merge( $args, [
+			'no_found_rows' => true,
 			'post_status' => 'publish',
-		];
-		$news_posts = get_posts( $args );
+		] ) );
+
 		$content = '';
 		$ids = [];
 		if ( ! empty( $news_posts ) && ! is_wp_error( $news_posts ) ) {
 			foreach ( $news_posts as $key => $news_post ) {
+				// TODO: Sounds a little strange when there's only one result.
 				$content .= $this->placement[ $key ] . ', ' . $news_post->post_title . '. ';
 				$ids[] = $news_post->ID;
 			}

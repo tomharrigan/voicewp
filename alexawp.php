@@ -59,6 +59,34 @@ function alexawp_autoload_function( $classname ) {
 	}
 }
 
+/**
+ * Get the post types whose content is included in the bundled News skill.
+ *
+ * @return array Post type names.
+ */
+function alexawp_news_post_types() {
+	/**
+	 * Filters the post types whose content is included in the bundled News skill.
+	 *
+	 * @param array $post_types Post type names.
+	 */
+	return apply_filters( 'alexawp_post_types', [ 'post' ] );
+}
+
+/**
+ * Get the taxonomies whose terms can be specified by users invoking the News skill.
+ *
+ * @return array Taxonomy names.
+ */
+function alexawp_news_taxonomies() {
+	$option = get_option( 'alexawp-settings' );
+
+	$taxonomies = ( empty( $option['latest_taxonomies'] ) ) ? [] : $option['latest_taxonomies'];
+
+	// Nonexistant taxonomies can shortcircuit get_terms().
+	return array_filter( $taxonomies, 'taxonomy_exists' );
+}
+
 spl_autoload_register( 'alexawp_autoload_function' );
 
 add_action( 'init', [ 'Alexawp', 'get_instance' ], 0 );
