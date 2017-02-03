@@ -117,7 +117,7 @@ class Alexa_News {
 		$ids = [];
 		if ( ! empty( $news_posts ) && ! is_wp_error( $news_posts ) ) {
 			foreach ( $news_posts as $key => $news_post ) {
-				// Sounds a little strange when there's only one result.
+				// TODO: Sounds a little strange when there's only one result.
 				$content .= $this->placement[ $key ] . ', ' . $news_post->post_title . '. ';
 				$ids[] = $news_post->ID;
 			}
