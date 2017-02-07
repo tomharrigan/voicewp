@@ -3,7 +3,7 @@
 use Alexa\Request\IntentRequest;
 
 class Alexa_News {
-	public $numbers = [
+	public $numbers = array(
 		'First' => 1,
 		'1st' => 1,
 		'Second' => 2,
@@ -14,15 +14,15 @@ class Alexa_News {
 		'4th' => 4,
 		'Fifth' => 5,
 		'5th' => 5,
-	];
+	);
 
-	public $placement = [
+	public $placement = array(
 		'First',
 		'Second',
 		'Third',
 		'Fourth',
 		'Fifth',
-	];
+	);
 
 	public function news_request( $event ) {
 
@@ -61,21 +61,21 @@ class Alexa_News {
 	private function endpoint_single_post( $id ) {
 		$single_post = get_post( $id );
 		$post_content = strip_tags( strip_shortcodes( $single_post->post_content ) );
-		return [
+		return array(
 			'content' => $post_content,
 			'title' => $single_post->post_title,
-		];
+		);
 	}
 
 	private function endpoint_content() {
-		$args = [
+		$args = array(
 			'post_type' => apply_filters( 'alexawp_post_types', [ 'post' ] ),
 			'posts_per_page' => 5,
 			'post_status' => 'publish',
-		];
+		);
 		$news_posts = get_posts( $args );
 		$content = '';
-		$ids = [];
+		$ids = array();
 		if ( ! empty( $news_posts ) && ! is_wp_error( $news_posts ) ) {
 			foreach ( $news_posts as $key => $news_post ) {
 				$content .= $this->placement[ $key ] . ', ' . $news_post->post_title . '. ';
@@ -83,9 +83,9 @@ class Alexa_News {
 			}
 		}
 
-		return [
+		return array(
 			'content' => $content,
 			'ids' => $ids,
-		];
+		);
 	}
 }
