@@ -28,33 +28,35 @@ class Alexa_News {
 
 		$request = $event->get_request();
 		$response = $event->get_response();
-		$intent = $request->intentName;
 
-		switch ( $intent ) {
-			case 'Latest':
-				$result = $this->endpoint_content();
-				$response
-					->respond( $result['content'] )
-					/* translators: %s: site title */
-					->withCard( sprintf( __( 'Latest on %s', 'alexawp' ), get_bloginfo( 'name' ) ) )
-					->addSessionAttribute( 'post_ids', $result['ids'] );
-				break;
-			case 'ReadPost':
-				if ( $post_number = $request->getSlot( 'PostNumberWord' ) ) {
-					$post_number = $this->numbers[ $post_number ] -1;
-				} elseif ( $post_number = $request->getSlot( 'PostNumber' ) ) {
-					$post_number = $post_number - 1;
-				}
-				$post_ids = $request->session->attributes['post_ids'];
-				$result = $this->endpoint_single_post( $post_ids[ $post_number ] );
-				$response->respond( $result['content'] )->withCard( $result['title'] )->endSession();
-				break;
-			case 'AMAZON.StopIntent':
-				$response->respond( __( 'Thanks for listening!', 'alexawp' ) )->endSession();
-				break;
-			default:
-				# code...
-				break;
+		if ( $request instanceof Alexa\Request\IntentRequest ) {
+			$intent = $request->intentName;
+			switch ( $intent ) {
+				case 'Latest':
+					$result = $this->endpoint_content();
+					$response
+						->respond( $result['content'] )
+						/* translators: %s: site title */
+						->withCard( sprintf( __( 'Latest on %s', 'alexawp' ), get_bloginfo( 'name' ) ) )
+						->addSessionAttribute( 'post_ids', $result['ids'] );
+					break;
+				case 'ReadPost':
+					if ( $post_number = $request->getSlot( 'PostNumberWord' ) ) {
+						$post_number = $this->numbers[ $post_number ] -1;
+					} elseif ( $post_number = $request->getSlot( 'PostNumber' ) ) {
+						$post_number = $post_number - 1;
+					}
+					$post_ids = $request->session->attributes['post_ids'];
+					$result = $this->endpoint_single_post( $post_ids[ $post_number ] );
+					$response->respond( $result['content'] )->withCard( $result['title'] )->endSession();
+					break;
+				case 'AMAZON.StopIntent':
+					$response->respond( __( 'Thanks for listening!', 'alexawp' ) )->endSession();
+					break;
+				default:
+					# code...
+					break;
+			}
 		}
 	}
 
