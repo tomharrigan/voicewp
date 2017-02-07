@@ -221,6 +221,9 @@ function alexawp_fm_alexa_settings() {
 							],
 						],
 					],
+					[
+						'intent' => 'AMAZON.StopIntent',
+					]
 				],
 			],
 			JSON_PRETTY_PRINT
