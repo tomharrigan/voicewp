@@ -99,8 +99,6 @@ class Alexa_News {
 			}
 		} elseif ( $request instanceof Alexa\Request\LaunchRequest ) {
 			$response->respond( __( 'Ask me whats up!', 'alexawp' ) );
-		} elseif ( $request instanceof Alexa\Request\SessionEndedRequest ) {
-			$response->respond( __( 'Thanks for listening!', 'alexawp' ) )->endSession();
 		}
 	}
 
