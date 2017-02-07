@@ -131,7 +131,6 @@ class Alexawp {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function alexawp_skill_request( WP_REST_Request $request ) {
-		error_log( 'hi');
 		$body = $this->access_protected( $request, 'body' );
 
 		$id = absint( $request->get_param( 'id' ) );
@@ -174,7 +173,7 @@ class Alexawp {
 				$alexa_settings = get_option( 'alexawp-settings' );
 				$app_id = $alexa_settings['news_id'];
 				$certificate = new \Alexa\Request\Certificate( $request->get_header( 'signaturecertchainurl' ), $request->get_header( 'signature' ), $app_id );
-				$alexa = new \Alexa\Request\IntentRequest( $body, $app_id );
+				$alexa = new \Alexa\Request\Request( $body, $app_id );
 				$alexa->setCertificateDependency( $certificate );
 
 				// Parse and validate the request.
