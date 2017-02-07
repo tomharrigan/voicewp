@@ -61,7 +61,7 @@ function alexawp_autoload_function( $classname ) {
 
 spl_autoload_register( 'alexawp_autoload_function' );
 
-add_action( 'init', [ 'Alexawp', 'get_instance' ], 0 );
+add_action( 'init', array( 'Alexawp', 'get_instance' ), 0 );
 
 use Alexa\Request\IntentRequest;
 use Alexa\Request\LaunchRequest;
@@ -79,8 +79,8 @@ class Alexawp {
 	}
 
 	protected function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
-		add_action( 'after_setup_theme', [ $this, 'add_image_size' ] );
+		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_action( 'after_setup_theme', array( $this, 'add_image_size' ) );
 	}
 
 	/**
@@ -88,20 +88,20 @@ class Alexawp {
 	 */
 	public function register_routes() {
 		// Endpoint for flash briefing
-		register_rest_route( 'alexawp/v1', '/skill/briefing', [
-			'callback' => [ $this, 'briefing_request' ],
-			'methods' => [ 'GET' ],
-		] );
+		register_rest_route( 'alexawp/v1', '/skill/briefing', array(
+			'callback' => array( $this, 'briefing_request' ),
+			'methods' => array( 'GET' ),
+		) );
 		// Endpoint for News skill
-		register_rest_route( 'alexawp/v1', '/skill/news', [
-			'callback' => [ $this, 'alexawp_news_request' ],
-			'methods' => [ 'POST' ],
-		] );
+		register_rest_route( 'alexawp/v1', '/skill/news', array(
+			'callback' => array( $this, 'alexawp_news_request' ),
+			'methods' => array( 'POST' ),
+		) );
 		// Endpoint for all other skills
-		register_rest_route( 'alexawp/v1', '/skill/(?P<id>\d+)', [
-			'callback' => [ $this, 'alexawp_skill_request' ],
-			'methods' => [ 'POST' ],
-		] );
+		register_rest_route( 'alexawp/v1', '/skill/(?P<id>\d+)', array(
+			'callback' => array( $this, 'alexawp_skill_request' ),
+			'methods' => array( 'POST' ),
+		) );
 	}
 
 	/**
@@ -131,6 +131,7 @@ class Alexawp {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function alexawp_skill_request( WP_REST_Request $request ) {
+		error_log( 'hi');
 		$body = $this->access_protected( $request, 'body' );
 
 		$id = absint( $request->get_param( 'id' ) );
@@ -214,17 +215,17 @@ class Alexawp {
 
 	private function fail_response( $e ) {
 		return new WP_REST_Response(
-			[
+			array(
 				'version' => '1.0',
-				'response' => [
-					'outputSpeech' => [
+				'response' => array(
+					'outputSpeech' => array(
 						'type' => 'PlainText',
 						'text' => $e->getMessage(),
-					],
+					),
 					'shouldEndSession' => true,
-				],
-				'sessionAttributes' => [],
-			],
+				),
+				'sessionAttributes' => array(),
+			),
 			200
 		);
 	}
