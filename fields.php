@@ -91,8 +91,8 @@ function alexawp_fm_alexa_settings() {
 		$utterances .= "Latest Get the latest news from %s\r";
 		$utterances .= "Latest Get the latest stories from %s\r";
 		$utterances .= "Latest Get the latest content from %s\r";
-		$utterances .= "Latest Ask %s whats up\r";
-		$utterances .= "Latest Ask %s whats new\r";
+		$utterances .= "Latest Ask %s what's up\r";
+		$utterances .= "Latest Ask %s what's new\r";
 		$utterances .= "ReadPost Read the {PostNumber}\r";
 		$utterances .= "ReadPost Read the {PostNumber} post\r";
 		$utterances .= "ReadPost Read the {PostNumber} article\r";
