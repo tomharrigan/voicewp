@@ -98,7 +98,7 @@ class Alexa_News {
 					break;
 			}
 		} elseif ( $request instanceof Alexa\Request\LaunchRequest ) {
-			$response->respond( __( 'Ask me whats up!', 'alexawp' ) );
+			$response->respond( __( "Ask me what's new!", 'alexawp' ) );
 		}
 	}
 
