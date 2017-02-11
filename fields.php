@@ -40,6 +40,99 @@ function alexawp_fm_alexa_app_image() {
 add_action( 'fm_post_alexawp-skill', 'alexawp_fm_alexa_app_image' );
 
 /**
+ * Fields for controlling flash briefing content.
+ *
+ * @return \Fieldmanager_Context_Post Post context.
+ */
+function alexawp_fm_briefing_content() {
+	$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;
+	$allowed_formats = [ 'mp3' ];
+
+	$children = [
+		new \Fieldmanager_TextArea( __( 'Text', 'alexawp' ), [
+			'name' => 'text',
+			'description' => __( 'Text should be under 4,500 characters.', 'alexawp' ),
+			'attributes' => [
+				'style' => 'width: 100%; height: 400px',
+				'maxlength' => 4500,
+			],
+		] ),
+		new \Fieldmanager_Media( __( 'Uploaded MP3', 'alexawp' ), [
+			'name' => 'attachment_id',
+			'mime_type' => 'audio/mpeg',
+			'button_label' => __( 'Select a File', 'alexawp' ),
+			'modal_button_label' => __( 'Select File', 'alexawp' ),
+			'modal_title' => __( 'Select a File', 'alexawp' ),
+			'selected_file_label' => __( 'Selected File:', 'alexawp' ),
+			'remove_media_label' => __( 'Remove Selection', 'alexawp' ),
+		] ),
+		new \Fieldmanager_Link( __( 'HTTPS URL to an MP3', 'alexawp' ), [
+			'name' => 'audio_url',
+			'attributes' => [
+				'style' => 'width: 100%;',
+			],
+		] ),
+	];
+
+	foreach ( $children as $key => $value ) {
+		$children[ $key ]->display_if = [ 'src' => 'source', 'value' => $children[ $key ]->name ];
+	}
+
+	// Display-if control.
+	$display_if = new \Fieldmanager_Radios( __( 'Source', 'alexawp' ), [
+		'name' => 'source',
+		'options' => wp_list_pluck( $children, 'label', 'name' ),
+	] );
+
+	// Briefing UUID, saved the first time and used thereafter.
+	$uuid = new \Fieldmanager_Hidden( [
+		'name' => 'uuid',
+	] );
+
+	if ( ! get_post_meta( $post_id, 'alexawp_briefing_uuid', true ) ) {
+		$uuid->default_value = wp_generate_uuid4();
+	}
+
+	array_unshift( $children, $display_if, $uuid );
+
+	$fm = new \Fieldmanager_Group( [
+		'name' => 'alexawp_briefing',
+		'serialize_data' => false,
+		// Needs to be name => field for compat with FM's validation routines.
+		'children' => array_combine( wp_list_pluck( $children, 'name' ), $children ),
+	] );
+
+	// Help text.
+	if ( $post_id ) {
+		$existing_audio_url = get_post_meta( $post_id, 'alexawp_briefing_audio_url', true );
+
+		if ( ! $existing_audio_url || ! in_array( pathinfo( parse_url( $existing_audio_url, PHP_URL_PATH ), PATHINFO_EXTENSION ), $allowed_formats, true ) ) {
+			$fm->children['audio_url']->description = __( 'Please make sure this is a URL to an MP3 file.', 'alexawp' );
+		}
+
+		$existing_attachment_id = get_post_meta( $post_id, 'alexawp_briefing_attachment_id', true );
+
+		if ( $existing_attachment_id ) {
+			$attachment_metadata = wp_get_attachment_metadata( $existing_attachment_id );
+			$warnings = [];
+
+			if ( ! isset( $attachment_metadata['fileformat'] ) || ! in_array( $attachment_metadata['fileformat'], $allowed_formats, true ) ) {
+				$warnings[] = __( 'Please make sure this is an MP3 upload.', 'alexawp' );
+			}
+
+			if ( isset( $attachment_metadata['length'] ) && $attachment_metadata['length'] > ( 10 * MINUTE_IN_SECONDS ) ) {
+				$warnings[] = __( 'Audio should be under 10 minutes long.', 'alexawp' );
+			}
+
+			$fm->children['attachment_id']->description = implode( ' ', $warnings );
+		}
+	}
+
+	return $fm->add_meta_box( __( 'Briefing Content', 'alexawp' ), fm_get_context()[1], 'normal', 'high' );
+}
+add_action( 'fm_post_alexawp-briefing', 'alexawp_fm_briefing_content' );
+
+/**
  * Add facts or skills.
  */
 function alexawp_fm_skill_fact_quote() {
