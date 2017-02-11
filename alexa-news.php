@@ -3,7 +3,7 @@
 use Alexa\Request\IntentRequest;
 
 class Alexa_News {
-	public $numbers = [
+	public $numbers = array(
 		'First' => 1,
 		'1st' => 1,
 		'Second' => 2,
@@ -14,97 +14,101 @@ class Alexa_News {
 		'4th' => 4,
 		'Fifth' => 5,
 		'5th' => 5,
-	];
+	);
 
-	public $placement = [
+	public $placement = array(
 		'First',
 		'Second',
 		'Third',
 		'Fourth',
 		'Fifth',
-	];
+	);
 
 	public function news_request( $event ) {
 
 		$request = $event->get_request();
 		$response = $event->get_response();
-		$intent = $request->intentName;
 
-		switch ( $intent ) {
-			case 'Latest':
-				$term_slot = strtolower( sanitize_text_field( $request->getSlot( 'TermName' ) ) );
+		if ( $request instanceof Alexa\Request\IntentRequest ) {
+			$intent = $request->intentName;
+			switch ( $intent ) {
+				case 'Latest':
+					$term_slot = strtolower( sanitize_text_field( $request->getSlot( 'TermName' ) ) );
 
-				$args = [
-					'post_type'      => alexawp_news_post_types(),
-					'posts_per_page' => max( 1, min( 100, count( $this->placement ) ) ),
-					'tax_query'      => [],
-				];
+					$args = [
+						'post_type'      => alexawp_news_post_types(),
+						'posts_per_page' => max( 1, min( 100, count( $this->placement ) ) ),
+						'tax_query'      => [],
+					];
 
-				if ( $term_slot ) {
-					$news_taxonomies = alexawp_news_taxonomies();
+					if ( $term_slot ) {
+						$news_taxonomies = alexawp_news_taxonomies();
 
-					if ( $news_taxonomies ) {
-						/*
-						 * TODO:
-						 *
-						 * Support for 'name__like'?
-						 * Support for an 'alias' meta field?
-						 * Support for excluding terms?
-						 */
-						$terms = get_terms( [
-							'name' => $term_slot,
-							'taxonomy' => $news_taxonomies,
-						] );
+						if ( $news_taxonomies ) {
+							/*
+							 * TODO:
+							 *
+							 * Support for 'name__like'?
+							 * Support for an 'alias' meta field?
+							 * Support for excluding terms?
+							 */
+							$terms = get_terms( [
+								'name' => $term_slot,
+								'taxonomy' => $news_taxonomies,
+							] );
 
-						if ( $terms ) {
-							// 'term_taxonomy_id' query allows omitting 'taxonomy'.
-							$args['tax_query'][] = [
-								'terms' => wp_list_pluck( $terms, 'term_taxonomy_id' ),
-								'field' => 'term_taxonomy_id',
-							];
+							if ( $terms ) {
+								// 'term_taxonomy_id' query allows omitting 'taxonomy'.
+								$args['tax_query'][] = [
+									'terms' => wp_list_pluck( $terms, 'term_taxonomy_id' ),
+									'field' => 'term_taxonomy_id',
+								];
+							}
 						}
 					}
-				}
 
-				if ( $term_slot && ! $args['tax_query'] ) {
-					$response->respond( __( "Sorry! I couldn't find any news about that topic.", 'alexawp' ) )->endSession();
+					if ( $term_slot && ! $args['tax_query'] ) {
+						$response->respond( __( "Sorry! I couldn't find any news about that topic.", 'alexawp' ) )->endSession();
+						break;
+					}
+
+					$result = $this->endpoint_content( $args );
+
+					$response
+						->respond( $result['content'] )
+						/* translators: %s: site title */
+						->withCard( sprintf( __( 'Latest on %s', 'alexawp' ), get_bloginfo( 'name' ) ) )
+						->addSessionAttribute( 'post_ids', $result['ids'] );
 					break;
-				}
-
-				$result = $this->endpoint_content( $args );
-
-				$response
-					->respond( $result['content'] )
-					/* translators: %s: site title */
-					->withCard( sprintf( __( 'Latest on %s', 'alexawp' ), get_bloginfo( 'name' ) ) )
-					->addSessionAttribute( 'post_ids', $result['ids'] );
-				break;
-			case 'ReadPost':
-				if ( $post_number = $request->getSlot( 'PostNumberWord' ) ) {
-					$post_number = $this->numbers[ $post_number ] -1;
-				} elseif ( $post_number = $request->getSlot( 'PostNumber' ) ) {
-					$post_number = $post_number - 1;
-				}
-				$post_ids = $request->session->attributes['post_ids'];
-				$result = $this->endpoint_single_post( $post_ids[ $post_number ] );
-				$response->respond( $result['content'] )->withCard( $result['title'] )->endSession();
-				break;
-			case 'AMAZON.StopIntent':
-				$response->respond( __( 'Thanks for listening!', 'alexawp' ) )->endSession();
-				break;
-			default:
-				# code...
-				break;
+				case 'ReadPost':
+					if ( $post_number = $request->getSlot( 'PostNumberWord' ) ) {
+						$post_number = $this->numbers[ $post_number ] -1;
+					} elseif ( $post_number = $request->getSlot( 'PostNumber' ) ) {
+						$post_number = $post_number - 1;
+					}
+					$post_ids = $request->session->attributes['post_ids'];
+					$result = $this->endpoint_single_post( $post_ids[ $post_number ] );
+					$response->respond( $result['content'] )->withCard( $result['title'] )->endSession();
+					break;
+				case 'AMAZON.StopIntent':
+					$response->respond( __( 'Thanks for listening!', 'alexawp' ) )->endSession();
+					break;
+				default:
+					# code...
+					break;
+			}
+		} elseif ( $request instanceof Alexa\Request\LaunchRequest ) {
+			$response->respond( __( "Ask me what's new!", 'alexawp' ) );
 		}
 	}
 
 	private function endpoint_single_post( $id ) {
 		$single_post = get_post( $id );
 		$post_content = strip_tags( strip_shortcodes( $single_post->post_content ) );
-		return [
+		return array(
 			'content' => $post_content,
 			'title' => $single_post->post_title,
-		];
+		);
 	}
 
 	private function endpoint_content( $args ) {
@@ -114,7 +118,7 @@ class Alexa_News {
 		] ) );
 
 		$content = '';
-		$ids = [];
+		$ids = array();
 		if ( ! empty( $news_posts ) && ! is_wp_error( $news_posts ) ) {
 			foreach ( $news_posts as $key => $news_post ) {
 				// TODO: Sounds a little strange when there's only one result.
@@ -123,9 +127,9 @@ class Alexa_News {
 			}
 		}
 
-		return [
+		return array(
 			'content' => $content,
 			'ids' => $ids,
-		];
+		);
 	}
 }

@@ -8,6 +8,6 @@ class SessionEndedRequest extends Request {
 	public function __construct( $raw_data ) {
 		parent::__construct( $raw_data );
 
-		$this->reason = $data['request']['reason'];
+		$this->reason = $this->data['request']['reason'];
 	}
 }

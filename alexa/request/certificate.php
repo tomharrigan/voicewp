@@ -41,6 +41,10 @@ class Certificate {
 	}
 
 	public function validate_request( $request_data ) {
+
+		// Set required http status code 400 for certificate error
+		status_header( 400 );
+
 		$request_parsed = json_decode( $request_data, true );
 		// Validate the entire request by:
 
@@ -55,6 +59,9 @@ class Certificate {
 
 		// 4. Verifying the request signature
 		$this->validaterequest_signature( $request_data );
+
+		// Set http status code back to 200
+		status_header( 200 );
 	}
 
 	/**
