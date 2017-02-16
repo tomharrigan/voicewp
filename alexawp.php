@@ -149,6 +149,7 @@ class Alexawp {
 	 */
 	public function allowed_http_origins( $allowed_origins ) {
 		$allowed_origins[] = 'http://ask-ifr-download.s3.amazonaws.com';
+		$allowed_origins[] = 'https://ask-ifr-download.s3.amazonaws.com';
 		return $allowed_origins;
 	}
 
