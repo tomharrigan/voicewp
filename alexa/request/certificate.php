@@ -13,7 +13,7 @@ use InvalidArgumentException;
 use DateTime;
 
 class Certificate {
-	const TIMESTAMP_VALID_TOLERANCE_SECONDS = 30;
+	const TIMESTAMP_VALID_TOLERANCE_SECONDS = 60;
 	const SIGNATURE_VALID_PROTOCOL = 'https';
 	const SIGNATURE_VALID_HOSTNAME = 's3.amazonaws.com';
 	const SIGNATURE_VALID_PATH = '/echo.api/';
@@ -82,7 +82,7 @@ class Certificate {
 		$this->certificate_content = $this->get_certificate();
 		$parsed_certificate = $this->parse_certificate( $this->certificate_content );
 
-		if ( ! $this->validate_certificate_date( $parsed_certificate ) || ! $this->validate_certificate_san( $parsed_certificate, static::ECHO_SERVICE_DOMAIN ) ) {
+		if ( ! $parsed_certificate || ! $this->validate_certificate_date( $parsed_certificate ) || ! $this->validate_certificate_san( $parsed_certificate, static::ECHO_SERVICE_DOMAIN ) ) {
 			throw new InvalidArgumentException( "The remote certificate doesn't contain a valid SANs in the signature or is expired." );
 		}
 	}
@@ -155,13 +155,13 @@ class Certificate {
 	}
 
 	/**
-	 * Return the certificate to the underlying code by fetching it from its location. Cached for 1 hour.
+	 * Return the certificate to the underlying code by fetching it from its location. Cached for 1 min
 	 */
 	public function get_certificate() {
 		$certificate_id = 'alexawp' . md5( $this->certificate_url . $this->app_id );
 		if ( ! $certificate = get_transient( $certificate_id ) ) {
 			$certificate = $this->fetch_certificate();
-			set_transient( $certificate_id, $certificate, 3600 );
+			set_transient( $certificate_id, $certificate, TIMESTAMP_VALID_TOLERANCE_SECONDS );
 		}
 		return $certificate;
 	}
@@ -179,7 +179,7 @@ class Certificate {
 		$st = curl_exec( $ch );
 		curl_close( $ch );
 
-		// Return the certificate contents;
+		// Return the certificate contents
 		return $st;
 	}
 }
