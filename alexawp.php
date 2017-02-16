@@ -70,7 +70,7 @@ function alexawp_news_post_types() {
 	 *
 	 * @param array $post_types Post type names.
 	 */
-	return apply_filters( 'alexawp_post_types', [ 'post' ] );
+	return apply_filters( 'alexawp_post_types', array( 'post' ) );
 }
 
 /**
@@ -81,7 +81,7 @@ function alexawp_news_post_types() {
 function alexawp_news_taxonomies() {
 	$option = get_option( 'alexawp-settings' );
 
-	$taxonomies = ( empty( $option['latest_taxonomies'] ) ) ? [] : $option['latest_taxonomies'];
+	$taxonomies = ( empty( $option['latest_taxonomies'] ) ) ? array() : $option['latest_taxonomies'];
 
 	// Nonexistant taxonomies can shortcircuit get_terms().
 	return array_filter( $taxonomies, 'taxonomy_exists' );
@@ -109,6 +109,7 @@ class Alexawp {
 	protected function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 		add_action( 'after_setup_theme', array( $this, 'add_image_size' ) );
+		add_filter( 'allowed_http_origins', array( $this, 'allowed_http_origins' ) );
 	}
 
 	/**
@@ -139,6 +140,19 @@ class Alexawp {
 		add_image_size( 'alexa-small', 720, 480, true );
 		add_image_size( 'alexa-large', 1200, 800, true );
 	}
+
+	/**
+	 * Add the Alexa service to the list of allowed HTTP origins
+	 *
+	 * @param $allowed_origins array Default allowed HTTP origins
+	 * @return array allowed origin URLs
+	 */
+	public function allowed_http_origins( $allowed_origins ) {
+		$allowed_origins[] = 'http://ask-ifr-download.s3.amazonaws.com';
+		$allowed_origins[] = 'https://ask-ifr-download.s3.amazonaws.com';
+		return $allowed_origins;
+	}
+
 	/**
 	 * We have better ways of doing this and this is hacky. Change it.
 	 *
