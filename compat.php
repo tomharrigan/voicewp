@@ -2,8 +2,6 @@
 /**
  * AlexaWP compatibility functionality.
  *
- * Checks for plugin requirements and alerts users to missing requirements.
- *
  * @package AlexaWP
  */
 
@@ -65,6 +63,26 @@ function alexawp_check_requirements() {
  */
 function alexawp_admin_notice( $classes, $message ) {
 	printf( '<div class="%s"><p>%s</p></div>', esc_attr( implode( ' ', $classes ) ), esc_html( $message ) );
+}
+
+/**
+ * Shim wp_generate_uuid4() if this WordPress version doesn't include it.
+ *
+ * @return string UUID.
+ */
+function alexawp_generate_uuid4() {
+	if ( function_exists( 'wp_generate_uuid4' ) ) {
+		return wp_generate_uuid4();
+	}
+
+	// As of WordPress 4.7.2.
+	return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+		mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+		mt_rand( 0, 0xffff ),
+		mt_rand( 0, 0x0fff ) | 0x4000,
+		mt_rand( 0, 0x3fff ) | 0x8000,
+		mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
+	);
 }
 
 /**
