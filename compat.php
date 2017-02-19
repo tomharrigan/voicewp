@@ -32,7 +32,7 @@ function alexawp_check_requirements() {
 		);
 	}
 
-	if ( ! $unsupported_wordpress && ! class_exists( '\WP_REST_Controller' ) ) {
+	if ( ! $unsupported_wordpress && ! class_exists( '\WP_REST_Response' ) ) {
 		$check->add( 'no_rest_api', __( 'AlexaWP requires the WordPress REST API.', 'alexawp' ) );
 	}
 
