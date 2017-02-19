@@ -75,4 +75,4 @@ function alexawp_print_requirements_errors() {
 		alexawp_admin_notice( array( 'notice notice-error' ), $message );
 	}
 }
-add_action( 'after_setup_theme', 'alexawp_print_requirements_errors' );
+add_action( 'admin_init', 'alexawp_print_requirements_errors' );
