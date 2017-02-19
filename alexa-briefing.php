@@ -33,8 +33,8 @@ class Alexa_Briefing {
 			];
 
 			switch ( get_post_meta( $post->ID, 'alexawp_briefing_source', true ) ) {
-				case 'text' :
-					$response['mainText'] = get_post_meta( $post->ID, 'alexawp_briefing_text', true );
+				case 'content' :
+					$response['mainText'] = $post->post_content;
 				break;
 
 				case 'attachment_id' :

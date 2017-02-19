@@ -49,8 +49,7 @@ function alexawp_fm_briefing_content() {
 	$allowed_formats = [ 'mp3' ];
 
 	$children = [
-		new \Fieldmanager_TextArea( __( 'Text', 'alexawp' ), [
-			'name' => 'text',
+		new \AlexaWP_Fieldmanager_Content_TextArea( __( 'Text', 'alexawp' ), [
 			'description' => __( 'Text should be under 4,500 characters.', 'alexawp' ),
 			'attributes' => [
 				'style' => 'width: 100%; height: 400px',
@@ -75,7 +74,10 @@ function alexawp_fm_briefing_content() {
 	];
 
 	foreach ( $children as $key => $value ) {
-		$children[ $key ]->display_if = [ 'src' => 'source', 'value' => $children[ $key ]->name ];
+		$children[ $key ]->display_if = [
+			'src' => 'source',
+			'value' => $children[ $key ]->name,
+		];
 	}
 
 	// Display-if control.
