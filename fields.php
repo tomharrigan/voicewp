@@ -90,7 +90,7 @@ function alexawp_fm_briefing_content() {
 	] );
 
 	if ( ! get_post_meta( $post_id, 'alexawp_briefing_uuid', true ) ) {
-		$uuid->default_value = wp_generate_uuid4();
+		$uuid->default_value = alexawp_generate_uuid4();
 	}
 
 	array_unshift( $children, $display_if, $uuid );

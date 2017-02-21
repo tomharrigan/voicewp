@@ -24,6 +24,11 @@ function alexawp_deactivate() {
 }
 
 /**
+ * Compatibility requirements.
+ */
+require_once( ALEXAWP_PATH . '/compat.php' );
+
+/**
  * Post Type Base Class
  */
 require_once( ALEXAWP_PATH . '/post-types/class-alexawp-post-type.php' );
