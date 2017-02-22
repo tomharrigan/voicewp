@@ -159,26 +159,12 @@ class Alexawp {
 	}
 
 	/**
-	 * We have better ways of doing this and this is hacky. Change it.
-	 *
-	 * @param $obj
-	 * @param $prop
-	 * @return json body of Alexa Request
-	 */
-	public function access_protected( $obj, $prop ) {
-		$reflection = new ReflectionClass( $obj );
-		$property = $reflection->getProperty( $prop );
-		$property->setAccessible( true );
-		return $property->getValue( $obj );
-	}
-
-	/**
 	 * Get one item from the collection
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function alexawp_skill_request( WP_REST_Request $request ) {
-		$body = $this->access_protected( $request, 'body' );
+		$body = $request->get_body();
 
 		$id = absint( $request->get_param( 'id' ) );
 
@@ -212,8 +198,7 @@ class Alexawp {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function alexawp_news_request( WP_REST_Request $request ) {
-
-		$body = $this->access_protected( $request, 'body' );
+		$body = $request->get_body();
 
 		if ( ! empty( $body ) ) {
 			try {
