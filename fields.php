@@ -172,7 +172,7 @@ function alexawp_fm_alexa_settings() {
 	$eligible_news_taxonomy_objects = array_filter(
 		get_taxonomies( [ 'public' => true ], 'objects' ),
 		function ( $taxonomy ) use ( $news_post_types ) {
-			return array_intersect( $news_post_types, $taxonomy->object_type );
+			return ( $taxonomy->label && array_intersect( $news_post_types, $taxonomy->object_type ) );
 		}
 	);
 
