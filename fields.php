@@ -334,9 +334,11 @@ function alexawp_fm_alexa_settings() {
 		'label' => __( 'Custom Slot Types', 'alexawp' ),
 		'children' => [
 			new \Fieldmanager_Group( [
+				'name' => 'custom_slot_type_children',
 				'description' => __( 'These slot types must be added to your news skill in the Amazon developer portal.', 'alexawp' ),
 				'children' => [
 					new \Fieldmanager_TextField( __( 'Type', 'alexawp' ), [
+						'name' => 'ALEXAWP_POST_NUMBER_WORD',
 						'default_value' => 'ALEXAWP_POST_NUMBER_WORD',
 						'attributes' => array_merge(
 							$readonly,
@@ -344,6 +346,7 @@ function alexawp_fm_alexa_settings() {
 						),
 					] ),
 					new \Fieldmanager_TextArea( __( 'Values', 'alexawp' ), [
+						'name' => 'ALEXAWP_POST_NUMBER_WORD_values',
 						'default_value' => "first\nsecond\nthird\nfourth\nfifth",
 						'attributes' => array_merge(
 							$readonly,
@@ -351,6 +354,7 @@ function alexawp_fm_alexa_settings() {
 						),
 					] ),
 					new \Fieldmanager_TextField( __( 'Type', 'alexawp' ), [
+						'name' => 'ALEXAWP_TERM_NAME',
 						'default_value' => 'ALEXAWP_TERM_NAME',
 						'attributes' => array_merge(
 							$readonly,
@@ -358,6 +362,7 @@ function alexawp_fm_alexa_settings() {
 						),
 					] ),
 					new \Fieldmanager_TextArea( __( 'Values', 'alexawp' ), [
+						'name' => 'ALEXAWP_TERM_NAME_values',
 						'default_value' => implode(
 							"\n",
 							// Generate sample terms from all available taxonomies.
