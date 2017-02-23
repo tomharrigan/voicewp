@@ -30,6 +30,7 @@ class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
 				'parent_item_colon'  => __( 'Parent Briefing:', 'alexawp' ),
 				'menu_name'          => __( 'Briefings', 'alexawp' ),
 			),
+			'menu_icon' => 'dashicons-microphone',
 			'public' => false,
 			'show_in_menu' => true,
 			'show_ui' => true,
