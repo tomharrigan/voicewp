@@ -30,6 +30,7 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 				'parent_item_colon'  => __( 'Parent Skill:', 'alexawp' ),
 				'menu_name'          => __( 'Skills', 'alexawp' ),
 			),
+			'menu_icon' => 'dashicons-awards',
 			'public' => true,
 			'supports' => [ 'title' ],
 		] );
