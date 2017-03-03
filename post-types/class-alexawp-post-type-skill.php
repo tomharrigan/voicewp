@@ -15,7 +15,7 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 	 * Creates the post type.
 	 */
 	public function create_post_type() {
-		register_post_type( $this->name, [
+		register_post_type( $this->name, array(
 			'labels' => array(
 				'name'               => __( 'Skills', 'alexawp' ),
 				'singular_name'      => __( 'Skill', 'alexawp' ),
@@ -32,8 +32,8 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 			),
 			'menu_icon' => 'dashicons-awards',
 			'public' => true,
-			'supports' => [ 'title' ],
-		] );
+			'supports' => array( 'title' ),
+		) );
 	}
 }
 

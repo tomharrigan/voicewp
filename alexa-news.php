@@ -35,11 +35,11 @@ class Alexa_News {
 				case 'Latest':
 					$term_slot = strtolower( sanitize_text_field( $request->getSlot( 'TermName' ) ) );
 
-					$args = [
-						'post_type'      => alexawp_news_post_types(),
+					$args = array(
+						'post_type' => alexawp_news_post_types(),
 						'posts_per_page' => max( 1, min( 100, count( $this->placement ) ) ),
-						'tax_query'      => [],
-					];
+						'tax_query' => array(),
+					);
 
 					if ( $term_slot ) {
 						$news_taxonomies = alexawp_news_taxonomies();
@@ -52,17 +52,17 @@ class Alexa_News {
 							 * Support for an 'alias' meta field?
 							 * Support for excluding terms?
 							 */
-							$terms = get_terms( [
+							$terms = get_terms( array(
 								'name' => $term_slot,
 								'taxonomy' => $news_taxonomies,
-							] );
+							) );
 
 							if ( $terms ) {
 								// 'term_taxonomy_id' query allows omitting 'taxonomy'.
-								$args['tax_query'][] = [
+								$args['tax_query'][] = array(
 									'terms' => wp_list_pluck( $terms, 'term_taxonomy_id' ),
 									'field' => 'term_taxonomy_id',
-								];
+								);
 							}
 						}
 					}
@@ -112,10 +112,10 @@ class Alexa_News {
 	}
 
 	private function endpoint_content( $args ) {
-		$news_posts = get_posts( array_merge( $args, [
+		$news_posts = get_posts( array_merge( $args, array(
 			'no_found_rows' => true,
 			'post_status' => 'publish',
-		] ) );
+		) ) );
 
 		$content = '';
 		$ids = array();

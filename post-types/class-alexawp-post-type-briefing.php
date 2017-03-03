@@ -15,7 +15,7 @@ class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
 	 * Creates the post type.
 	 */
 	public function create_post_type() {
-		register_post_type( $this->name, [
+		register_post_type( $this->name, array(
 			'labels' => array(
 				'name'               => __( 'Briefings', 'alexawp' ),
 				'singular_name'      => __( 'Briefing', 'alexawp' ),
@@ -34,8 +34,8 @@ class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
 			'public' => false,
 			'show_in_menu' => true,
 			'show_ui' => true,
-			'supports' => [ 'title' ],
-		] );
+			'supports' => array( 'title' ),
+		) );
 	}
 }
 
