@@ -3,15 +3,14 @@
  * Populates the types of skills that can be created
  */
 function alexawp_fm_skill_type() {
-	$fm = new Fieldmanager_Select( [
+	$fm = new Fieldmanager_Select( array(
 		'name' => 'skill_type',
 		'first_empty' => true,
-		'options' =>
-		[
+		'options' => array(
 			'fact_quote' => __( 'Fact / Quote', 'alexawp' ),
-		],
-	] );
-	$fm->add_meta_box( __( 'Skill Type', 'alexawp' ), [ 'alexawp-skill' ] );
+		),
+	) );
+	$fm->add_meta_box( __( 'Skill Type', 'alexawp' ), array( 'alexawp-skill' ) );
 }
 add_action( 'fm_post_alexawp-skill', 'alexawp_fm_skill_type' );
 
@@ -19,11 +18,11 @@ add_action( 'fm_post_alexawp-skill', 'alexawp_fm_skill_type' );
  * Add the Alexa app ID.
  */
 function alexawp_fm_alexa_app_id() {
-	$fm = new Fieldmanager_TextField( [
+	$fm = new Fieldmanager_TextField( array(
 		'name' => 'alexa_app_id',
 		'description' => __( 'Add the application ID given by Amazon', 'alexawp' ),
-	] );
-	$fm->add_meta_box( __( 'Alexa Application ID', 'alexawp' ), [ 'alexawp-skill' ] );
+	) );
+	$fm->add_meta_box( __( 'Alexa Application ID', 'alexawp' ), array( 'alexawp-skill' ) );
 }
 add_action( 'fm_post_alexawp-skill', 'alexawp_fm_alexa_app_id' );
 
@@ -31,11 +30,11 @@ add_action( 'fm_post_alexawp-skill', 'alexawp_fm_alexa_app_id' );
  * Add the Alexa app ID.
  */
 function alexawp_fm_alexa_app_image() {
-	$fm = new Fieldmanager_Media( [
+	$fm = new Fieldmanager_Media( array(
 		'name' => 'alexawp_default_image',
 		'description' => __( 'Image to be used when no other is provided', 'alexawp' ),
-	] );
-	$fm->add_meta_box( __( 'Default App Card Image', 'alexawp' ), [ 'alexawp-skill' ] );
+	) );
+	$fm->add_meta_box( __( 'Default App Card Image', 'alexawp' ), array( 'alexawp-skill' ) );
 }
 add_action( 'fm_post_alexawp-skill', 'alexawp_fm_alexa_app_image' );
 
@@ -46,17 +45,17 @@ add_action( 'fm_post_alexawp-skill', 'alexawp_fm_alexa_app_image' );
  */
 function alexawp_fm_briefing_content() {
 	$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;
-	$allowed_formats = [ 'mp3' ];
+	$allowed_formats = array( 'mp3' );
 
-	$children = [
-		new \AlexaWP_Fieldmanager_Content_TextArea( __( 'Text', 'alexawp' ), [
+	$children = array(
+		new \AlexaWP_Fieldmanager_Content_TextArea( __( 'Text', 'alexawp' ), array(
 			'description' => __( 'Text should be under 4,500 characters.', 'alexawp' ),
-			'attributes' => [
+			'attributes' => array(
 				'style' => 'width: 100%; height: 400px',
 				'maxlength' => 4500,
-			],
-		] ),
-		new \Fieldmanager_Media( __( 'Uploaded MP3', 'alexawp' ), [
+			),
+		) ),
+		new \Fieldmanager_Media( __( 'Uploaded MP3', 'alexawp' ), array(
 			'name' => 'attachment_id',
 			'mime_type' => 'audio/mpeg',
 			'button_label' => __( 'Select a File', 'alexawp' ),
@@ -64,32 +63,32 @@ function alexawp_fm_briefing_content() {
 			'modal_title' => __( 'Select a File', 'alexawp' ),
 			'selected_file_label' => __( 'Selected File:', 'alexawp' ),
 			'remove_media_label' => __( 'Remove Selection', 'alexawp' ),
-		] ),
-		new \Fieldmanager_Link( __( 'HTTPS URL to an MP3', 'alexawp' ), [
+		) ),
+		new \Fieldmanager_Link( __( 'HTTPS URL to an MP3', 'alexawp' ), array(
 			'name' => 'audio_url',
-			'attributes' => [
+			'attributes' => array(
 				'style' => 'width: 100%;',
-			],
-		] ),
-	];
+			),
+		) ),
+	);
 
 	foreach ( $children as $key => $value ) {
-		$children[ $key ]->display_if = [
+		$children[ $key ]->display_if = array(
 			'src' => 'source',
 			'value' => $children[ $key ]->name,
-		];
+		);
 	}
 
 	// Display-if control.
-	$display_if = new \Fieldmanager_Radios( __( 'Source', 'alexawp' ), [
+	$display_if = new \Fieldmanager_Radios( __( 'Source', 'alexawp' ), array(
 		'name' => 'source',
 		'options' => wp_list_pluck( $children, 'label', 'name' ),
-	] );
+	) );
 
 	// Briefing UUID, saved the first time and used thereafter.
-	$uuid = new \Fieldmanager_Hidden( [
+	$uuid = new \Fieldmanager_Hidden( array(
 		'name' => 'uuid',
-	] );
+	) );
 
 	if ( ! get_post_meta( $post_id, 'alexawp_briefing_uuid', true ) ) {
 		$uuid->default_value = alexawp_generate_uuid4();
@@ -97,12 +96,12 @@ function alexawp_fm_briefing_content() {
 
 	array_unshift( $children, $display_if, $uuid );
 
-	$fm = new \Fieldmanager_Group( [
+	$fm = new \Fieldmanager_Group( array(
 		'name' => 'alexawp_briefing',
 		'serialize_data' => false,
 		// Needs to be name => field for compat with FM's validation routines.
 		'children' => array_combine( wp_list_pluck( $children, 'name' ), $children ),
-	] );
+	) );
 
 	// Help text.
 	if ( $post_id ) {
@@ -116,7 +115,7 @@ function alexawp_fm_briefing_content() {
 
 		if ( $existing_attachment_id ) {
 			$attachment_metadata = wp_get_attachment_metadata( $existing_attachment_id );
-			$warnings = [];
+			$warnings = array();
 
 			if ( ! isset( $attachment_metadata['fileformat'] ) || ! in_array( $attachment_metadata['fileformat'], $allowed_formats, true ) ) {
 				$warnings[] = __( 'Please make sure this is an MP3 upload.', 'alexawp' );
@@ -130,7 +129,8 @@ function alexawp_fm_briefing_content() {
 		}
 	}
 
-	return $fm->add_meta_box( __( 'Briefing Content', 'alexawp' ), fm_get_context()[1], 'normal', 'high' );
+	$context = fm_get_context();
+	return $fm->add_meta_box( __( 'Briefing Content', 'alexawp' ), $context[1], 'normal', 'high' );
 }
 add_action( 'fm_post_alexawp-briefing', 'alexawp_fm_briefing_content' );
 
@@ -138,26 +138,25 @@ add_action( 'fm_post_alexawp-briefing', 'alexawp_fm_briefing_content' );
  * Add facts or skills.
  */
 function alexawp_fm_skill_fact_quote() {
-	$fm = new Fieldmanager_Group( [
+	$fm = new Fieldmanager_Group( array(
 		'name' => 'facts_quotes',
 		'limit' => 0,
 		'add_more_label' => __( 'Add another fact or quote', 'alexawp' ),
-		'children' =>
-		[
-			'fact_quote' => new Fieldmanager_TextField( [
+		'children' => array(
+			'fact_quote' => new Fieldmanager_TextField( array(
 				'label' => __( 'Fact / Quote', 'alexawp' ),
 				'description' => __( 'Add a fact or quote', 'alexawp' ),
-			] ),
-			'attribution' => new Fieldmanager_TextField( [
+			) ),
+			'attribution' => new Fieldmanager_TextField( array(
 				'label' => __( 'Attribution', 'alexawp' ),
 				'description' => __( 'Add attribution if applicable', 'alexawp' ),
-			] ),
-			'image' => new Fieldmanager_Media( [
+			) ),
+			'image' => new Fieldmanager_Media( array(
 				'label' => __( 'Alexa App Card Image', 'alexawp' ),
-			] ),
-		],
-	] );
-	$fm->add_meta_box( __( 'Facts / Quotes', 'alexawp' ), [ 'alexawp-skill' ] );
+			) ),
+		),
+	) );
+	$fm->add_meta_box( __( 'Facts / Quotes', 'alexawp' ), array( 'alexawp-skill' ) );
 }
 add_action( 'fm_post_alexawp-skill', 'alexawp_fm_skill_fact_quote' );
 
@@ -165,44 +164,44 @@ add_action( 'fm_post_alexawp-skill', 'alexawp_fm_skill_fact_quote' );
  * Create a settings page for the news/post consumption skill
  */
 function alexawp_fm_alexa_settings() {
-	$readonly = [ 'readonly' => 'readonly' ];
+	$readonly = array( 'readonly' => 'readonly' );
 
 	$news_post_types = alexawp_news_post_types();
 	// All public taxonomies associated with news post types. Could be abstracted into a function.
 	$eligible_news_taxonomy_objects = array_filter(
-		get_taxonomies( [ 'public' => true ], 'objects' ),
+		get_taxonomies( array( 'public' => true ), 'objects' ),
 		function ( $taxonomy ) use ( $news_post_types ) {
 			return ( $taxonomy->label && array_intersect( $news_post_types, $taxonomy->object_type ) );
 		}
 	);
 
-	$children = [
-		'news_invocation' => new Fieldmanager_TextField( [
+	$children = array(
+		'news_invocation' => new Fieldmanager_TextField( array(
 			'label' => __( 'What is the invocation name you will use for this skill?', 'alexawp' ),
 			'description' => __( 'This is the name a person says when they wish to interact with your skill.', 'alexawp' ),
-		] ),
-		'news_id' => new Fieldmanager_TextField( [
+		) ),
+		'news_id' => new Fieldmanager_TextField( array(
 			'label' => __( 'News skill ID', 'alexawp' ),
 			'description' => __( 'Add the application ID given by Amazon', 'alexawp' ),
-			'attributes' => [
+			'attributes' => array(
 				'style' => 'width: 95%;',
-			],
-		] ),
-		'latest_taxonomies' => new \Fieldmanager_Checkboxes( [
+			),
+		) ),
+		'latest_taxonomies' => new \Fieldmanager_Checkboxes( array(
 			'label' => __( 'Allow people to ask for content from specific:', 'alexawp' ),
 			'options' => wp_list_pluck( $eligible_news_taxonomy_objects, 'label', 'name' ),
-		] ),
-	];
+		) ),
+	);
 
 	$alexawp_settings = get_option( 'alexawp-settings' );
 	$saved_invocation = ( ! empty( $alexawp_settings['news_invocation'] ) );
 
 	if ( $saved_invocation ) {
-		$children['news_utterances'] = new Fieldmanager_TextArea( [
+		$children['news_utterances'] = new Fieldmanager_TextArea( array(
 			'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'alexawp' ),
 			'default_value' => implode(
 				"\r",
-				[
+				array(
 					/* translators: 1: skill invocation name */
 					'Latest ' . sprintf( __( 'Ask %1$s for the latest content', 'alexawp' ), $alexawp_settings['news_invocation'] ),
 					/* translators: 1: skill invocation name */
@@ -279,124 +278,124 @@ function alexawp_fm_alexa_settings() {
 					'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumberWord}' ),
 					/* translators: 1: ordinal number of the post to read */
 					'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumberWord}' ),
-				]
+				)
 			),
 			'skip_save' => true,
 			'attributes' => array_merge(
 				$readonly,
-				[ 'style' => 'width: 95%; height: 300px;' ]
+				array( 'style' => 'width: 95%; height: 300px;' )
 			),
-		] );
+		) );
 	}
 
-	$children['news_intent_schema'] = new \Fieldmanager_TextArea( [
+	$children['news_intent_schema'] = new \Fieldmanager_TextArea( array(
 		'label' => __( 'The Intent Schema for your News skill. Add this to your news skill in the Amazon developer portal.', 'alexawp' ),
 		'default_value' => wp_json_encode(
-			[
-				'intents' => [
-					[
+			array(
+				'intents' => array(
+					array(
 						'intent' => 'Latest',
-						'slots' => [
-							[
+						'slots' => array(
+							array(
 								'name' => 'TermName',
 								'type' => 'ALEXAWP_TERM_NAME',
-							],
-						],
-					],
-					[
+							),
+						),
+					),
+					array(
 						'intent' => 'ReadPost',
-						'slots' => [
-							[
+						'slots' => array(
+							array(
 								'name' => 'PostNumber',
 								'type' => 'AMAZON.NUMBER',
-							],
-							[
+							),
+							array(
 								'name' => 'PostNumberWord',
 								'type' => 'ALEXAWP_POST_NUMBER_WORD',
-							],
-						],
-					],
-					[
+							),
+						),
+					),
+					array(
 						'intent' => 'AMAZON.StopIntent',
-					],
-				],
-			],
+					),
+				),
+			),
 			JSON_PRETTY_PRINT
 		),
 		'skip_save' => true,
 		'attributes' => array_merge(
 			$readonly,
-			[ 'style' => 'width: 95%; height: 300px; font-family: monospace;' ]
+			array( 'style' => 'width: 95%; height: 300px; font-family: monospace;' )
 		),
-	] );
+	) );
 
-	$children['custom_slot_types'] = new \Fieldmanager_Group( [
+	$children['custom_slot_types'] = new \Fieldmanager_Group( array(
 		'label' => __( 'Custom Slot Types', 'alexawp' ),
-		'children' => [
-			new \Fieldmanager_Group( [
+		'children' => array(
+			new \Fieldmanager_Group( array(
 				'name' => 'custom_slot_type_children',
 				'description' => __( 'These slot types must be added to your news skill in the Amazon developer portal.', 'alexawp' ),
-				'children' => [
-					new \Fieldmanager_TextField( __( 'Type', 'alexawp' ), [
+				'children' => array(
+					new \Fieldmanager_TextField( __( 'Type', 'alexawp' ), array(
 						'name' => 'ALEXAWP_POST_NUMBER_WORD',
 						'default_value' => 'ALEXAWP_POST_NUMBER_WORD',
 						'attributes' => array_merge(
 							$readonly,
-							[ 'style' => 'width: 50%; font-family: monospace' ]
+							array( 'style' => 'width: 50%; font-family: monospace' )
 						),
-					] ),
-					new \Fieldmanager_TextArea( __( 'Values', 'alexawp' ), [
+					) ),
+					new \Fieldmanager_TextArea( __( 'Values', 'alexawp' ), array(
 						'name' => 'ALEXAWP_POST_NUMBER_WORD_values',
 						'default_value' => "first\nsecond\nthird\nfourth\nfifth",
 						'attributes' => array_merge(
 							$readonly,
-							[ 'style' => 'width: 50%; height: 150px; font-family: monospace;' ]
+							array( 'style' => 'width: 50%; height: 150px; font-family: monospace;' )
 						),
-					] ),
-					new \Fieldmanager_TextField( __( 'Type', 'alexawp' ), [
+					) ),
+					new \Fieldmanager_TextField( __( 'Type', 'alexawp' ), array(
 						'name' => 'ALEXAWP_TERM_NAME',
 						'default_value' => 'ALEXAWP_TERM_NAME',
 						'attributes' => array_merge(
 							$readonly,
-							[ 'style' => 'width: 50%; font-family: monospace' ]
+							array( 'style' => 'width: 50%; font-family: monospace' )
 						),
-					] ),
-					new \Fieldmanager_TextArea( __( 'Values', 'alexawp' ), [
+					) ),
+					new \Fieldmanager_TextArea( __( 'Values', 'alexawp' ), array(
 						'name' => 'ALEXAWP_TERM_NAME_values',
 						'default_value' => implode(
 							"\n",
 							// Generate sample terms from all available taxonomies.
 							// We want someone to add this slot even if they haven't
 							// turned on taxonomies so it's already there if they do.
-							array_values( array_unique( array_map( 'strtolower', wp_list_pluck( get_terms( [
+							array_values( array_unique( array_map( 'strtolower', wp_list_pluck( get_terms( array(
 								'number' => 100,
 								'order' => 'DESC',
 								'orderby' => 'count',
 								'taxonomy' => array_values( wp_list_pluck( $eligible_news_taxonomy_objects, 'name' ) ),
-							] ), 'name' ) ) ) )
+							) ), 'name' ) ) ) )
 						),
 						'attributes' => array_merge(
 							$readonly,
-							[ 'style' => 'width: 50%; height: 150px; font-family: monospace;' ]
+							array( 'style' => 'width: 50%; height: 150px; font-family: monospace;' )
 						),
-					] ),
-				],
-			] ),
-		],
+					) ),
+				),
+			) ),
+		),
 		'skip_save' => true,
-	] );
+	) );
 
 	if ( $saved_invocation ) {
-		$children['remove_last_upload'] = new Fieldmanager_Checkbox( [
+		$children['remove_last_upload'] = new Fieldmanager_Checkbox( array(
 			'label' => __( 'Remove last upload', 'alexawp' ),
 			'skip_save' => true,
-		] );
+		) );
 	}
 
-	$fm = new Fieldmanager_Group( [
+	$fm = new Fieldmanager_Group( array(
 		'name' => 'alexawp-settings',
 		'children' => $children,
-	] );
+	) );
 	$fm->activate_submenu_page();
 }
 add_action( 'fm_submenu_alexawp-settings', 'alexawp_fm_alexa_settings' );

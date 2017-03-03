@@ -77,10 +77,10 @@ class Response {
 		$this->card->title = $title;
 		$this->card->content = $content;
 		if ( $image ) {
-			$this->card->image = [
+			$this->card->image = array(
 				'smallImageUrl' => wp_get_attachment_image_src( absint( $image ), 'alexa-small' ),
 				'LargeImageUrl' => wp_get_attachment_image_src( absint( $image ), 'alexa-large' ),
-			];
+			);
 			$this->card->type = 'Standard';
 		}
 
