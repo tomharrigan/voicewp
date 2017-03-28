@@ -1,4 +1,6 @@
 <?php
+require_once( ALEXAWP_PATH . '/alexa-briefing.php' );
+
 /**
  * Custom post type for Skills.
  */
@@ -10,6 +12,12 @@ class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
 	 * @var string
 	 */
 	public $name = 'alexawp-briefing';
+
+	function __construct() {
+		parent::__construct();
+
+		add_action( 'save_post_' . $this->name, array( $this, 'set_cache' ) );
+	}
 
 	/**
 	 * Creates the post type.
@@ -37,6 +45,24 @@ class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
 			'supports' => array( 'title' ),
 		) );
 	}
+
+	/*
+		cache the briefing
+	 */
+	public function set_cache( $post_id ) {
+		// don't cache if this is a revision or an import
+		if (
+			empty( $post_id )
+			|| wp_is_post_revision( $post_id )
+	 		|| ( defined( 'WP_IMPORTING' ) && WP_IMPORTING === true )
+		) {
+			return;
+		}
+
+		$briefing = new Alexa_Briefing();
+		set_transient( $this->name, $briefing->briefing_request() );
+	}
+
 }
 
 $post_type_briefing = new Alexawp_Post_Type_Briefing();
