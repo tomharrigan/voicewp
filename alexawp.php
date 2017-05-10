@@ -225,7 +225,13 @@ class Alexawp {
 
 	public function briefing_request() {
 		$briefing = new Alexa_Briefing();
-		$result = $briefing->briefing_request();
+
+		$result = get_transient( 'alexawp-briefing' );
+		if ( false === $result ) {
+			$result = $briefing->briefing_request();
+			set_transient( 'alexawp-briefing', $result );
+		}
+
 		return new WP_REST_Response( $result );
 	}
 
