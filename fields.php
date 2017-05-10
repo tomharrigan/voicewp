@@ -1,42 +1,47 @@
 <?php
 /**
+ * Add the Alexa app ID.
  * Populates the types of skills that can be created
  */
-function alexawp_fm_skill_type() {
-	$fm = new Fieldmanager_Select( array(
-		'name' => 'skill_type',
-		'first_empty' => true,
-		'options' => array(
-			'fact_quote' => __( 'Fact / Quote', 'alexawp' ),
-		),
-	) );
-	$fm->add_meta_box( __( 'Skill Type', 'alexawp' ), array( 'alexawp-skill' ) );
-}
-add_action( 'fm_post_alexawp-skill', 'alexawp_fm_skill_type' );
+function alexawp_fm_alexa_app_settings() {
 
-/**
- * Add the Alexa app ID.
- */
-function alexawp_fm_alexa_app_id() {
-	$fm = new Fieldmanager_TextField( array(
-		'name' => 'alexa_app_id',
-		'description' => __( 'Add the application ID given by Amazon', 'alexawp' ),
-	) );
-	$fm->add_meta_box( __( 'Alexa Application ID', 'alexawp' ), array( 'alexawp-skill' ) );
-}
-add_action( 'fm_post_alexawp-skill', 'alexawp_fm_alexa_app_id' );
+	$children = array(
+		new \Fieldmanager_Checkbox( array(
+			'name' => 'is_standalone',
+			'label' => __( 'This is a standalone skill', 'alexawp' ),
+			'description' => __( 'Create as a separate skill or part of main skill.', 'alexawp' ),
+		) ),
+		new \Fieldmanager_TextField( __( 'Alexa Application ID', 'alexawp' ), array(
+			'name' => 'app_id',
+			'description' => __( 'Add the application ID given by Amazon', 'alexawp' ),
+			'display_if' => array(
+				'src' => 'is_standalone',
+				'value' => true,
+			),
+		) ),
+		new \Fieldmanager_Select( __( 'Skill Type', 'alexawp' ), array(
+			'name' => 'type',
+			'first_empty' => true,
+			'options' => array(
+				'fact_quote' => __( 'Fact / Quote', 'alexawp' ),
+			),
+		) ),
+		new \Fieldmanager_Media( __( 'Default App Card Image', 'alexawp' ), array(
+			'name' => 'default_image',
+			'description' => __( 'Image to be used when no other is provided', 'alexawp' ),
+		) ),
+	);
 
-/**
- * Add the Alexa app ID.
- */
-function alexawp_fm_alexa_app_image() {
-	$fm = new Fieldmanager_Media( array(
-		'name' => 'alexawp_default_image',
-		'description' => __( 'Image to be used when no other is provided', 'alexawp' ),
+	$fm = new \Fieldmanager_Group( array(
+		'name' => 'alexawp_skill',
+		'serialize_data' => false,
+		// Needs to be name => field for compat with FM's validation routines.
+		'children' => array_combine( wp_list_pluck( $children, 'name' ), $children ),
 	) );
-	$fm->add_meta_box( __( 'Default App Card Image', 'alexawp' ), array( 'alexawp-skill' ) );
+	$context = fm_get_context();
+	return $fm->add_meta_box( __( 'Skill Settings', 'alexawp' ), $context[1], 'normal', 'high' );
 }
-add_action( 'fm_post_alexawp-skill', 'alexawp_fm_alexa_app_image' );
+add_action( 'fm_post_alexawp-skill', 'alexawp_fm_alexa_app_settings' );
 
 /**
  * Fields for controlling flash briefing content.
@@ -141,6 +146,7 @@ function alexawp_fm_skill_fact_quote() {
 	$fm = new Fieldmanager_Group( array(
 		'name' => 'facts_quotes',
 		'limit' => 0,
+		'extra_elements' => 0,
 		'add_more_label' => __( 'Add another fact or quote', 'alexawp' ),
 		'children' => array(
 			'fact_quote' => new Fieldmanager_TextField( array(

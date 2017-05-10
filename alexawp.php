@@ -171,7 +171,8 @@ class Alexawp {
 		if ( ! empty( $body ) ) {
 			try {
 				// get config based on url
-				$app_id = get_post_meta( $id, 'alexa_app_id', true );
+				//This ID will be made optional, first do a check for if standalone or not
+				$app_id = get_post_meta( $id, 'alexawp_skill_app_id', true );
 				$certificate = new \Alexa\Request\Certificate( $request->get_header( 'signaturecertchainurl' ), $request->get_header( 'signature' ), $app_id );
 				$alexa = new \Alexa\Request\Request( $body, $app_id );
 				$alexa->setCertificateDependency( $certificate );
@@ -203,6 +204,7 @@ class Alexawp {
 		if ( ! empty( $body ) ) {
 			try {
 				$alexa_settings = get_option( 'alexawp-settings' );
+				// The main amazon Application ID
 				$app_id = $alexa_settings['news_id'];
 				$certificate = new \Alexa\Request\Certificate( $request->get_header( 'signaturecertchainurl' ), $request->get_header( 'signature' ), $app_id );
 				$alexa = new \Alexa\Request\Request( $body, $app_id );
@@ -225,19 +227,16 @@ class Alexawp {
 
 	public function briefing_request() {
 		$briefing = new Alexa_Briefing();
-
-		$result = get_transient( 'alexawp-briefing' );
-		if ( false === $result ) {
+		if ( false === ( $result = get_transient( 'alexawp-briefing' ) ) ) {
 			$result = $briefing->briefing_request();
 			set_transient( 'alexawp-briefing', $result );
 		}
-
 		return new WP_REST_Response( $result );
 	}
 
 	public function skill_dispatch( $id, $event ) {
 
-		$skill_type = get_post_meta( $id, 'skill_type', true );
+		$skill_type = get_post_meta( $id, 'alexawp_skill_type', true );
 
 		switch ( $skill_type ) {
 			case 'fact_quote':
