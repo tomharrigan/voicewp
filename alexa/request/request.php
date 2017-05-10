@@ -23,7 +23,7 @@ class Request {
 	 * Set up Request with RequestId, timestamp (DateTime) and user (User obj.)
 	 * @param type $data
 	 */
-	public function __construct( $raw_data, $applicationId ) {
+	public function __construct( $raw_data, $applicationId = null ) {
 		if ( ! is_string( $raw_data ) ) {
 			throw new InvalidArgumentException( 'Alexa Request requires the raw JSON data to validate request signature' );
 		}
@@ -37,7 +37,9 @@ class Request {
 		$this->timestamp = new DateTime( $data['request']['timestamp'] );
 		$this->session = new Session( $data['session'] );
 
-		$this->applicationId = $applicationId;
+		$this->applicationId = ( is_null( $applicationId ) && isset($data['session']['application']['applicationId']))
+			? $data['session']['application']['applicationId']
+			: $applicationId;
 
 	}
 
