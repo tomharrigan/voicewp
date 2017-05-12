@@ -117,6 +117,18 @@ class Alexawp {
 		add_filter( 'allowed_http_origins', array( $this, 'allowed_http_origins' ) );
 	}
 
+	public function alexawp_is_get_request() {
+		return isset( $_SERVER['REQUEST_METHOD'] )
+			&& ( 'GET' === sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) );
+	}
+
+	public function alexawp_maybe_display_notice() {
+		if ( $this->alexawp_is_get_request() ) {
+			esc_html_e( 'To test your skill, use an Alexa enabled device or Echosim.io', 'alexawp' );
+			exit();
+		}
+	}
+
 	/**
 	 * Register the routes for the objects of the controller.
 	 */
@@ -129,12 +141,12 @@ class Alexawp {
 		// Endpoint for News skill
 		register_rest_route( 'alexawp/v1', '/skill/news', array(
 			'callback' => array( $this, 'alexawp_news_request' ),
-			'methods' => array( 'POST' ),
+			'methods' => array( 'POST', 'GET' ),
 		) );
 		// Endpoint for all other skills
 		register_rest_route( 'alexawp/v1', '/skill/(?P<id>\d+)', array(
 			'callback' => array( $this, 'alexawp_skill_request' ),
-			'methods' => array( 'POST' ),
+			'methods' => array( 'POST', 'GET' ),
 		) );
 	}
 
@@ -164,6 +176,9 @@ class Alexawp {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function alexawp_skill_request( WP_REST_Request $request ) {
+
+		$this->alexawp_maybe_display_notice();
+
 		$body = $request->get_body();
 
 		$id = absint( $request->get_param( 'id' ) );
@@ -199,6 +214,9 @@ class Alexawp {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function alexawp_news_request( WP_REST_Request $request ) {
+
+		$this->alexawp_maybe_display_notice();
+
 		$body = $request->get_body();
 
 		if ( ! empty( $body ) ) {
