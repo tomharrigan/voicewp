@@ -104,7 +104,7 @@ class Alexa_News {
 
 	private function endpoint_single_post( $id ) {
 		$single_post = get_post( $id );
-		$post_content = strip_tags( strip_shortcodes( $single_post->post_content ) );
+		$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', strip_tags( strip_shortcodes( $single_post->post_content ) ) );
 		return array(
 			'content' => $post_content,
 			'title' => $single_post->post_title,
