@@ -4,6 +4,12 @@ use Alexa\Request\IntentRequest;
 
 class Alexa_News {
 
+	public $intents = array(
+		'Latest',
+		'ReadPost',
+		'AMAZON.StopIntent',
+	);
+
 	public function news_request( $event ) {
 
 		$request = $event->get_request();
@@ -87,11 +93,19 @@ class Alexa_News {
 					$response->respond( __( 'Thanks for listening!', 'alexawp' ) )->endSession();
 					break;
 				default:
-					$this->message( $response );
+					$this->custom_functionality( $intent, $request, $response );
 					break;
 			}
 		} elseif ( $request instanceof Alexa\Request\LaunchRequest ) {
 			$response->respond( __( "Ask me what's new!", 'alexawp' ) );
+		}
+	}
+
+	private function custom_functionality( $intent, $request, $response ) {
+		$custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
+		if ( isset( $custom_skill_index[ $intent ] ) ) {
+			$alexawp = Alexawp::get_instance();
+			$alexawp->skill_dispatch( absint( $custom_skill_index[ $intent ] ), $request, $response );
 		}
 	}
 
