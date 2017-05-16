@@ -6,17 +6,17 @@ class Card {
 	public $type = 'Simple';
 	public $title = '';
 	public $content = '';
-	public $image = null;
+
+	public function __construct( $title, $content ) {
+		$this->title = $title;
+		$this->content = $content;
+	}
 
 	public function render() {
-		$card = array(
+		return array(
 			'type' => $this->type,
 			'title' => $this->title,
 			'content' => $this->content,
 		);
-		if ( $this->image ) {
-			$card['image'] = $this->image;
-		}
-		return $card;
 	}
 }
