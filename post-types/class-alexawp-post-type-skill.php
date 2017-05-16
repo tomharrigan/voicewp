@@ -63,7 +63,7 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 		$skill_type = get_post_meta( $post_id, 'alexawp_skill_type', true );
 		if ( empty( $is_standalone ) && ! empty( $skill_type ) ) {
 			$custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
-			$stuff = new Alexa_Quote;
+			$stuff = new \Alexa\Skill\Quote;
 			foreach ( $stuff->intents as $intent ) {
 				$custom_skill_index[ $intent ] = $post_id;
 			}

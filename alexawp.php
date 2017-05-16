@@ -52,6 +52,9 @@ function alexawp_load_fieldmanager_fields() {
 add_action( 'init', 'alexawp_load_fieldmanager_fields' );
 
 function alexawp_autoload_function( $classname ) {
+	if ( class_exists( $classname ) || 0 !== strpos( $classname, 'Alexa' ) ) {
+		return;
+	}
 	$class = str_replace( '\\', DIRECTORY_SEPARATOR, str_replace( '_', '-', strtolower( $classname ) ) );
 
 	// create the actual filepath
@@ -239,7 +242,7 @@ class Alexawp {
 			$response = new \Alexa\Response\Response;
 			$event = new AlexaEvent( $alexa_request, $response );
 
-			$news = new Alexa_News();
+			$news = new \Alexa\Skill\News();
 			$news->news_request( $event );
 
 			return new WP_REST_Response( $response->render() );
@@ -247,7 +250,7 @@ class Alexawp {
 	}
 
 	public function briefing_request() {
-		$briefing = new Alexa_Briefing();
+		$briefing = new \Alexa\Skill\Briefing();
 		if ( false === ( $result = get_transient( 'alexawp-briefing' ) ) ) {
 			$result = $briefing->briefing_request();
 			set_transient( 'alexawp-briefing', $result );
@@ -261,7 +264,7 @@ class Alexawp {
 
 		switch ( $skill_type ) {
 			case 'fact_quote':
-				$quote = new Alexa_Quote();
+				$quote = new \Alexa\Skill\Quote();
 				$quote->quote_request( $id, $request, $response );
 				break;
 			default:

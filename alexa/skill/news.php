@@ -1,8 +1,10 @@
 <?php
 
+namespace Alexa\Skill;
+
 use Alexa\Request\IntentRequest;
 
-class Alexa_News {
+class News {
 
 	public $intents = array(
 		'Latest',
@@ -15,7 +17,7 @@ class Alexa_News {
 		$request = $event->get_request();
 		$response = $event->get_response();
 
-		if ( $request instanceof Alexa\Request\IntentRequest ) {
+		if ( $request instanceof \Alexa\Request\IntentRequest ) {
 			$intent = $request->intentName;
 			switch ( $intent ) {
 				case 'Latest':

@@ -1,6 +1,8 @@
 <?php
 
-class Alexa_Briefing {
+namespace Alexa\Skill;
+
+class Briefing {
 	public function briefing_request() {
 		$responses = array();
 

@@ -1,6 +1,8 @@
 <?php
 
-class Alexa_Quote {
+namespace Alexa\Skill;
+
+class Quote {
 
 	public $intents = array(
 		'FactQuote',
