@@ -4,6 +4,9 @@ namespace Alexa\Skill;
 
 use Alexa\Request\IntentRequest;
 
+/**
+ * Class that creates a custom skill allowing WordPress content to be consumed via Alexa
+ */
 class News {
 
 	public $intents = array(

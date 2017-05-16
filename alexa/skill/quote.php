@@ -2,6 +2,9 @@
 
 namespace Alexa\Skill;
 
+/**
+ * Class that creates a custom skill for serving facts or quotes
+ */
 class Quote {
 
 	public $intents = array(

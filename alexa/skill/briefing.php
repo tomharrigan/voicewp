@@ -2,6 +2,9 @@
 
 namespace Alexa\Skill;
 
+/**
+ * Class that creates a Flash Briefing skill
+ */
 class Briefing {
 	public function briefing_request() {
 		$responses = array();
