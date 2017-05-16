@@ -88,7 +88,7 @@ class Alexa_News {
 					}
 					$post_ids = $request->session->attributes['post_ids'];
 					$result = $this->endpoint_single_post( $post_ids[ $post_number ] );
-					$response->respond( $result['content'] )->withCard( $result['title'] )->endSession();
+					$response->respond( $result['content'] )->withCard( $result['title'], '', $result['image'] )->endSession();
 					break;
 				case 'AMAZON.StopIntent':
 					$response->respond( __( 'Thanks for listening!', 'alexawp' ) )->endSession();
@@ -108,6 +108,7 @@ class Alexa_News {
 		return array(
 			'content' => $post_content,
 			'title' => $single_post->post_title,
+			'image' => get_post_thumbnail_id( $id ),
 		);
 	}
 
