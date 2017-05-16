@@ -69,7 +69,7 @@ class Alexa_News {
 				             */
 				            $post_number = 2;
 				        } else {
-				        	$post_number = substr( $post_number, 0, -2 );
+							$post_number = substr( $post_number, 0, -2 );
 				        }
 					} else {
 						$post_number = $request->getSlot( 'PostNumber' );
