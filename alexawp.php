@@ -199,12 +199,15 @@ class Alexawp {
 				return $this->fail_response( $e );
 			}
 
-			$response = new \Alexa\Response\Response;
-			$event = new AlexaEvent( $alexa_request, $response );
+			$response_object = new \Alexa\Response\Response;
+			$event = new AlexaEvent( $alexa_request, $response_object );
 
-			$this->skill_dispatch( $id, $event );
+			$request = $event->get_request();
+			$response = $event->get_response();
 
-			return new WP_REST_Response( $response->render() );
+			$this->skill_dispatch( $id, $request, $response );
+
+			return new WP_REST_Response( $response_object->render() );
 		}
 	}
 
@@ -252,14 +255,14 @@ class Alexawp {
 		return new WP_REST_Response( $result );
 	}
 
-	public function skill_dispatch( $id, $event ) {
+	public function skill_dispatch( $id, $request, $response ) {
 
 		$skill_type = get_post_meta( $id, 'alexawp_skill_type', true );
 
 		switch ( $skill_type ) {
 			case 'fact_quote':
 				$quote = new Alexa_Quote();
-				$quote->quote_request( $id, $event );
+				$quote->quote_request( $id, $request, $response );
 				break;
 			default:
 				do_action( 'alexawp_custom_skill', $skill_type, $id );
