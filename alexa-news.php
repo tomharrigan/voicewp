@@ -16,14 +16,6 @@ class Alexa_News {
 		'5th' => 5,
 	);
 
-	public $placement = array(
-		'First',
-		'Second',
-		'Third',
-		'Fourth',
-		'Fifth',
-	);
-
 	public function news_request( $event ) {
 
 		$request = $event->get_request();
@@ -123,7 +115,8 @@ class Alexa_News {
 		if ( ! empty( $news_posts ) && ! is_wp_error( $news_posts ) ) {
 			foreach ( $news_posts as $key => $news_post ) {
 				// TODO: Sounds a little strange when there's only one result.
-				$content .= $this->placement[ $key ] . ', ' . $news_post->post_title . '. ';
+				// Appending 'th' to any number results in proper ordinal pronunciation
+				$content .= ( $key + 1 ) . 'th, ' . $news_post->post_title . '. ';
 				$ids[] = $news_post->ID;
 			}
 		}
