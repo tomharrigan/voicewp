@@ -3,18 +3,6 @@
 use Alexa\Request\IntentRequest;
 
 class Alexa_News {
-	public $numbers = array(
-		'First' => 1,
-		'1st' => 1,
-		'Second' => 2,
-		'2nd' => 2,
-		'Third' => 3,
-		'3rd' => 3,
-		'Fourth' => 4,
-		'4th' => 4,
-		'Fifth' => 5,
-		'5th' => 5,
-	);
 
 	public function news_request( $event ) {
 
@@ -29,7 +17,7 @@ class Alexa_News {
 
 					$args = array(
 						'post_type' => alexawp_news_post_types(),
-						'posts_per_page' => max( 1, min( 100, count( $this->placement ) ) ),
+						'posts_per_page' => 5,
 						'tax_query' => array(),
 					);
 
@@ -60,7 +48,7 @@ class Alexa_News {
 					}
 
 					if ( $term_slot && ! $args['tax_query'] ) {
-						$response->respond( __( "Sorry! I couldn't find any news about that topic.", 'alexawp' ) )->endSession();
+						$this->message( $response );
 						break;
 					}
 
@@ -74,19 +62,32 @@ class Alexa_News {
 					break;
 				case 'ReadPost':
 					if ( $post_number = $request->getSlot( 'PostNumberWord' ) ) {
-						$post_number = $this->numbers[ $post_number ] -1;
-					} elseif ( $post_number = $request->getSlot( 'PostNumber' ) ) {
-						$post_number = $post_number - 1;
+						if ( 'second' === $post_number ) {
+				            /**
+				             * Alexa Skills Kit passes 'second' instead of '2nd'
+				             * unlike the case for all other numbers.
+				             */
+				            $post_number = 2;
+				        } else {
+				        	$post_number = substr( $post_number, 0, -2 );
+				        }
+					} else {
+						$post_number = $request->getSlot( 'PostNumber' );
 					}
-					$post_ids = $request->session->attributes['post_ids'];
-					$result = $this->endpoint_single_post( $post_ids[ $post_number ] );
-					$response->respond( $result['content'] )->withCard( $result['title'], '', $result['image'] )->endSession();
+
+					if ( ! empty( $request->session->attributes['post_ids'] ) && ! empty( $post_number ) ) {
+						$post_id = $this->get_post_id( $request->session->attributes['post_ids'], $post_number );
+						$result = $this->endpoint_single_post( $post_id );
+						$response->respond( $result['content'] )->withCard( $result['title'], '', $result['image'] )->endSession();
+					} else {
+						$this->message( $response );
+					}
 					break;
 				case 'AMAZON.StopIntent':
 					$response->respond( __( 'Thanks for listening!', 'alexawp' ) )->endSession();
 					break;
 				default:
-					# code...
+					$this->message( $response );
 					break;
 			}
 		} elseif ( $request instanceof Alexa\Request\LaunchRequest ) {
@@ -102,6 +103,15 @@ class Alexa_News {
 			'title' => $single_post->post_title,
 			'image' => get_post_thumbnail_id( $id ),
 		);
+	}
+
+	private function get_post_id( $ids, $number ) {
+		$number = absint( $number ) - 1;
+		return absint( $ids[ $number ] );
+	}
+
+	private function message( $response, $case = 'missing' ) {
+		$response->respond( __( "Sorry! I couldn't find any news about that topic.", 'alexawp' ) )->endSession();
 	}
 
 	private function endpoint_content( $args ) {
