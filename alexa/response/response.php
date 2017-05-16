@@ -72,16 +72,12 @@ class Response {
 	 * @param null|int $image
 	 * @return \Alexa\Response\Response
 	 */
-	public function withCard( $title, $content = '', $image = null ) {
-		$this->card = new Card;
-		$this->card->title = $title;
-		$this->card->content = $content;
+	public function withCard( $title = '', $content = '', $image = null ) {
+
 		if ( $image ) {
-			$this->card->image = array(
-				'smallImageUrl' => wp_get_attachment_image_src( absint( $image ), 'alexa-small' ),
-				'LargeImageUrl' => wp_get_attachment_image_src( absint( $image ), 'alexa-large' ),
-			);
-			$this->card->type = 'Standard';
+			$this->card = new StandardCard( $title, $content, $image );
+		} else {
+			$this->card = new Card( $title, $content );
 		}
 
 		return $this;
