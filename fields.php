@@ -212,78 +212,7 @@ function alexawp_fm_alexa_settings() {
 
 	$children['news_utterances'] = new Fieldmanager_TextArea( array(
 		'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'alexawp' ),
-		'default_value' => implode(
-			"\r",
-			array(
-				'Latest ' . __( 'the latest content', 'alexawp' ),
-				'Latest ' . __( 'the latest articles', 'alexawp' ),
-				'Latest ' . __( 'the latest stories', 'alexawp' ),
-				'Latest ' . __( 'the latest news', 'alexawp' ),
-				'Latest ' . __( 'Get the latest news', 'alexawp' ),
-				'Latest ' . __( 'Get the latest stories', 'alexawp' ),
-				'Latest ' . __( 'Get the latest content', 'alexawp' ),
-				'Latest ' . __( 'what\'s up', 'alexawp' ),
-				'Latest ' . __( 'what\'s new', 'alexawp' ),
-				/* translators: 1: search term */
-				'Latest ' . sprintf( __( 'the latest %1$s articles', 'alexawp' ), '{TermName}' ),
-				/* translators: 1: search term */
-				'Latest ' . sprintf( __( 'the latest %1$s content', 'alexawp' ), '{TermName}' ),
-				/* translators: 1: search term */
-				'Latest ' . sprintf( __( 'the latest %1$s news', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( 'the latest %1$s stories', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( '%1$s articles', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( '%1$s content', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( '%1$s news', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( '%1$s stories', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( '%1$s articles', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( '%1$s content', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( '%1$s news', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( '%1$s stories', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( 'Get the latest %1$s articles', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( 'Get the latest %1$s content', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( 'Get the latest %1$s news', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( 'Get the latest %1$s stories', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( 'Get %1$s articles', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( 'Get %1$s content', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( 'Get %1$s news', 'alexawp' ), '{TermName}' ),
-				/* translators: 1:  search term */
-				'Latest ' . sprintf( __( 'Get %1$s stories', 'alexawp' ), '{TermName}' ),
-				/* translators: 1: cardinal number of the post to read */
-				'ReadPost ' . sprintf( __( 'Read the %1$s', 'alexawp' ), '{PostNumber}' ),
-				/* translators: 1: cardinal number of the post to read */
-				'ReadPost ' . sprintf( __( 'Read the %1$s post', 'alexawp' ), '{PostNumber}' ),
-				/* translators: 1: cardinal number of the post to read */
-				'ReadPost ' . sprintf( __( 'Read the %1$s article', 'alexawp' ), '{PostNumber}' ),
-				/* translators: 1: cardinal number of the post to read */
-				'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumber}' ),
-				/* translators: 1: cardinal number of the post to read */
-				'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumber}' ),
-				/* translators: 1: ordinal number of the post to read */
-				'ReadPost ' . sprintf( __( 'Read the %1$s post', 'alexawp' ), '{PostNumberWord}' ),
-				/* translators: 1: ordinal number of the post to read */
-				'ReadPost ' . sprintf( __( 'Read the %1$s article', 'alexawp' ), '{PostNumberWord}' ),
-				/* translators: 1: ordinal number of the post to read */
-				'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumberWord}' ),
-				/* translators: 1: ordinal number of the post to read */
-				'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumberWord}' ),
-			)
-		),
+		'default_value' => file_get_contents( 'speechAssets/Utterances.txt', FILE_USE_INCLUDE_PATH ),
 		'skip_save' => true,
 		'attributes' => array_merge(
 			$readonly,
@@ -293,38 +222,7 @@ function alexawp_fm_alexa_settings() {
 
 	$children['news_intent_schema'] = new \Fieldmanager_TextArea( array(
 		'label' => __( 'The Intent Schema for your News skill. Add this to your news skill in the Amazon developer portal.', 'alexawp' ),
-		'default_value' => wp_json_encode(
-			array(
-				'intents' => array(
-					array(
-						'intent' => 'Latest',
-						'slots' => array(
-							array(
-								'name' => 'TermName',
-								'type' => 'ALEXAWP_TERM_NAME',
-							),
-						),
-					),
-					array(
-						'intent' => 'ReadPost',
-						'slots' => array(
-							array(
-								'name' => 'PostNumber',
-								'type' => 'AMAZON.NUMBER',
-							),
-							array(
-								'name' => 'PostNumberWord',
-								'type' => 'ALEXAWP_POST_NUMBER_WORD',
-							),
-						),
-					),
-					array(
-						'intent' => 'AMAZON.StopIntent',
-					),
-				),
-			),
-			JSON_PRETTY_PRINT
-		),
+		'default_value' => file_get_contents( 'speechAssets/IntentSchema.json', FILE_USE_INCLUDE_PATH ),
 		'skip_save' => true,
 		'attributes' => array_merge(
 			$readonly,
