@@ -63,14 +63,14 @@ class Alexa_News {
 				case 'ReadPost':
 					if ( $post_number = $request->getSlot( 'PostNumberWord' ) ) {
 						if ( 'second' === $post_number ) {
-				            /**
-				             * Alexa Skills Kit passes 'second' instead of '2nd'
-				             * unlike the case for all other numbers.
-				             */
-				            $post_number = 2;
-				        } else {
+							/**
+							* Alexa Skills Kit passes 'second' instead of '2nd'
+							* unlike the case for all other numbers.
+							*/
+							$post_number = 2;
+						} else {
 							$post_number = substr( $post_number, 0, -2 );
-				        }
+						}
 					} else {
 						$post_number = $request->getSlot( 'PostNumber' );
 					}
