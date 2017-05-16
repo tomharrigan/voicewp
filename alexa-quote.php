@@ -1,10 +1,12 @@
 <?php
 
 class Alexa_Quote {
-	public function quote_request( $id, $event ) {
 
-		$request = $event->get_request();
-		$response = $event->get_response();
+	public $intents = array(
+		'FactQuote',
+	);
+
+	public function quote_request( $id, $request, $response ) {
 
 		$quotes_facts = get_post_meta( $id, 'facts_quotes', true );
 		$default_image = get_post_meta( $id, 'alexawp_skill_default_image', true );
