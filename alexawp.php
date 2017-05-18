@@ -51,6 +51,11 @@ function alexawp_load_fieldmanager_fields() {
 }
 add_action( 'init', 'alexawp_load_fieldmanager_fields' );
 
+/**
+ * Load a class from within the plugin based on a class name.
+ *
+ * @param string $classname Class name to load.
+ */
 function alexawp_autoload_function( $classname ) {
 	if ( class_exists( $classname ) || 0 !== strpos( $classname, 'Alexa' ) ) {
 		return;
