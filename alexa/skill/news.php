@@ -15,8 +15,11 @@ class News {
 	 */
 	public $intents = array(
 		'Latest',
+		'LatestTerm',
 		'ReadPost',
 		'AMAZON.StopIntent',
+		'AMAZON.HelpIntent',
+		'AMAZON.CancelIntent',
 	);
 
 	/**
@@ -32,15 +35,8 @@ class News {
 		if ( $request instanceof \Alexa\Request\IntentRequest ) {
 			$intent = $request->intentName;
 			switch ( $intent ) {
-				case 'Latest':
+				case 'LatestTerm':
 					$term_slot = strtolower( sanitize_text_field( $request->getSlot( 'TermName' ) ) );
-
-					$args = array(
-						'post_type' => alexawp_news_post_types(),
-						'posts_per_page' => 5,
-						'tax_query' => array(),
-					);
-
 					if ( $term_slot ) {
 						$news_taxonomies = alexawp_news_taxonomies();
 
@@ -59,18 +55,24 @@ class News {
 
 							if ( $terms ) {
 								// 'term_taxonomy_id' query allows omitting 'taxonomy'.
-								$args['tax_query'][] = array(
+								$tax_query = array(
 									'terms' => wp_list_pluck( $terms, 'term_taxonomy_id' ),
 									'field' => 'term_taxonomy_id',
 								);
 							}
 						}
 					}
-
-					if ( $term_slot && ! $args['tax_query'] ) {
+					if ( $term_slot && ! $tax_query ) {
 						$this->message( $response );
 						break;
 					}
+				case 'Latest':
+
+					$args = array(
+						'post_type' => alexawp_news_post_types(),
+						'posts_per_page' => 5,
+						'tax_query' => isset( $tax_query ) ? $tax_query : array(),
+					);
 
 					$result = $this->endpoint_content( $args );
 
@@ -108,6 +110,9 @@ class News {
 					break;
 				case 'AMAZON.StopIntent':
 					$this->message( $response, 'stop_intent' );
+					break;
+				case 'AMAZON.HelpIntent':
+					$this->message( $response, 'help_intent' );
 					break;
 				default:
 					$this->skill_intent( $intent, $request, $response );
