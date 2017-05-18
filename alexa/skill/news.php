@@ -61,10 +61,10 @@ class News {
 								);
 							}
 						}
-					}
-					if ( $term_slot && ! $tax_query ) {
-						$this->message( $response );
-						break;
+						if ( ! isset( $tax_query ) ) {
+							$this->message( $response );
+							break;
+						}
 					}
 				case 'Latest':
 
