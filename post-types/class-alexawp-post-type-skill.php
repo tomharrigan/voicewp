@@ -14,7 +14,10 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 	function __construct() {
 		parent::__construct();
 
-		add_filter( 'save_post', array( $this, 'skill_index' ), 11, 3 );
+		add_filter( 'save_post', array( $this, 'save_post' ), 11, 3 );
+		add_filter( 'fm_presave_alter_values', array( $this, 'remove_from_skill_index' ), 10, 3 );
+		add_filter( 'update_post_metadata', array( $this, 'update_post_metadata' ), 10, 5 );
+		add_action( 'transition_post_status', array( $this, 'transition_post_status' ), 10, 3 );
 	}
 
 	/**
@@ -49,12 +52,13 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 	 * @param object $post Post object
 	 * @param bool $update Is post updated or new
 	 */
-	public function skill_index( $post_id, $post, $update ) {
+	public function save_post( $post_id, $post, $update ) {
 		if (
 			empty( $post_id )
 			|| wp_is_post_revision( $post_id )
 			|| ( defined( 'WP_IMPORTING' ) && WP_IMPORTING === true )
 			|| ( $post->post_type !== $this->name )
+			|| 'publish' !== get_post_status( $post_id )
 		) {
 			return;
 		}
@@ -62,11 +66,64 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 		$is_standalone = get_post_meta( $post_id, 'alexawp_skill_is_standalone', true );
 		$skill_type = get_post_meta( $post_id, 'alexawp_skill_type', true );
 		if ( empty( $is_standalone ) && ! empty( $skill_type ) ) {
-			$custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
-			$stuff = new \Alexa\Skill\Quote;
-			foreach ( $stuff->intents as $intent ) {
+			$old_index = $custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
+			$skill = '\Alexa\Skill\\' . $skill_type;
+			$skill = new $skill;
+
+			foreach ( $skill->intents as $intent ) {
 				$custom_skill_index[ $intent ] = $post_id;
 			}
+			if ( $old_index != $custom_skill_index ) {
+				update_option( 'alexawp_skill_index_map', $custom_skill_index );
+			}
+		}
+	}
+
+	function transition_post_status( $new_status, $old_status, $post ) {
+		// if status is going from published to something else
+		if ( ( 'publish' !== $new_status ) && ( 'publish' == $old_status ) ) {
+			$this->voicewp_remove_from_skill_index( $post->ID );
+		}
+	}
+
+	// skill type changes, it's going to need to be re-added with the new intents
+	function update_post_metadata( $null, $post_id, $meta_key, $meta_value, $prev_value ) {
+		if ( 'alexawp_skill_type' == $meta_key ) {
+			$old_value = get_metadata( 'post', $post_id, $meta_key );
+			// If theres a single value and the old value is the same as the new, return
+			if ( ( count( $old_value ) == 1 ) && ( $old_value[0] === $meta_value ) ) {
+				return $null;
+			}
+			// if the value is different, and the old value wasn't empty, remove the old index
+			if ( ! empty( $old_value[0] ) ) {
+				$this->voicewp_remove_from_skill_index( $post_id, $old_value[0] );
+			}
+		}
+		return $null;
+	}
+
+	// is_standalone changes to true
+	function remove_from_skill_index( $values, $fm_object, $current_values ) {
+		if ( isset( $fm_object->data_id ) && isset( $fm_object->name ) && 'is_standalone' === $fm_object->name ) {
+			// If was standalone and is now set to not be standalone
+			if ( false == $current_values[0] && $values[0] !== $current_values[0] ) {
+				$this->voicewp_remove_from_skill_index( $fm_object->data_id );
+			}
+		}
+		return $values;
+	}
+
+	function voicewp_remove_from_skill_index( $post_id, $skill_type = null ) {
+		$skill_type = ( $skill_type ) ? $skill_type : get_post_meta( $post_id, 'alexawp_skill_type', true );
+		$old_index = $custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
+		$skill = '\Alexa\Skill\\' . $skill_type;
+		$skill = new $skill;
+		foreach ( $skill->intents as $intent ) {
+			if ( $post_id == $custom_skill_index[ $intent ] ) {
+				unset( $custom_skill_index[ $intent ] );
+			}
+		}
+		if ( $old_index != $custom_skill_index ) {
 			update_option( 'alexawp_skill_index_map', $custom_skill_index );
 		}
 	}
