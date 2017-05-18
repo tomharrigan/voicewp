@@ -98,20 +98,23 @@ class News {
 					if ( ! empty( $request->session->attributes['post_ids'] ) && ! empty( $post_number ) ) {
 						$post_id = $this->get_post_id( $request->session->attributes['post_ids'], $post_number );
 						$result = $this->endpoint_single_post( $post_id );
-						$response->respond( $result['content'] )->withCard( $result['title'], '', $result['image'] )->endSession();
+						$response
+							->respond( $result['content'] )
+							->withCard( $result['title'], '', $result['image'] )
+							->endSession();
 					} else {
 						$this->message( $response );
 					}
 					break;
 				case 'AMAZON.StopIntent':
-					$response->respond( __( 'Thanks for listening!', 'alexawp' ) )->endSession();
+					$this->message( $response, 'stop_intent' );
 					break;
 				default:
 					$this->skill_intent( $intent, $request, $response );
 					break;
 			}
-		} elseif ( $request instanceof Alexa\Request\LaunchRequest ) {
-			$response->respond( __( "Ask me what's new!", 'alexawp' ) );
+		} elseif ( $request instanceof \Alexa\Request\LaunchRequest ) {
+			$this->message( $response, 'launch_request' );
 		}
 	}
 
@@ -149,6 +152,7 @@ class News {
 	 * Handles the offset between user selection of post in a list,
 	 * and zero based index of array
 	 * @param array $ids Array of IDs that were listed to the user
+	 * @param in $number User selection from list
 	 * @return int The post the user asked for
 	 */
 	private function get_post_id( $ids, $number ) {
@@ -159,10 +163,18 @@ class News {
 	/**
 	 * Deliver a message to user
 	 * @param AlexaResponse $response
-	 * @param string The type of message to return
+	 * @param string $case The type of message to return
 	 */
 	private function message( $response, $case = 'missing' ) {
-		$response->respond( __( "Sorry! I couldn't find any news about that topic.", 'alexawp' ) )->endSession();
+		$alexawp_settings = get_option( 'alexawp-settings' );
+		if ( isset( $alexawp_settings[ $case ] ) ) {
+			$response->respond( $alexawp_settings[ $case ] );
+		} else {
+			$response->respond( __( "Sorry! I couldn't find any news about that topic. Try asking something else!", 'alexawp' ) );
+		}
+		if ( 'stop_intent' === $case ) {
+			$response->endSession();
+		}
 	}
 
 	/**
