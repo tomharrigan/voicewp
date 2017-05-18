@@ -11,6 +11,12 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 	 */
 	public $name = 'alexawp-skill';
 
+	/**
+	 * Hooks on to actions and filters for adding/removing items from an option that
+	 * tracks what functionality is in a skill
+	 * @param string $label
+	 * @param array $options
+	 */
 	function __construct() {
 		parent::__construct();
 
@@ -79,6 +85,12 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 		}
 	}
 
+	/**
+	 * Checks if going from publish to another status
+	 * @param string $new_status status post is changing to
+	 * @param string $old_status status post was
+	 * @param Object $post post object
+	 */
 	function transition_post_status( $new_status, $old_status, $post ) {
 		// if status is going from published to something else
 		if ( ( 'publish' !== $new_status ) && ( 'publish' == $old_status ) ) {
@@ -86,7 +98,16 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 		}
 	}
 
-	// skill type changes, it's going to need to be re-added with the new intents
+	/**
+	 * If skill type changes, remove the old data from the index
+	 * @param null $null
+	 * @param string $old_status status post was
+	 * @param int $post_id post ID
+	 * @param string $meta_key meta key being edited
+	 * @param mixed $meta_value meta value being saved
+	 * @param mixed $old_status optional meta value to change if multiple keys
+	 * @retun null
+	 */
 	function update_post_metadata( $null, $post_id, $meta_key, $meta_value, $prev_value ) {
 		if ( 'alexawp_skill_type' == $meta_key ) {
 			$old_value = get_metadata( 'post', $post_id, $meta_key );
@@ -102,7 +123,13 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 		return $null;
 	}
 
-	// is_standalone changes to true
+	/**
+	 * If is_standalone changes to true, we need to remove from index
+	 * @param array $values meta value being saved
+	 * @param object $fm_object Fieldmanager object
+	 * @param array $current_values meta value previously saved
+	 * @return array value to save
+	 */
 	function remove_from_skill_index( $values, $fm_object, $current_values ) {
 		if ( isset( $fm_object->data_id ) && isset( $fm_object->name ) && 'is_standalone' === $fm_object->name ) {
 			// If was standalone and is now set to not be standalone
@@ -113,6 +140,12 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 		return $values;
 	}
 
+	/**
+	 * Helper function that removes intents, which are the array keys
+	 * and ID's, which are the array values, from the index
+	 * @param int $post_id Post ID
+	 * @param string|null $skill_type type of skill being removed
+	 */
 	function voicewp_remove_from_skill_index( $post_id, $skill_type = null ) {
 		$skill_type = ( $skill_type ) ? $skill_type : get_post_meta( $post_id, 'alexawp_skill_type', true );
 		$old_index = $custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
