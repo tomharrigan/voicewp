@@ -180,6 +180,7 @@ class Alexawp {
 
 	/**
 	 * Get one item from the collection
+	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
@@ -221,6 +222,7 @@ class Alexawp {
 
 	/**
 	 * Get one item from the collection
+	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
