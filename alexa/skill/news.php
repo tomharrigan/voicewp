@@ -109,6 +109,7 @@ class News {
 					}
 					break;
 				case 'AMAZON.StopIntent':
+				case 'AMAZON.CancelIntent':
 					$this->message( $response, 'stop_intent' );
 					break;
 				case 'AMAZON.HelpIntent':
