@@ -1,15 +1,35 @@
 <?php
 
+namespace Alexa\Skill;
+
 use Alexa\Request\IntentRequest;
 
-class Alexa_News {
+/**
+ * Class that creates a custom skill allowing WordPress content to be consumed via Alexa
+ */
+class News {
 
+	/**
+	 * @var array
+	 * Intents supported by this skill type
+	 */
+	public $intents = array(
+		'Latest',
+		'ReadPost',
+		'AMAZON.StopIntent',
+	);
+
+	/**
+	 * Figures out what kind of intent we're dealing with from the request
+	 * Handles grabbing the needed data and delivering the response
+	 * @param AlexaEvent $event
+	 */
 	public function news_request( $event ) {
 
 		$request = $event->get_request();
 		$response = $event->get_response();
 
-		if ( $request instanceof Alexa\Request\IntentRequest ) {
+		if ( $request instanceof \Alexa\Request\IntentRequest ) {
 			$intent = $request->intentName;
 			switch ( $intent ) {
 				case 'Latest':
@@ -78,23 +98,45 @@ class Alexa_News {
 					if ( ! empty( $request->session->attributes['post_ids'] ) && ! empty( $post_number ) ) {
 						$post_id = $this->get_post_id( $request->session->attributes['post_ids'], $post_number );
 						$result = $this->endpoint_single_post( $post_id );
-						$response->respond( $result['content'] )->withCard( $result['title'], '', $result['image'] )->endSession();
+						$response
+							->respond( $result['content'] )
+							->withCard( $result['title'], '', $result['image'] )
+							->endSession();
 					} else {
 						$this->message( $response );
 					}
 					break;
 				case 'AMAZON.StopIntent':
-					$response->respond( __( 'Thanks for listening!', 'alexawp' ) )->endSession();
+					$this->message( $response, 'stop_intent' );
 					break;
 				default:
-					$this->message( $response );
+					$this->skill_intent( $intent, $request, $response );
 					break;
 			}
-		} elseif ( $request instanceof Alexa\Request\LaunchRequest ) {
-			$response->respond( __( "Ask me what's new!", 'alexawp' ) );
+		} elseif ( $request instanceof \Alexa\Request\LaunchRequest ) {
+			$this->message( $response, 'launch_request' );
 		}
 	}
 
+	/**
+	 * Handles intents that come from outside the main set of News skill intents
+	 * @param string $intent name of the intent to handle
+	 * @param AlexaRequest $request
+	 * @param AlexaResponse $response
+	 */
+	private function skill_intent( $intent, $request, $response ) {
+		$custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
+		if ( isset( $custom_skill_index[ $intent ] ) ) {
+			$alexawp = Alexawp::get_instance();
+			$alexawp->skill_dispatch( absint( $custom_skill_index[ $intent ] ), $request, $response );
+		}
+	}
+
+	/**
+	 * Packages up the post data that will be served in the response
+	 * @param int $id ID of post to get data for
+	 * @return array Data from the post being returned
+	 */
 	private function endpoint_single_post( $id ) {
 		$single_post = get_post( $id );
 		$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', strip_tags( strip_shortcodes( $single_post->post_content ) ) );
@@ -105,15 +147,43 @@ class Alexa_News {
 		);
 	}
 
+	/**
+	 * Gets a post ID from an array based on user input.
+	 * Handles the offset between user selection of post in a list,
+	 * and zero based index of array
+	 * @param array $ids Array of IDs that were listed to the user
+	 * @param in $number User selection from list
+	 * @return int The post the user asked for
+	 */
 	private function get_post_id( $ids, $number ) {
 		$number = absint( $number ) - 1;
 		return absint( $ids[ $number ] );
 	}
 
+	/**
+	 * Deliver a message to user
+	 * @param AlexaResponse $response
+	 * @param string $case The type of message to return
+	 */
 	private function message( $response, $case = 'missing' ) {
-		$response->respond( __( "Sorry! I couldn't find any news about that topic.", 'alexawp' ) )->endSession();
+		$alexawp_settings = get_option( 'alexawp-settings' );
+		if ( isset( $alexawp_settings[ $case ] ) ) {
+			$response->respond( $alexawp_settings[ $case ] );
+		} else {
+			$response->respond( __( "Sorry! I couldn't find any news about that topic. Try asking something else!", 'alexawp' ) );
+		}
+		if ( 'stop_intent' === $case ) {
+			$response->endSession();
+		}
 	}
 
+	/**
+	 * Creates output when a user asks for a list of posts.
+	 * Delivers an array containing a numbered list of post titles
+	 * to choose from and a subarray of IDs that get set in an attribute
+	 * @param array $response
+	 * @return array array of post IDs and titles
+	 */
 	private function endpoint_content( $args ) {
 		$news_posts = get_posts( array_merge( $args, array(
 			'no_found_rows' => true,

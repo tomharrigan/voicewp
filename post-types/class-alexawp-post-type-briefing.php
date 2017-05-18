@@ -59,7 +59,7 @@ class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
 			return;
 		}
 
-		$briefing = new Alexa_Briefing();
+		$briefing = new \Alexa\Skill\Briefing();
 		set_transient( $this->name, $briefing->briefing_request() );
 	}
 }

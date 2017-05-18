@@ -1,10 +1,27 @@
 <?php
 
-class Alexa_Quote {
-	public function quote_request( $id, $event ) {
+namespace Alexa\Skill;
 
-		$request = $event->get_request();
-		$response = $event->get_response();
+/**
+ * Class that creates a custom skill for serving facts or quotes
+ */
+class Quote {
+
+	/**
+	 * @var array
+	 * Intents supported by this skill type
+	 */
+	public $intents = array(
+		'FactQuote',
+	);
+
+	/**
+	 * Grabs a quote/fact and responds
+	 * @param int $id post id
+	 * @param AlexaRequest $request
+	 * @param AlexaResponse $response
+	 */
+	public function quote_request( $id, $request, $response ) {
 
 		$quotes_facts = get_post_meta( $id, 'facts_quotes', true );
 		$default_image = get_post_meta( $id, 'alexawp_skill_default_image', true );

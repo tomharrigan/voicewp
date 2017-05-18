@@ -23,7 +23,8 @@ function alexawp_fm_alexa_app_settings() {
 			'name' => 'type',
 			'first_empty' => true,
 			'options' => array(
-				'fact_quote' => __( 'Fact / Quote', 'alexawp' ),
+				// Key is class name
+				'Quote' => __( 'Fact / Quote', 'alexawp' ),
 			),
 		) ),
 		new \Fieldmanager_Media( __( 'Default App Card Image', 'alexawp' ), array(
@@ -182,9 +183,23 @@ function alexawp_fm_alexa_settings() {
 	);
 
 	$children = array(
-		'news_invocation' => new Fieldmanager_TextField( array(
-			'label' => __( 'What is the invocation name you will use for this skill?', 'alexawp' ),
-			'description' => __( 'This is the name a person says when they wish to interact with your skill.', 'alexawp' ),
+		'launch_request' => new Fieldmanager_TextArea( array(
+			'label' => __( 'Welcome message', 'alexawp' ),
+			'description' => __( 'This is the message a person hears when they open your skill with an utterance such as "Alexa, open {your skill name}"', 'alexawp' ),
+			'default_value' => __( 'Welcome to the {put your skill name here} Skill. This skill allows you to listen to content from {your site name}. You can ask questions like: What are the latest articles? ... Now, what can I help you with.', 'alexawp' ),
+			'attributes' => array( 'style' => 'width: 95%; height: 100px;' ),
+		) ),
+		'help_intent' => new Fieldmanager_TextArea( array(
+			'label' => __( 'Help message', 'alexawp' ),
+			'description' => __( "This is the message a person hears when they ask your skill for 'help'", 'alexawp' ),
+			'default_value' => __( "{put your skill name here} provides you with the latest content from {your site name}. You can ask me for the latest articles, and then select an item from the list by saying, for example, 'read the 3rd article' Or you can also say exit... What can I help you with?", 'alexawp' ),
+			'attributes' => array( 'style' => 'width: 95%; height: 100px;' ),
+		) ),
+		'stop_intent' => new Fieldmanager_TextArea( array(
+			'label' => __( 'Stop message', 'alexawp' ),
+			'description' => __( 'You can optionally provide a message when a person is done with your skill.', 'alexawp' ),
+			'default_value' => __( 'Thanks for listening!', 'alexawp' ),
+			'attributes' => array( 'style' => 'width: 95%; height: 100px;' ),
 		) ),
 		'news_id' => new Fieldmanager_TextField( array(
 			'label' => __( 'News skill ID', 'alexawp' ),
@@ -199,135 +214,19 @@ function alexawp_fm_alexa_settings() {
 		) ),
 	);
 
-	$alexawp_settings = get_option( 'alexawp-settings' );
-	$saved_invocation = ( ! empty( $alexawp_settings['news_invocation'] ) );
-
-	if ( $saved_invocation ) {
-		$children['news_utterances'] = new Fieldmanager_TextArea( array(
-			'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'alexawp' ),
-			'default_value' => implode(
-				"\r",
-				array(
-					/* translators: 1: skill invocation name */
-					'Latest ' . sprintf( __( 'Ask %1$s for the latest content', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-					/* translators: 1: skill invocation name */
-					'Latest ' . sprintf( __( 'Ask %1$s for the latest articles', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-					/* translators: 1: skill invocation name */
-					'Latest ' . sprintf( __( 'Ask %1$s for the latest stories', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-					/* translators: 1: skill invocation name */
-					'Latest ' . sprintf( __( 'Ask %1$s for the latest news', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-					/* translators: 1: skill invocation name */
-					'Latest ' . sprintf( __( 'Get the latest news from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-					/* translators: 1: skill invocation name */
-					'Latest ' . sprintf( __( 'Get the latest stories from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-					/* translators: 1: skill invocation name */
-					'Latest ' . sprintf( __( 'Get the latest content from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-					/* translators: 1: skill invocation name */
-					'Latest ' . sprintf( __( 'Ask %1$s what\'s up', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-					/* translators: 1: skill invocation name */
-					'Latest ' . sprintf( __( 'Ask %1$s what\'s new', 'alexawp' ), $alexawp_settings['news_invocation'] ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s for the latest %2$s articles', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s for the latest %2$s content', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s for the latest %2$s news', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s for the latest %2$s stories', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s for %2$s articles', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s for %2$s content', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s for %2$s news', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s for %2$s stories', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s about %2$s articles', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s about %2$s content', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s about %2$s news', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Ask %1$s about %2$s stories', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Get the latest %2$s articles from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Get the latest %2$s content from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Get the latest %2$s news from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Get the latest %2$s stories from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Get %2$s articles from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Get %2$s content from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Get %2$s news from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: skill invocation name, 2: search term */
-					'Latest ' . sprintf( __( 'Get %2$s stories from %1$s', 'alexawp' ), $alexawp_settings['news_invocation'], '{TermName}' ),
-					/* translators: 1: cardinal number of the post to read */
-					'ReadPost ' . sprintf( __( 'Read the %1$s', 'alexawp' ), '{PostNumber}' ),
-					/* translators: 1: cardinal number of the post to read */
-					'ReadPost ' . sprintf( __( 'Read the %1$s post', 'alexawp' ), '{PostNumber}' ),
-					/* translators: 1: cardinal number of the post to read */
-					'ReadPost ' . sprintf( __( 'Read the %1$s article', 'alexawp' ), '{PostNumber}' ),
-					/* translators: 1: cardinal number of the post to read */
-					'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumber}' ),
-					/* translators: 1: cardinal number of the post to read */
-					'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumber}' ),
-					/* translators: 1: ordinal number of the post to read */
-					'ReadPost ' . sprintf( __( 'Read the %1$s post', 'alexawp' ), '{PostNumberWord}' ),
-					/* translators: 1: ordinal number of the post to read */
-					'ReadPost ' . sprintf( __( 'Read the %1$s article', 'alexawp' ), '{PostNumberWord}' ),
-					/* translators: 1: ordinal number of the post to read */
-					'ReadPost ' . sprintf( __( 'Read the %1$s story', 'alexawp' ), '{PostNumberWord}' ),
-					/* translators: 1: ordinal number of the post to read */
-					'ReadPost ' . sprintf( __( 'Read %1$s', 'alexawp' ), '{PostNumberWord}' ),
-				)
-			),
-			'skip_save' => true,
-			'attributes' => array_merge(
-				$readonly,
-				array( 'style' => 'width: 95%; height: 300px;' )
-			),
-		) );
-	}
+	$children['news_utterances'] = new Fieldmanager_TextArea( array(
+		'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'alexawp' ),
+		'default_value' => file_get_contents( 'speechAssets/Utterances.txt', FILE_USE_INCLUDE_PATH ),
+		'skip_save' => true,
+		'attributes' => array_merge(
+			$readonly,
+			array( 'style' => 'width: 95%; height: 300px;' )
+		),
+	) );
 
 	$children['news_intent_schema'] = new \Fieldmanager_TextArea( array(
 		'label' => __( 'The Intent Schema for your News skill. Add this to your news skill in the Amazon developer portal.', 'alexawp' ),
-		'default_value' => wp_json_encode(
-			array(
-				'intents' => array(
-					array(
-						'intent' => 'Latest',
-						'slots' => array(
-							array(
-								'name' => 'TermName',
-								'type' => 'ALEXAWP_TERM_NAME',
-							),
-						),
-					),
-					array(
-						'intent' => 'ReadPost',
-						'slots' => array(
-							array(
-								'name' => 'PostNumber',
-								'type' => 'AMAZON.NUMBER',
-							),
-							array(
-								'name' => 'PostNumberWord',
-								'type' => 'ALEXAWP_POST_NUMBER_WORD',
-							),
-						),
-					),
-					array(
-						'intent' => 'AMAZON.StopIntent',
-					),
-				),
-			),
-			JSON_PRETTY_PRINT
-		),
+		'default_value' => file_get_contents( 'speechAssets/IntentSchema.json', FILE_USE_INCLUDE_PATH ),
 		'skip_save' => true,
 		'attributes' => array_merge(
 			$readonly,
@@ -390,13 +289,6 @@ function alexawp_fm_alexa_settings() {
 		),
 		'skip_save' => true,
 	) );
-
-	if ( $saved_invocation ) {
-		$children['remove_last_upload'] = new Fieldmanager_Checkbox( array(
-			'label' => __( 'Remove last upload', 'alexawp' ),
-			'skip_save' => true,
-		) );
-	}
 
 	$fm = new Fieldmanager_Group( array(
 		'name' => 'alexawp-settings',
