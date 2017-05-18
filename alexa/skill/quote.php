@@ -7,10 +7,20 @@ namespace Alexa\Skill;
  */
 class Quote {
 
+	/**
+	 * @var array
+	 * Intents supported by this skill type
+	 */
 	public $intents = array(
 		'FactQuote',
 	);
 
+	/**
+	 * Grabs a quote/fact and responds
+	 * @param int $id post id
+	 * @param AlexaRequest $request
+	 * @param AlexaResponse $response
+	 */
 	public function quote_request( $id, $request, $response ) {
 
 		$quotes_facts = get_post_meta( $id, 'facts_quotes', true );
