@@ -250,7 +250,7 @@ class Alexawp {
 	}
 
 	public function briefing_request() {
-		$briefing = new \Alexa\Skill\Briefing();
+		$briefing = new \Alexa\Skill\Briefing;
 		if ( false === ( $result = get_transient( 'alexawp-briefing' ) ) ) {
 			$result = $briefing->briefing_request();
 			set_transient( 'alexawp-briefing', $result );
@@ -264,7 +264,7 @@ class Alexawp {
 
 		switch ( $skill_type ) {
 			case 'fact_quote':
-				$quote = new \Alexa\Skill\Quote();
+				$quote = new \Alexa\Skill\Quote;
 				$quote->quote_request( $id, $request, $response );
 				break;
 			default:
