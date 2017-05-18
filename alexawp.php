@@ -242,7 +242,7 @@ class Alexawp {
 			$response = new \Alexa\Response\Response;
 			$event = new AlexaEvent( $alexa_request, $response );
 
-			$news = new \Alexa\Skill\News();
+			$news = new \Alexa\Skill\News;
 			$news->news_request( $event );
 
 			return new WP_REST_Response( $response->render() );
