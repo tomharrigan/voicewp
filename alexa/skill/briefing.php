@@ -6,6 +6,15 @@ namespace Alexa\Skill;
  * Class that creates a Flash Briefing skill
  */
 class Briefing {
+
+	/**
+	 * Gets and formats the data for a Flash Briefing response.
+	 * The response can contain either text or an audio file,
+	 * which itself can be from an attachment uploaded to WP,
+	 * or an audio file hosted elsewhere
+	 *
+	 * @return array Response for Flash Briefing
+	 */
 	public function briefing_request() {
 		$responses = array();
 
