@@ -23,7 +23,8 @@ function alexawp_fm_alexa_app_settings() {
 			'name' => 'type',
 			'first_empty' => true,
 			'options' => array(
-				'fact_quote' => __( 'Fact / Quote', 'alexawp' ),
+				// Key is class name
+				'Quote' => __( 'Fact / Quote', 'alexawp' ),
 			),
 		) ),
 		new \Fieldmanager_Media( __( 'Default App Card Image', 'alexawp' ), array(
@@ -186,16 +187,19 @@ function alexawp_fm_alexa_settings() {
 			'label' => __( 'Welcome message', 'alexawp' ),
 			'description' => __( 'This is the message a person hears when they open your skill with an utterance such as "Alexa, open {your skill name}"', 'alexawp' ),
 			'default_value' => __( 'Welcome to the {put your skill name here} Skill. This skill allows you to listen to content from {your site name}. You can ask questions like: What are the latest articles? ... Now, what can I help you with.', 'alexawp' ),
+			'attributes' => array( 'style' => 'width: 95%; height: 100px;' ),
 		) ),
 		'help_intent' => new Fieldmanager_TextArea( array(
 			'label' => __( 'Help message', 'alexawp' ),
 			'description' => __( "This is the message a person hears when they ask your skill for 'help'", 'alexawp' ),
 			'default_value' => __( "{put your skill name here} provides you with the latest content from {your site name}. You can ask me for the latest articles, and then select an item from the list by saying, for example, 'read the 3rd article' Or you can also say exit... What can I help you with?", 'alexawp' ),
+			'attributes' => array( 'style' => 'width: 95%; height: 100px;' ),
 		) ),
 		'stop_intent' => new Fieldmanager_TextArea( array(
 			'label' => __( 'Stop message', 'alexawp' ),
 			'description' => __( 'You can optionally provide a message when a person is done with your skill.', 'alexawp' ),
 			'default_value' => __( 'Thanks for listening!', 'alexawp' ),
+			'attributes' => array( 'style' => 'width: 95%; height: 100px;' ),
 		) ),
 		'news_id' => new Fieldmanager_TextField( array(
 			'label' => __( 'News skill ID', 'alexawp' ),
