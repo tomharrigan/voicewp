@@ -1,0 +1,17 @@
+FactQuote for a quote
+FactQuote for a fact
+FactQuote for trivia
+FactQuote a quote
+FactQuote a fact
+FactQuote quote
+FactQuote fact
+FactQuote trivia
+FactQuote tell me a quote
+FactQuote tell me a fact
+FactQuote tell me trivia
+FactQuote give me a quote
+FactQuote give me a fact
+FactQuote give me trivia
+FactQuote give me some information
+FactQuote tell me something
+FactQuote give me something
