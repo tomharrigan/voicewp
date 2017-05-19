@@ -6,10 +6,23 @@
 function alexawp_fm_alexa_app_settings() {
 
 	$children = array(
+		new \Fieldmanager_Select( __( 'Skill Type', 'alexawp' ), array(
+			'name' => 'type',
+			'first_empty' => true,
+			'options' => array(
+				// Key is class name
+				'Quote' => __( 'Fact / Quote', 'alexawp' ),
+			),
+			'description' => __( 'What type of functionality is being added?', 'alexawp' ),
+		) ),
+		new \Fieldmanager_Media( __( 'Default App Card Image', 'alexawp' ), array(
+			'name' => 'default_image',
+			'description' => __( 'Image to be used when no other is provided. App cards can be displayed within the Alexa app when she responds to a user request.', 'alexawp' ),
+		) ),
 		new \Fieldmanager_Checkbox( array(
 			'name' => 'is_standalone',
 			'label' => __( 'This is a standalone skill', 'alexawp' ),
-			'description' => __( 'Create as a separate skill or part of main skill.', 'alexawp' ),
+			'description' => __( 'Will this be its own skill or is this part of another skill?', 'alexawp' ),
 		) ),
 		new \Fieldmanager_TextField( __( 'Alexa Application ID', 'alexawp' ), array(
 			'name' => 'app_id',
@@ -18,18 +31,6 @@ function alexawp_fm_alexa_app_settings() {
 				'src' => 'is_standalone',
 				'value' => true,
 			),
-		) ),
-		new \Fieldmanager_Select( __( 'Skill Type', 'alexawp' ), array(
-			'name' => 'type',
-			'first_empty' => true,
-			'options' => array(
-				// Key is class name
-				'Quote' => __( 'Fact / Quote', 'alexawp' ),
-			),
-		) ),
-		new \Fieldmanager_Media( __( 'Default App Card Image', 'alexawp' ), array(
-			'name' => 'default_image',
-			'description' => __( 'Image to be used when no other is provided', 'alexawp' ),
 		) ),
 	);
 
