@@ -257,8 +257,8 @@ class Alexawp {
 	}
 
 	public function briefing_request() {
-		$briefing = new \Alexa\Skill\Briefing;
 		if ( false === ( $result = get_transient( 'alexawp-briefing' ) ) ) {
+			$briefing = new \Alexa\Skill\Briefing;
 			$result = $briefing->briefing_request();
 			set_transient( 'alexawp-briefing', $result );
 		}
