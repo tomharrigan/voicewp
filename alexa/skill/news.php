@@ -144,13 +144,20 @@ class News {
 	 * @return array Data from the post being returned
 	 */
 	private function endpoint_single_post( $id ) {
-		$single_post = get_post( $id );
-		$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', strip_tags( strip_shortcodes( $single_post->post_content ) ) );
-		return array(
-			'content' => $post_content,
-			'title' => $single_post->post_title,
-			'image' => get_post_thumbnail_id( $id ),
-		);
+		$transient_key = 'voicewp_single_' . $id;
+		if ( false === ( $result = get_transient( $transient_key ) ) ) {
+			$single_post = get_post( $id );
+			$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', strip_tags( strip_shortcodes( $single_post->post_content ) ) );
+			$result = array(
+				'content' => $post_content,
+				'title' => $single_post->post_title,
+				'image' => get_post_thumbnail_id( $id ),
+			);
+			// TODO: If content of the post changes,
+			// repopulate this cache entry with the fresh data
+			set_transient( $transient_key, $result, 60 * MINUTE_IN_SECONDS );
+		}
+		return $result;
 	}
 
 	/**
