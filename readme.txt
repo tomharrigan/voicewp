@@ -3,7 +3,7 @@ Contributors: tomharrigan, dlh
 Tags: Alexa, Amazon, fieldmanager
 Requires at least: 4.4
 Tested up to: 4.7.2
-Stable tag: 0.1
+Stable tag: 0.2
 License: MIT
 
 WordPress + Amazon Alexa integration
@@ -41,6 +41,14 @@ The endpoint for this will be at: `https://yourdomain.com/wp-json/alexawp/v1/ski
 3. Upload and/or activate the AlexaWP plugin
 
 == Changelog ==
+
+= 0.2 =
+* Cache data around briefings and news
+* Remove hardcoded messages and add editable fields for different messages (for launch intent, help, stop/cancel)
+* Adds intent schema and custom slots within settings screen
+* Adds improved utterances
+* Adds support for Standard Cards
+* Support for PHP 5.3
 
 = 0.1 =
 * Initial commit
