@@ -191,25 +191,33 @@ class News {
 	 * @return array array of post IDs and titles
 	 */
 	private function endpoint_content( $args ) {
-		$news_posts = get_posts( array_merge( $args, array(
-			'no_found_rows' => true,
-			'post_status' => 'publish',
-		) ) );
+		$transient_key = isset( $args['tax_query']['terms'][0] ) ? 'voicewp_latest_' . $args['tax_query']['terms'][0] : 'voicewp_latest';
+		if ( false === ( $result = get_transient( $transient_key ) ) ) {
+			$news_posts = get_posts( array_merge( $args, array(
+				'no_found_rows' => true,
+				'post_status' => 'publish',
+			) ) );
 
-		$content = '';
-		$ids = array();
-		if ( ! empty( $news_posts ) && ! is_wp_error( $news_posts ) ) {
-			foreach ( $news_posts as $key => $news_post ) {
-				// TODO: Sounds a little strange when there's only one result.
-				// Appending 'th' to any number results in proper ordinal pronunciation
-				$content .= ( $key + 1 ) . 'th, ' . $news_post->post_title . '. ';
-				$ids[] = $news_post->ID;
+			$content = '';
+			$ids = array();
+			if ( ! empty( $news_posts ) && ! is_wp_error( $news_posts ) ) {
+
+				foreach ( $news_posts as $key => $news_post ) {
+					// TODO: Sounds a little strange when there's only one result.
+					// Appending 'th' to any number results in proper ordinal pronunciation
+					$content .= ( $key + 1 ) . 'th, ' . $news_post->post_title . '. ';
+					$ids[] = $news_post->ID;
+				}
 			}
-		}
 
-		return array(
-			'content' => $content,
-			'ids' => $ids,
-		);
+			$result = array(
+				'content' => $content,
+				'ids' => $ids,
+			);
+			// TODO: hook on 'publish_*' to clear cache entry when a post type served
+			// in news content is published and remove the cache time here
+			set_transient( $transient_key, $result, 15 * MINUTE_IN_SECONDS );
+		}
+		return $result;
 	}
 }
