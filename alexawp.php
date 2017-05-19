@@ -5,7 +5,7 @@
  * Plugin URI: https://github.com/tomharrigan/
  * Author: TomHarrigan
  * Author URI: https://alexawp.com
- * Version: 0.1
+ * Version: 0.2
  * Text Domain: alexawp
  * License: MIT
  */
