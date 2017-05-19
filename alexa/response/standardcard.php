@@ -43,10 +43,14 @@ class StandardCard {
 	public function __construct( $title, $content, $image ) {
 		$this->title = $title;
 		$this->content = $content;
-		$this->image = array(
-			'smallImageUrl' => wp_get_attachment_image_src( absint( $image ), 'alexa-small' )[0],
-			'largeImageUrl' => wp_get_attachment_image_src( absint( $image ), 'alexa-large' )[0],
-		);
+		if ( false === ( $images = get_transient( 'voicewp_card_image_' . $image ) ) ) {
+			$images = array(
+				'smallImageUrl' => wp_get_attachment_image_src( absint( $image ), 'alexa-small' )[0],
+				'largeImageUrl' => wp_get_attachment_image_src( absint( $image ), 'alexa-large' )[0],
+			);
+			set_transient( 'voicewp_card_image_' . $image, $images, 60 * MINUTE_IN_SECONDS );
+		}
+		$this->image = $images;
 	}
 
 	/**
