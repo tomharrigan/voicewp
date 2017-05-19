@@ -16,7 +16,11 @@ class Briefing {
 	 * @return array Response for Flash Briefing
 	 */
 	public function briefing_request() {
-		$responses = array();
+		$responses = apply_filters( 'voicewp_override_briefing', array() );
+
+		if ( ! empty( $responses ) ) {
+			return $responses;
+		}
 
 		// This logic could be both abstracted and used with array_map().
 		foreach (
