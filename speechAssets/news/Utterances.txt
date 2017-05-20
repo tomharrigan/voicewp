@@ -1,0 +1,79 @@
+Latest can I have the latest content
+Latest can I have the latest articles
+Latest can I have the latest stories
+Latest can I have the latest news
+Latest what is the latest content
+Latest what are the latest articles
+Latest what are the latest stories
+Latest what is the latest news
+Latest what's the latest content
+Latest what're the latest articles
+Latest what're the latest stories
+Latest what's the latest news
+Latest the latest content
+Latest the latest articles
+Latest the latest stories
+Latest the latest news
+Latest give me the latest content
+Latest give me the latest articles
+Latest give me the latest stories
+Latest give me the latest news
+Latest get the latest content
+Latest get the latest articles
+Latest get the latest stories
+Latest get the latest news
+Latest what's up
+Latest what's new
+Latest read the latest content
+Latest read the latest articles
+Latest read the latest stories
+Latest read the latest news
+Latest read me the latest content
+Latest read me the latest articles
+Latest read me the latest stories
+Latest read me the latest news
+Latest tell me the latest articles
+Latest tell me the latest stories
+Latest tell me the latest news
+LatestTerm the latest {TermName} articles
+LatestTerm the latest {TermName} content
+LatestTerm the latest {TermName} news
+LatestTerm the latest {TermName} stories
+LatestTerm {TermName} content
+LatestTerm {TermName} articles
+LatestTerm {TermName} stories
+LatestTerm {TermName} news
+LatestTerm Get the latest {TermName} articles
+LatestTerm Get the latest {TermName} content
+LatestTerm Get the latest {TermName} news
+LatestTerm Get the latest {TermName} stories
+LatestTerm Get {TermName} articles
+LatestTerm Get {TermName} content
+LatestTerm Get {TermName} news
+LatestTerm Get {TermName} stories
+ReadPost Read the {PostNumber}
+ReadPost Read the {PostNumber} post
+ReadPost Read the {PostNumber} article
+ReadPost Read the {PostNumber} story
+ReadPost Read {PostNumber}
+ReadPost Read {PostNumber} to me
+ReadPost Read me the {PostNumber}
+ReadPost Read me the {PostNumber} post
+ReadPost Read me the {PostNumber} article
+ReadPost Read me the {PostNumber} story
+ReadPost Read me {PostNumber}
+ReadPost Read the {PostNumberWord}
+ReadPost Read the {PostNumberWord} post
+ReadPost Read the {PostNumberWord} article
+ReadPost Read the {PostNumberWord} story
+ReadPost Read {PostNumberWord}
+ReadPost Read me the {PostNumberWord}
+ReadPost Read me the {PostNumberWord} post
+ReadPost Read me the {PostNumberWord} article
+ReadPost Read me the {PostNumberWord} story
+ReadPost Read me {PostNumberWord}
+ReadPost Read the {PostNumberWord} to me
+ReadPost Read the {PostNumberWord} post to me
+ReadPost Reade the {PostNumberWord} article to me
+ReadPost Read the {PostNumberWord} story to me
+ReadPost Read {PostNumberWord} to me
