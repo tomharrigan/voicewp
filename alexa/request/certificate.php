@@ -145,7 +145,6 @@ class Certificate {
 		}
 	}
 
-
 	/**
 	 * Parse the X509 certificate
 	 * @param $certificate The certificate contents
