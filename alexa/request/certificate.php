@@ -170,14 +170,8 @@ class Certificate {
 	 * Perform the actual download of the certificate
 	 */
 	public function fetch_certificate() {
-		if ( ! function_exists( 'curl_init' ) ) {
-			throw new InvalidArgumentException( 'CURL is required to download the Signature Certificate.' );
-		}
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $this->certificate_url );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		$st = curl_exec( $ch );
-		curl_close( $ch );
+		$st = wp_remote_get( $this->certificate_url );
+		$st = wp_remote_retrieve_body( $st );
 
 		// Return the certificate contents
 		return $st;
