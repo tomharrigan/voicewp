@@ -11,7 +11,6 @@ use Alexa\Request\Application;
 
 class Request {
 
-	public $request_id;
 	public $timestamp;
 	/** @var Session */
 	public $session;
@@ -20,7 +19,7 @@ class Request {
 	public $applicationId;
 
 	/**
-	 * Set up Request with RequestId, timestamp (DateTime) and user (User obj.)
+	 * Set up Request with timestamp (DateTime) and user (User obj.)
 	 * @param type $data
 	 */
 	public function __construct( $raw_data, $applicationId = null ) {
@@ -33,7 +32,6 @@ class Request {
 		$this->data = $data;
 		$this->raw_data = $raw_data;
 
-		$this->request_id = $data['request']['requestId'];
 		$this->timestamp = new DateTime( $data['request']['timestamp'] );
 		$this->session = new Session( $data['session'] );
 
