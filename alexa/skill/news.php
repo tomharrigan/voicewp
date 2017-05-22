@@ -80,7 +80,7 @@ class News {
 						->respond( $result['content'] )
 						/* translators: %s: site title */
 						->with_card( sprintf( __( 'Latest on %s', 'alexawp' ), get_bloginfo( 'name' ) ) )
-						->addSessionAttribute( 'post_ids', $result['ids'] );
+						->add_session_attribute( 'post_ids', $result['ids'] );
 					break;
 				case 'ReadPost':
 					if ( $post_number = $request->getSlot( 'PostNumberWord' ) ) {
