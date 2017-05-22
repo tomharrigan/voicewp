@@ -110,7 +110,7 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 	 */
 	function update_post_metadata( $null, $post_id, $meta_key, $meta_value, $prev_value ) {
 		if ( 'alexawp_skill_type' == $meta_key ) {
-			$old_value = get_metadata( 'post', $post_id, $meta_key );
+			$old_value = get_post_meta( $post_id, $meta_key, true );
 			// If theres a single value and the old value is the same as the new, return
 			if ( ( count( $old_value ) == 1 ) && ( $old_value[0] === $meta_value ) ) {
 				return $null;
