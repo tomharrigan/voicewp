@@ -88,7 +88,7 @@ class Response {
 	 * @param type $should_end_session
 	 * @return \Alexa\Response\Response
 	 */
-	public function endSession( $should_end_session = true ) {
+	public function end_session( $should_end_session = true ) {
 		$this->should_end_session = $should_end_session;
 
 		return $this;
@@ -99,7 +99,7 @@ class Response {
 	 * @param string $key
 	 * @param mixed $value
 	 */
-	public function addSessionAttribute( $key, $value ) {
+	public function add_session_attribute( $key, $value ) {
 		$this->session_attributes[ $key ] = $value;
 	}
 

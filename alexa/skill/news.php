@@ -103,7 +103,7 @@ class News {
 						$response
 							->respond( $result['content'] )
 							->with_card( $result['title'], '', $result['image'] )
-							->endSession();
+							->end_session();
 					} else {
 						$this->message( $response );
 					}
@@ -186,7 +186,7 @@ class News {
 			$response->respond( __( "Sorry! I couldn't find any news about that topic. Try asking something else!", 'alexawp' ) );
 		}
 		if ( 'stop_intent' === $case ) {
-			$response->endSession();
+			$response->end_session();
 		}
 	}
 

@@ -28,6 +28,6 @@ class Quote {
 		$quote_fact = $quotes_facts[ $quote_fact_index ];
 		$image = isset( $quote_fact['image'] ) ? $quote_fact['image'] : get_post_meta( $id, 'alexawp_skill_default_image', true );
 
-		$response->respond( $quote_fact['fact_quote'] )->with_card( $quote_fact['fact_quote'] . ' - ' . $quote_fact['attribution'], '', $image )->endSession();
+		$response->respond( $quote_fact['fact_quote'] )->with_card( $quote_fact['fact_quote'] . ' - ' . $quote_fact['attribution'], '', $image )->end_session();
 	}
 }
