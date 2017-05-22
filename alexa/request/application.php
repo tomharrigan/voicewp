@@ -14,6 +14,9 @@ use InvalidArgumentException;
 class Application {
 	public $application_id;
 
+	/**
+	 * Builds Application to provide app ID
+	 */
 	public function __construct( $application_id ) {
 		$this->application_id = preg_split( '/,/', $application_id );
 	}
@@ -27,7 +30,7 @@ class Application {
 	*/
 	public function validate_application_id( $request_application_id = '' ) {
 		if ( ! in_array( $request_application_id, $this->application_id ) ) {
-			throw new InvalidArgumentException( 'Application Id not matched' );
+			throw new InvalidArgumentException( __( 'Application Id not matched', 'voicewp' ) );
 		}
 	}
 }

@@ -1,12 +1,11 @@
 <?php
-
 /**
  * @file Certificate.php
  * Validate the request signature
  * Based on code from alexa-app: https://github.com/develpr/alexa-app by Kevin Mitchell
  * Certificate validation requirements outlined at
  * https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/developing-an-alexa-skill-as-a-web-service
- * */
+ */
 
 namespace Alexa\Request;
 
@@ -104,7 +103,7 @@ class Certificate {
 		$difference_in_seconds = $now->getTimestamp() - $timestamp->getTimestamp();
 
 		if ( $difference_in_seconds > self::TIMESTAMP_VALID_TOLERANCE_SECONDS ) {
-			throw new InvalidArgumentException( 'Request timestamp was too old. Possible replay attack.' );
+			throw new InvalidArgumentException( __( 'Request timestamp was too old. Possible replay attack.', 'voicewp' ) );
 		}
 	}
 
@@ -117,12 +116,13 @@ class Certificate {
 		$parsed_certificate = $this->parse_certificate( $this->certificate_content );
 
 		if ( ! $parsed_certificate || ! $this->validate_certificate_date( $parsed_certificate ) || ! $this->validate_certificate_san( $parsed_certificate, static::ECHO_SERVICE_DOMAIN ) ) {
-			throw new InvalidArgumentException( "The remote certificate doesn't contain a valid SANs in the signature or is expired." );
+			throw new InvalidArgumentException( __( "The remote certificate doesn't contain a valid SANs in the signature or is expired.", 'voicewp' ) );
 		}
 	}
 
 	/**
-	 * @params $request_data
+	 * Verify signature
+	 * @params string $request_data string of data used to generate previous signature
 	 * @throws InvalidArgumentException
 	 */
 	public function validate_request_signature( $request_data ) {
@@ -131,7 +131,7 @@ class Certificate {
 
 		$valid = openssl_verify( $request_data, $signature, $cert_key, self::ENCRYPT_METHOD );
 		if ( ! $valid ) {
-			throw new InvalidArgumentException( 'Request signature could not be verified' );
+			throw new InvalidArgumentException( __( 'Request signature could not be verified', 'voicewp' ) );
 		}
 	}
 
@@ -169,13 +169,13 @@ class Certificate {
 		$url = parse_url( $this->certificate_url );
 
 		if ( static::SIGNATURE_VALID_PROTOCOL !== $url['scheme'] ) {
-			throw new InvalidArgumentException( 'Protocol isn\'t secure. Request isn\'t from Alexa.' );
+			throw new InvalidArgumentException( __( "Protocol isn't secure. Request isn't from Alexa.", 'voicewp' ) );
 		} else if ( static::SIGNATURE_VALID_HOSTNAME !== $url['host'] ) {
-			throw new InvalidArgumentException( 'Certificate isn\'t from Amazon. Request isn\'t from Alexa.' );
+			throw new InvalidArgumentException( __( "Certificate isn't from Amazon. Request isn't from Alexa.", 'voicewp' ) );
 		} else if ( 0 !== strpos( $url['path'], static::SIGNATURE_VALID_PATH ) ) {
-			throw new InvalidArgumentException( 'Certificate isn\'t in "' . static::SIGNATURE_VALID_PATH . '" folder. Request isn\'t from Alexa.' );
+			throw new InvalidArgumentException( sprintf( esc_html__( "Certificate isn't in '%s' folder. Request isn't from Alexa.", 'voicewp' ), static::SIGNATURE_VALID_PATH ) );
 		} else if ( isset( $url['port'] ) && static::SIGNATURE_VALID_PORT !== $url['port'] ) {
-			throw new InvalidArgumentException( 'Port isn\'t ' . static::SIGNATURE_VALID_PORT. '. Request isn\'t from Alexa.' );
+			throw new InvalidArgumentException( sprintf( esc_html__( "Port isn't %s. Request isn't from Alexa.", 'voicewp' ), static::SIGNATURE_VALID_PORT ) );
 		}
 	}
 
