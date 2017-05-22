@@ -33,7 +33,7 @@ class News {
 		$response = $event->get_response();
 
 		if ( $request instanceof \Alexa\Request\IntentRequest ) {
-			$intent = $request->intentName;
+			$intent = $request->intent_name;
 			switch ( $intent ) {
 				case 'LatestTerm':
 					$term_slot = strtolower( sanitize_text_field( $request->getSlot( 'TermName' ) ) );

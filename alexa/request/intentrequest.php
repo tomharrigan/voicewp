@@ -3,14 +3,14 @@
 namespace Alexa\Request;
 
 class IntentRequest extends Request {
-	public $intentName;
+	public $intent_name;
 	public $slots = array();
 
 	public function __construct( $raw_data, $application_id ) {
 		parent::__construct( $raw_data, $application_id );
 		$data = $this->data;
 
-		$this->intentName = $data['request']['intent']['name'];
+		$this->intent_name = $data['request']['intent']['name'];
 
 		if ( isset( $data['request']['intent']['slots'] ) ) {
 			foreach ( $data['request']['intent']['slots'] as $slot ) {
