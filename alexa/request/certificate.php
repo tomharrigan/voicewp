@@ -156,9 +156,8 @@ class Certificate {
 	public function validate_certificate_san( array $parsed_certificate, $amazon_service_domain ) {
 		if ( false === strpos( $parsed_certificate['extensions']['subjectAltName'], $amazon_service_domain ) ) {
 			return false;
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 	/**
@@ -182,7 +181,8 @@ class Certificate {
 
 	/**
 	 * Parse the X509 certificate
-	 * @param $certificate The certificate contents
+	 * @param string $certificate The certificate contents
+	 * @return array The certificate contents
 	 */
 	public function parse_certificate( $certificate ) {
 		return openssl_x509_parse( $certificate );
@@ -190,6 +190,7 @@ class Certificate {
 
 	/**
 	 * Return the certificate to the underlying code by fetching it from its location. Cached for the defined duration of TIMESTAMP_VALID_TOLERANCE_SECONDS
+	 * @return string
 	 */
 	public function get_certificate() {
 		$certificate_id = 'voicewp' . md5( $this->certificate_url . $this->app_id );
@@ -202,6 +203,7 @@ class Certificate {
 
 	/**
 	 * Perform the actual download of the certificate
+	 * @return string
 	 */
 	public function fetch_certificate() {
 		$st = wp_remote_get( $this->certificate_url );
