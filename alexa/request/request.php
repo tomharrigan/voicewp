@@ -16,14 +16,14 @@ class Request {
 	public $session;
 	public $data;
 	public $raw_data;
-	public $applicationId;
+	public $application_id;
 
 	/**
 	 * Set up Request with timestamp (DateTime) and user (User obj.)
 	 * @param string $raw_data
-	 * @param string $applicationId
+	 * @param string $application_id
 	 */
-	public function __construct( $raw_data, $applicationId = null ) {
+	public function __construct( $raw_data, $application_id = null ) {
 		if ( ! is_string( $raw_data ) ) {
 			throw new InvalidArgumentException( 'Alexa Request requires the raw JSON data to validate request signature' );
 		}
@@ -36,9 +36,9 @@ class Request {
 		$this->timestamp = new DateTime( $data['request']['timestamp'] );
 		$this->session = new Session( $data['session'] );
 
-		$this->applicationId = ( is_null( $applicationId ) && isset( $data['session']['application']['applicationId'] ) )
+		$this->application_id = ( is_null( $application_id ) && isset( $data['session']['application']['applicationId'] ) )
 			? $data['session']['application']['applicationId']
-			: $applicationId;
+			: $application_id;
 
 	}
 
@@ -76,22 +76,22 @@ class Request {
 			$this->certificate = new Certificate( $_SERVER['HTTP_SIGNATURECERTCHAINURL'], $_SERVER['HTTP_SIGNATURE'] );
 		}
 		if ( ! isset( $this->application ) ) {
-			$this->application = new Application( $this->applicationId );
+			$this->application = new Application( $this->application_id );
 		}
 
 		// We need to ensure that the request Application ID matches our Application ID.
-		$this->application->validateApplicationId( $data['session']['application']['applicationId'] );
+		$this->application->validate_application_id( $data['session']['application']['applicationId'] );
 		// Validate that the request signature matches the certificate.
 		$this->certificate->validate_request( $this->raw_data );
 
-		$requestType = $data['request']['type'];
-		if ( ! class_exists( '\\Alexa\\Request\\' . $requestType ) ) {
-			throw new RuntimeException( 'Unknown request type: ' . $requestType );
+		$request_type = $data['request']['type'];
+		if ( ! class_exists( '\\Alexa\\Request\\' . $request_type ) ) {
+			throw new RuntimeException( 'Unknown request type: ' . $request_type );
 		}
 
-		$className = '\\Alexa\\Request\\' . $requestType;
+		$class_name = '\\Alexa\\Request\\' . $request_type;
 
-		$request = new $className( $this->raw_data, $this->applicationId );
+		$request = new $class_name( $this->raw_data, $this->application_id );
 		return $request;
 	}
 }

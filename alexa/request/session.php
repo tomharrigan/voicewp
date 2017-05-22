@@ -6,7 +6,6 @@ class Session {
 	/** @var User */
 	public $user;
 	public $new;
-	/** @var Application */
 	public $application;
 	public $sessionId;
 	public $attributes = array();
