@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * This is the base request, used for types of requests such as IntentRequest and LaunchRequest
+ * Stores the data of a request and makes sure the request is valid
+ */
 namespace Alexa\Request;
 
 use RuntimeException;
@@ -25,7 +28,7 @@ class Request {
 	 */
 	public function __construct( $raw_data, $application_id = null ) {
 		if ( ! is_string( $raw_data ) ) {
-			throw new InvalidArgumentException( 'Alexa Request requires the raw JSON data to validate request signature' );
+			throw new InvalidArgumentException( __( 'Alexa Request requires the raw JSON data to validate request signature', 'voicewp' ) );
 		}
 
 		// Decode the raw data into a JSON array.
@@ -86,7 +89,7 @@ class Request {
 
 		$request_type = $data['request']['type'];
 		if ( ! class_exists( '\\Alexa\\Request\\' . $request_type ) ) {
-			throw new RuntimeException( 'Unknown request type: ' . $request_type );
+			throw new RuntimeException( sprintf( esc_html__( 'Unknown request type: %s', 'voicewp' ), $request_type ) );
 		}
 
 		$class_name = '\\Alexa\\Request\\' . $request_type;
