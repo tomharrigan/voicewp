@@ -6,13 +6,13 @@ class Response {
 	public $version = '1.0';
 	public $sessionAttributes = array();
 
-	public $outputSpeech = null;
+	public $output_speech = null;
 	public $card = null;
 	public $reprompt = null;
 	public $shouldEndSession = false;
 
 	public function __construct() {
-		$this->outputSpeech = new OutputSpeech;
+		$this->output_speech = new OutputSpeech;
 	}
 
 	/**
@@ -21,8 +21,8 @@ class Response {
 	 * @return \Alexa\Response\Response
 	 */
 	public function respond( $text ) {
-		$this->outputSpeech = new OutputSpeech;
-		$this->outputSpeech->text = $text;
+		$this->output_speech = new OutputSpeech;
+		$this->output_speech->text = $text;
 
 		return $this;
 	}
@@ -33,9 +33,9 @@ class Response {
 	 * @return \Alexa\Response\Response
 	 */
 	public function respondSSML( $ssml ) {
-		$this->outputSpeech = new OutputSpeech;
-		$this->outputSpeech->type = 'SSML';
-		$this->outputSpeech->ssml = $ssml;
+		$this->output_speech = new OutputSpeech;
+		$this->output_speech->type = 'SSML';
+		$this->output_speech->ssml = $ssml;
 
 		return $this;
 	}
@@ -47,7 +47,7 @@ class Response {
 	 */
 	public function reprompt( $text ) {
 		$this->reprompt = new Reprompt;
-		$this->reprompt->outputSpeech->text = $text;
+		$this->reprompt->output_speech->text = $text;
 
 		return $this;
 	}
@@ -59,8 +59,8 @@ class Response {
 	 */
 	public function repromptSSML( $ssml ) {
 		$this->reprompt = new Reprompt;
-		$this->reprompt->outputSpeech->type = 'SSML';
-		$this->reprompt->outputSpeech->text = $ssml;
+		$this->reprompt->output_speech->type = 'SSML';
+		$this->reprompt->output_speech->text = $ssml;
 
 		return $this;
 	}
@@ -112,7 +112,7 @@ class Response {
 			'version' => $this->version,
 			'sessionAttributes' => $this->sessionAttributes,
 			'response' => array(
-				'outputSpeech' => $this->outputSpeech ? $this->outputSpeech->render() : null,
+				'outputSpeech' => $this->output_speech ? $this->output_speech->render() : null,
 				'card' => $this->card ? $this->card->render() : null,
 				'reprompt' => $this->reprompt ? $this->reprompt->render() : null,
 				'shouldEndSession' => $this->shouldEndSession ? true : false,

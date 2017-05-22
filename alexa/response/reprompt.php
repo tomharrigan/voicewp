@@ -3,15 +3,15 @@
 namespace Alexa\Response;
 
 class Reprompt {
-	public $outputSpeech;
+	public $output_speech;
 
 	public function __construct() {
-		$this->outputSpeech = new OutputSpeech;
+		$this->output_speech = new OutputSpeech;
 	}
 
 	public function render() {
 		return array(
-			'outputSpeech' => $this->outputSpeech->render(),
+			'outputSpeech' => $this->output_speech->render(),
 		);
 	}
 }
