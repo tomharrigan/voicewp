@@ -1,13 +1,29 @@
 <?php
-
+/**
+ * A users' Session is used to persist data about their interaction with the app
+ */
 namespace Alexa\Request;
 
 class Session {
-	/** @var User */
+	/**
+	 * User object
+	 * @var Object
+	 */
 	public $user;
+	/**
+	 * Whether this is a new session or an existing session
+	 * @var bool
+	 */
 	public $new;
-	public $application;
+	/**
+	 * Session ID, null or string
+	 * @var mixed
+	 */
 	public $session_id;
+	/**
+	 * Any optional attributes
+	 * @var array
+	 */
 	public $attributes = array();
 
 	public function __construct( $data ) {

@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Data returned to Alexa/the user in response to a request.
+ * Contains the text, card, and associated info which can include session state, attributes
+ */
 namespace Alexa\Response;
 
 class Response {
@@ -85,7 +88,7 @@ class Response {
 
 	/**
 	 * Set if it should end the session
-	 * @param type $should_end_session
+	 * @param bool $should_end_session
 	 * @return \Alexa\Response\Response
 	 */
 	public function end_session( $should_end_session = true ) {
@@ -105,7 +108,7 @@ class Response {
 
 	/**
 	 * Return the response as an array for JSON-ification
-	 * @return type
+	 * @return array
 	 */
 	public function render() {
 		return array(

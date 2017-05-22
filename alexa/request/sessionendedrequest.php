@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Used when a user exits, an error occurs, or the user does not respond.
+ * Ends the current session.
+ * https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/handling-requests-sent-by-alexa#sessionendedrequest
+ */
 namespace Alexa\Request;
 
 class SessionEndedRequest extends Request {
