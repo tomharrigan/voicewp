@@ -1,11 +1,18 @@
 <?php
-
+/**
+ * when the user speaks a command that maps to an intent.
+ * The request object sent to your service includes the specific intent and any defined slot values.
+ * https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/handling-requests-sent-by-alexa#intentrequest
+ */
 namespace Alexa\Request;
 
 class IntentRequest extends Request {
 	public $intent_name;
 	public $slots = array();
 
+	/**
+	 * Intent request with name of intent and any slot data passed in with the request
+	 */
 	public function __construct( $raw_data, $application_id ) {
 		parent::__construct( $raw_data, $application_id );
 		$data = $this->data;
