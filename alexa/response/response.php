@@ -4,12 +4,12 @@ namespace Alexa\Response;
 
 class Response {
 	public $version = '1.0';
-	public $sessionAttributes = array();
+	public $session_attributes = array();
 
 	public $output_speech = null;
 	public $card = null;
 	public $reprompt = null;
-	public $shouldEndSession = false;
+	public $should_end_session = false;
 
 	public function __construct() {
 		$this->output_speech = new OutputSpeech;
@@ -85,11 +85,11 @@ class Response {
 
 	/**
 	 * Set if it should end the session
-	 * @param type $shouldEndSession
+	 * @param type $should_end_session
 	 * @return \Alexa\Response\Response
 	 */
-	public function endSession( $shouldEndSession = true ) {
-		$this->shouldEndSession = $shouldEndSession;
+	public function endSession( $should_end_session = true ) {
+		$this->should_end_session = $should_end_session;
 
 		return $this;
 	}
@@ -100,7 +100,7 @@ class Response {
 	 * @param mixed $value
 	 */
 	public function addSessionAttribute( $key, $value ) {
-		$this->sessionAttributes[ $key ] = $value;
+		$this->session_attributes[ $key ] = $value;
 	}
 
 	/**
@@ -110,12 +110,12 @@ class Response {
 	public function render() {
 		return array(
 			'version' => $this->version,
-			'sessionAttributes' => $this->sessionAttributes,
+			'sessionAttributes' => $this->session_attributes,
 			'response' => array(
 				'outputSpeech' => $this->output_speech ? $this->output_speech->render() : null,
 				'card' => $this->card ? $this->card->render() : null,
 				'reprompt' => $this->reprompt ? $this->reprompt->render() : null,
-				'shouldEndSession' => $this->shouldEndSession ? true : false,
+				'shouldEndSession' => $this->should_end_session ? true : false,
 			),
 		);
 	}
