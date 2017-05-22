@@ -79,7 +79,7 @@ class News {
 					$response
 						->respond( $result['content'] )
 						/* translators: %s: site title */
-						->withCard( sprintf( __( 'Latest on %s', 'alexawp' ), get_bloginfo( 'name' ) ) )
+						->with_card( sprintf( __( 'Latest on %s', 'alexawp' ), get_bloginfo( 'name' ) ) )
 						->addSessionAttribute( 'post_ids', $result['ids'] );
 					break;
 				case 'ReadPost':
@@ -102,7 +102,7 @@ class News {
 						$result = $this->endpoint_single_post( $post_id );
 						$response
 							->respond( $result['content'] )
-							->withCard( $result['title'], '', $result['image'] )
+							->with_card( $result['title'], '', $result['image'] )
 							->endSession();
 					} else {
 						$this->message( $response );

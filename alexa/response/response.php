@@ -32,7 +32,7 @@ class Response {
 	 * @param string $ssml
 	 * @return \Alexa\Response\Response
 	 */
-	public function respondSSML( $ssml ) {
+	public function respond_ssml( $ssml ) {
 		$this->output_speech = new OutputSpeech;
 		$this->output_speech->type = 'SSML';
 		$this->output_speech->ssml = $ssml;
@@ -57,7 +57,7 @@ class Response {
 	 * @param string $ssml
 	 * @return \Alexa\Response\Response
 	 */
-	public function repromptSSML( $ssml ) {
+	public function reprompt_ssml( $ssml ) {
 		$this->reprompt = new Reprompt;
 		$this->reprompt->output_speech->type = 'SSML';
 		$this->reprompt->output_speech->text = $ssml;
@@ -72,7 +72,7 @@ class Response {
 	 * @param null|int $image
 	 * @return \Alexa\Response\Response
 	 */
-	public function withCard( $title = '', $content = '', $image = null ) {
+	public function with_card( $title = '', $content = '', $image = null ) {
 
 		if ( $image ) {
 			$this->card = new StandardCard( $title, $content, $image );
