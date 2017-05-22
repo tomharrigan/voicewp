@@ -3,11 +3,11 @@
 namespace Alexa\Request;
 
 class User {
-	public $userId;
-	public $accessToken;
+	public $user_id;
+	public $access_token;
 
 	public function __construct( $data ) {
-		$this->userId = isset( $data['userId'] ) ? $data['userId'] : null;
-		$this->accessToken = isset( $data['accessToken'] ) ? $data['accessToken'] : null;
+		$this->user_id = isset( $data['userId'] ) ? $data['userId'] : null;
+		$this->access_token = isset( $data['accessToken'] ) ? $data['accessToken'] : null;
 	}
 }
