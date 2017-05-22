@@ -20,7 +20,8 @@ class Request {
 
 	/**
 	 * Set up Request with timestamp (DateTime) and user (User obj.)
-	 * @param type $data
+	 * @param string $raw_data
+	 * @param string $applicationId
 	 */
 	public function __construct( $raw_data, $applicationId = null ) {
 		if ( ! is_string( $raw_data ) ) {
@@ -35,7 +36,7 @@ class Request {
 		$this->timestamp = new DateTime( $data['request']['timestamp'] );
 		$this->session = new Session( $data['session'] );
 
-		$this->applicationId = ( is_null( $applicationId ) && isset($data['session']['application']['applicationId']))
+		$this->applicationId = ( is_null( $applicationId ) && isset( $data['session']['application']['applicationId'] ) )
 			? $data['session']['application']['applicationId']
 			: $applicationId;
 
@@ -46,7 +47,7 @@ class Request {
 	 * to extend it to for example cache their certificates.
 	 * @param \Alexa\Request\Certificate $certificate
 	 */
-	public function setCertificateDependency( \Alexa\Request\Certificate $certificate ) {
+	public function set_certificate_dependency( \Alexa\Request\Certificate $certificate ) {
 		$this->certificate = $certificate;
 	}
 
@@ -82,7 +83,6 @@ class Request {
 		$this->application->validateApplicationId( $data['session']['application']['applicationId'] );
 		// Validate that the request signature matches the certificate.
 		$this->certificate->validate_request( $this->raw_data );
-
 
 		$requestType = $data['request']['type'];
 		if ( ! class_exists( '\\Alexa\\Request\\' . $requestType ) ) {

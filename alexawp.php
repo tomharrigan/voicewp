@@ -199,7 +199,7 @@ class Alexawp {
 				$app_id = get_post_meta( $id, 'alexawp_skill_app_id', true );
 				$certificate = new \Alexa\Request\Certificate( $request->get_header( 'signaturecertchainurl' ), $request->get_header( 'signature' ), $app_id );
 				$alexa = new \Alexa\Request\Request( $body, $app_id );
-				$alexa->setCertificateDependency( $certificate );
+				$alexa->set_certificate_dependency( $certificate );
 
 				// Parse and validate the request.
 				$alexa_request = $alexa->fromData();
@@ -239,7 +239,7 @@ class Alexawp {
 				$app_id = $alexa_settings['news_id'];
 				$certificate = new \Alexa\Request\Certificate( $request->get_header( 'signaturecertchainurl' ), $request->get_header( 'signature' ), $app_id );
 				$alexa = new \Alexa\Request\Request( $body, $app_id );
-				$alexa->setCertificateDependency( $certificate );
+				$alexa->set_certificate_dependency( $certificate );
 
 				// Parse and validate the request.
 				$alexa_request = $alexa->fromData();
