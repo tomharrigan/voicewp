@@ -202,7 +202,7 @@ class Alexawp {
 				$alexa->set_certificate_dependency( $certificate );
 
 				// Parse and validate the request.
-				$alexa_request = $alexa->fromData();
+				$alexa_request = $alexa->from_data();
 
 			} catch ( InvalidArgumentException $e ) {
 				return $this->fail_response( $e );
@@ -242,7 +242,7 @@ class Alexawp {
 				$alexa->set_certificate_dependency( $certificate );
 
 				// Parse and validate the request.
-				$alexa_request = $alexa->fromData();
+				$alexa_request = $alexa->from_data();
 			} catch ( InvalidArgumentException $e ) {
 				return $this->fail_response( $e );
 			}

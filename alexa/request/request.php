@@ -56,7 +56,7 @@ class Request {
 	 * to extend it.
 	 * @param \Alexa\Request\Application $application
 	 */
-	public function setApplicationDependency( \Alexa\Request\Application $application ) {
+	public function set_application_dependency( \Alexa\Request\Application $application ) {
 		$this->application = $application;
 	}
 
@@ -67,7 +67,7 @@ class Request {
 	 * @return \Alexa\Request\Request   base class
 	 * @throws RuntimeException
 	 */
-	public function fromData() {
+	public function from_data() {
 		$data = $this->data;
 
 		// Instantiate a new Certificate validator if none is injected
