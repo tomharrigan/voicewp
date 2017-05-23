@@ -167,7 +167,8 @@ class Voicewp {
 		if ( false === ( $result = get_transient( 'voicewp-briefing' ) ) ) {
 			$briefing = new \Alexa\Skill\Briefing;
 			$result = $briefing->briefing_request();
-			set_transient( 'voicewp-briefing', $result );
+			// Set long cache time instead of 0 to prevent autoload
+			set_transient( 'voicewp-briefing', $result, WEEK_IN_SECONDS );
 		}
 		return new WP_REST_Response( $result );
 	}

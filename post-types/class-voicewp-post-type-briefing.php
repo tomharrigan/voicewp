@@ -14,7 +14,7 @@ class Voicewp_Post_Type_Briefing extends Voicewp_Post_Type {
 	function __construct() {
 		parent::__construct();
 
-		add_action( 'save_post_' . $this->name, array( $this, 'set_cache' ) );
+		add_action( 'save_post', array( $this, 'set_cache' ), 11, 3 );
 	}
 
 	/**
@@ -49,18 +49,21 @@ class Voicewp_Post_Type_Briefing extends Voicewp_Post_Type {
 	 * Cache the briefing
 	 * @param $post_id ID of current post
 	 */
-	public function set_cache( $post_id ) {
+	public function set_cache( $post_id, $post, $update ) {
 		// don't cache if this is a revision or an import
 		if (
 			empty( $post_id )
 			|| wp_is_post_revision( $post_id )
 			|| ( defined( 'WP_IMPORTING' ) && WP_IMPORTING === true )
+			|| ( $post->post_type !== $this->name )
+			|| 'publish' !== get_post_status( $post_id )
 		) {
 			return;
 		}
 
 		$briefing = new \Alexa\Skill\Briefing();
-		set_transient( $this->name, $briefing->briefing_request() );
+		// Set long cache time instead of 0 to prevent autoload
+		set_transient( $this->name, $briefing->briefing_request(), WEEK_IN_SECONDS );
 	}
 }
 

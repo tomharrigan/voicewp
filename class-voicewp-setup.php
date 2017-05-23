@@ -22,6 +22,49 @@ class Voicewp_Setup {
 		add_action( 'after_setup_theme', array( $this, 'add_image_size' ) );
 		add_filter( 'allowed_http_origins', array( $this, 'allowed_http_origins' ) );
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
+		add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
+		foreach ( voicewp_news_post_types() as $post_type ) {
+			add_action( 'publish_' . $post_type, array( $this, 'publish_clear_cache' ), 10, 2 );
+		}
+	}
+
+	/**
+	 * Handle clearing cache on single items when a post is edited
+	 *
+	 * @param int $post_id Post ID
+	 * @param object $post Post object
+	 * @param bool $update Is post updated or new
+	 */
+	public function save_post( $post_id, $post, $update ) {
+		if (
+			empty( $post_id )
+			|| wp_is_post_revision( $post_id )
+			|| ( defined( 'WP_IMPORTING' ) && WP_IMPORTING === true )
+			|| ! in_array( $post->post_type, voicewp_news_post_types() )
+			|| 'publish' !== get_post_status( $post_id )
+			|| false == $update
+		) {
+			return;
+		}
+		delete_transient( 'voicewp_single_' . $post_id );
+	}
+
+	/**
+	 * Handle clearing cache on single items when a post is edited
+	 *
+	 * @param int $post_id Post ID
+	 * @param object $post Post object
+	 * @param bool $update Is post updated or new
+	 */
+	public function publish_clear_cache( $post_id, $post ) {
+		delete_transient( 'voicewp_latest' );
+		$args = array(
+			'post_type' => voicewp_news_post_types(),
+			'posts_per_page' => 5,
+			'tax_query' => array(),
+		);
+		$news = new \Alexa\Skill\News;
+		$news->endpoint_content( $args );
 	}
 
 	/**
