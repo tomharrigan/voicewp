@@ -115,9 +115,10 @@ class Voicewp_Post_Type_Skill extends Voicewp_Post_Type {
 			if ( ( count( $old_value ) == 1 ) && ( $old_value[0] === $meta_value ) ) {
 				return $null;
 			}
+
 			// if the value is different, and the old value wasn't empty, remove the old index
-			if ( ! empty( $old_value[0] ) ) {
-				$this->voicewp_remove_from_skill_index( $post_id, $old_value[0] );
+			if ( ! empty( $old_value ) ) {
+				$this->voicewp_remove_from_skill_index( $post_id, $old_value );
 			}
 		}
 		return $null;
@@ -150,6 +151,9 @@ class Voicewp_Post_Type_Skill extends Voicewp_Post_Type {
 		$skill_type = ( $skill_type ) ? $skill_type : get_post_meta( $post_id, 'alexawp_skill_type', true );
 		$old_index = $custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
 		$skill = '\Alexa\Skill\\' . $skill_type;
+		if ( ! class_exists( $skill ) ) {
+			return;
+		}
 		$skill = new $skill;
 		foreach ( $skill->intents as $intent ) {
 			if ( $post_id == $custom_skill_index[ $intent ] ) {
