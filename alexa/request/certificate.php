@@ -196,7 +196,7 @@ class Certificate {
 		$certificate_id = 'voicewp' . md5( $this->certificate_url . $this->app_id );
 		if ( ! $certificate = get_transient( $certificate_id ) ) {
 			$certificate = $this->fetch_certificate();
-			set_transient( $certificate_id, $certificate, TIMESTAMP_VALID_TOLERANCE_SECONDS );
+			set_transient( $certificate_id, $certificate, self::TIMESTAMP_VALID_TOLERANCE_SECONDS );
 		}
 		return $certificate;
 	}
