@@ -174,10 +174,10 @@ class Voicewp_Setup {
 				// unregister post type
 				$post_type_object = get_post_type_object( $legacy_post_type );
 				$post_type_object->remove_supports();
-			    $post_type_object->unregister_meta_boxes();
-			    $post_type_object->remove_hooks();
-			    $post_type_object->unregister_taxonomies();
-			    unset( $wp_post_types[ $legacy_post_type ] );
+				$post_type_object->unregister_meta_boxes();
+				$post_type_object->remove_hooks();
+				$post_type_object->unregister_taxonomies();
+				unset( $wp_post_types[ $legacy_post_type ] );
 			}
 		}
 	}
