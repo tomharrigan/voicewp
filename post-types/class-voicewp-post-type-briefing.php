@@ -9,7 +9,7 @@ class Voicewp_Post_Type_Briefing extends Voicewp_Post_Type {
 	 *
 	 * @var string
 	 */
-	public $name = 'alexawp-briefing';
+	public $name = 'voicewp-briefing';
 
 	function __construct() {
 		parent::__construct();

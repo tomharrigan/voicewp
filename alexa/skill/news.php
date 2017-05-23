@@ -131,7 +131,7 @@ class News {
 	 * @param AlexaResponse $response
 	 */
 	private function skill_intent( $intent, $request, $response ) {
-		$custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
+		$custom_skill_index = get_option( 'voicewp_skill_index_map', array() );
 		if ( isset( $custom_skill_index[ $intent ] ) ) {
 			$voicewp = Voicewp::get_instance();
 			$voicewp->skill_dispatch( absint( $custom_skill_index[ $intent ] ), $request, $response );
@@ -179,7 +179,7 @@ class News {
 	 * @param string $case The type of message to return
 	 */
 	private function message( $response, $case = 'missing' ) {
-		$voicewp_settings = get_option( 'alexawp-settings' );
+		$voicewp_settings = get_option( 'voicewp-settings' );
 		if ( isset( $voicewp_settings[ $case ] ) ) {
 			$response->respond( $voicewp_settings[ $case ] );
 		} else {

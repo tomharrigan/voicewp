@@ -35,7 +35,7 @@ function voicewp_fm_alexa_app_settings() {
 	);
 
 	$fm = new \Fieldmanager_Group( array(
-		'name' => 'alexawp_skill',
+		'name' => 'voicewp_skill',
 		'serialize_data' => false,
 		// Needs to be name => field for compat with FM's validation routines.
 		'children' => array_combine( wp_list_pluck( $children, 'name' ), $children ),
@@ -43,7 +43,7 @@ function voicewp_fm_alexa_app_settings() {
 	$context = fm_get_context();
 	return $fm->add_meta_box( __( 'Skill Settings', 'voicewp' ), $context[1], 'normal', 'high' );
 }
-add_action( 'fm_post_alexawp-skill', 'voicewp_fm_alexa_app_settings' );
+add_action( 'fm_post_voicewp-skill', 'voicewp_fm_alexa_app_settings' );
 
 /**
  * Fields for controlling flash briefing content.
@@ -95,14 +95,14 @@ function voicewp_fm_briefing_content() {
 		'name' => 'uuid',
 	) );
 
-	if ( ! get_post_meta( $post_id, 'alexawp_briefing_uuid', true ) ) {
+	if ( ! get_post_meta( $post_id, 'voicewp_briefing_uuid', true ) ) {
 		$uuid->default_value = voicewp_generate_uuid4();
 	}
 
 	array_unshift( $children, $display_if, $uuid );
 
 	$fm = new \Fieldmanager_Group( array(
-		'name' => 'alexawp_briefing',
+		'name' => 'voicewp_briefing',
 		'serialize_data' => false,
 		// Needs to be name => field for compat with FM's validation routines.
 		'children' => array_combine( wp_list_pluck( $children, 'name' ), $children ),
@@ -110,13 +110,13 @@ function voicewp_fm_briefing_content() {
 
 	// Help text.
 	if ( $post_id ) {
-		$existing_audio_url = get_post_meta( $post_id, 'alexawp_briefing_audio_url', true );
+		$existing_audio_url = get_post_meta( $post_id, 'voicewp_briefing_audio_url', true );
 
 		if ( ! $existing_audio_url || ! in_array( pathinfo( parse_url( $existing_audio_url, PHP_URL_PATH ), PATHINFO_EXTENSION ), $allowed_formats, true ) ) {
 			$fm->children['audio_url']->description = __( 'Please make sure this is a URL to an MP3 file.', 'voicewp' );
 		}
 
-		$existing_attachment_id = get_post_meta( $post_id, 'alexawp_briefing_attachment_id', true );
+		$existing_attachment_id = get_post_meta( $post_id, 'voicewp_briefing_attachment_id', true );
 
 		if ( $existing_attachment_id ) {
 			$attachment_metadata = wp_get_attachment_metadata( $existing_attachment_id );
@@ -137,7 +137,7 @@ function voicewp_fm_briefing_content() {
 	$context = fm_get_context();
 	return $fm->add_meta_box( __( 'Briefing Content', 'voicewp' ), $context[1], 'normal', 'high' );
 }
-add_action( 'fm_post_alexawp-briefing', 'voicewp_fm_briefing_content' );
+add_action( 'fm_post_voicewp-briefing', 'voicewp_fm_briefing_content' );
 
 /**
  * Add facts or skills.
@@ -162,9 +162,9 @@ function voicewp_fm_skill_fact_quote() {
 			) ),
 		),
 	) );
-	$fm->add_meta_box( __( 'Facts / Quotes', 'voicewp' ), array( 'alexawp-skill' ) );
+	$fm->add_meta_box( __( 'Facts / Quotes', 'voicewp' ), array( 'voicewp-skill' ) );
 }
-add_action( 'fm_post_alexawp-skill', 'voicewp_fm_skill_fact_quote' );
+add_action( 'fm_post_voicewp-skill', 'voicewp_fm_skill_fact_quote' );
 
 /**
  * Create a settings page for the news/post consumption skill
@@ -241,15 +241,15 @@ function voicewp_fm_alexa_settings() {
 				'description' => __( 'These slot types must be added to your news skill in the Amazon developer portal.', 'voicewp' ),
 				'children' => array(
 					new \Fieldmanager_TextField( __( 'Type', 'voicewp' ), array(
-						'name' => 'ALEXAWP_POST_NUMBER_WORD',
-						'default_value' => 'ALEXAWP_POST_NUMBER_WORD',
+						'name' => 'VOICEWP_POST_NUMBER_WORD',
+						'default_value' => 'VOICEWP_POST_NUMBER_WORD',
 						'attributes' => array_merge(
 							$readonly,
 							array( 'style' => 'width: 50%; font-family: monospace' )
 						),
 					) ),
 					new \Fieldmanager_TextArea( __( 'Values', 'voicewp' ), array(
-						'name' => 'ALEXAWP_POST_NUMBER_WORD_values',
+						'name' => 'VOICEWP_POST_NUMBER_WORD_values',
 						'default_value' => "first\nsecond\nthird\nfourth\nfifth",
 						'attributes' => array_merge(
 							$readonly,
@@ -257,15 +257,15 @@ function voicewp_fm_alexa_settings() {
 						),
 					) ),
 					new \Fieldmanager_TextField( __( 'Type', 'voicewp' ), array(
-						'name' => 'ALEXAWP_TERM_NAME',
-						'default_value' => 'ALEXAWP_TERM_NAME',
+						'name' => 'VOICEWP_TERM_NAME',
+						'default_value' => 'VOICEWP_TERM_NAME',
 						'attributes' => array_merge(
 							$readonly,
 							array( 'style' => 'width: 50%; font-family: monospace' )
 						),
 					) ),
 					new \Fieldmanager_TextArea( __( 'Values', 'voicewp' ), array(
-						'name' => 'ALEXAWP_TERM_NAME_values',
+						'name' => 'VOICEWP_TERM_NAME_values',
 						'default_value' => implode(
 							"\n",
 							// Generate sample terms from all available taxonomies.
@@ -290,12 +290,12 @@ function voicewp_fm_alexa_settings() {
 	) );
 
 	$fm = new Fieldmanager_Group( array(
-		'name' => 'alexawp-settings',
+		'name' => 'voicewp-settings',
 		'children' => $children,
 	) );
 	$fm->activate_submenu_page();
 }
-add_action( 'fm_submenu_alexawp-settings', 'voicewp_fm_alexa_settings' );
+add_action( 'fm_submenu_voicewp-settings', 'voicewp_fm_alexa_settings' );
 if ( function_exists( 'fm_register_submenu_page' ) ) {
-	fm_register_submenu_page( 'alexawp-settings', 'tools.php', __( 'Alexa Skill Settings', 'voicewp' ), __( 'Alexa Skill Settings', 'voicewp' ), 'manage_options', 'alexawp-settings' );
+	fm_register_submenu_page( 'voicewp-settings', 'tools.php', __( 'Alexa Skill Settings', 'voicewp' ), __( 'Alexa Skill Settings', 'voicewp' ), 'manage_options', 'voicewp-settings' );
 }
