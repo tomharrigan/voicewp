@@ -13,7 +13,7 @@
 function voicewp_check_requirements() {
 	global $wp_version;
 
-	$minimum_wp_version    = '4.5';
+	$minimum_wp_version    = '4.4';
 	$unsupported_wordpress = version_compare( $wp_version, $minimum_wp_version, '<' );
 	$minimum_fm_version    = '1.0';
 	$fm_defined            = defined( 'FM_VERSION' );
