@@ -47,6 +47,7 @@ require_once( VOICEWP_PATH . '/post-types/class-voicewp-post-type-briefing.php' 
  * Fieldmanager custom fields
  */
 function voicewp_load_fieldmanager_fields() {
+	require_once( VOICEWP_PATH . '/voicewp-fieldmanager-content-textarea.php' );
 	require_once( VOICEWP_PATH . '/fields.php' );
 }
 add_action( 'init', 'voicewp_load_fieldmanager_fields' );
