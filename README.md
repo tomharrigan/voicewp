@@ -18,10 +18,6 @@ It allows you to use WordPress as an endpoint.
 
 - Download the .zip file of this repo and upload to your WordPress site by navigating to WP Admin and navigating to **Plugins -> Add New**. Select the 'Upload Plugin' button near the top of the top of the screen to upload the .zip file.
 
-## Giving credit where it's due
-
-This project is built on top of [Amazon Alexa PHP](https://github.com/jakubsuchy/amazon-alexa-php) and the work of its authors as well as this [Drupal project](https://www.drupal.org/project/alexa). Authors of those projects include: Jakub Suchy, Emanuele Corradini, Mathias Hansen, Chris Hamper
-
 ### Flash Briefing Skill
 
 A Briefings post type is created which is intended to be used for a Flash Briefing skill.
@@ -43,17 +39,6 @@ This news/content skill will currently read the 5 latest headlines from your reg
 The endpoint for this will be at:
 `https://yourdomain.com/wp-json/voicewp/v1/skill/news`
 
-----
+## Credit
 
-## Contribute
-
-I very much welcome pull requests and collaboration on this project.
-
-## To Do
-
-- More caching is needed around the endpoint content
-
-- News skill can become more useful by allowing category selection without any heavy lifting
-
-- Utterance generation can be further flushed out along with more helpful guidance within the wp-admin context
-
+See credits.txt

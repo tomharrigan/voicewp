@@ -5,7 +5,7 @@
  * Plugin URI: https://github.com/tomharrigan/
  * Author: TomHarrigan
  * Author URI: https://voicewp.com
- * Version: 0.2
+ * Version: 1.0.0
  * Text Domain: voicewp
  * License: MIT
  */
