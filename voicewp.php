@@ -123,6 +123,7 @@ class Voicewp {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 		add_action( 'after_setup_theme', array( $this, 'add_image_size' ) );
 		add_filter( 'allowed_http_origins', array( $this, 'allowed_http_origins' ) );
+		add_action( 'rest_pre_dispatch', array( $this, 'rest_pre_dispatch' ), 10, 3 );
 	}
 
 	public function voicewp_is_get_request() {
@@ -142,17 +143,17 @@ class Voicewp {
 	 */
 	public function register_routes() {
 		// Endpoint for flash briefing
-		register_rest_route( 'alexawp/v1', '/skill/briefing', array(
+		register_rest_route( 'voicewp/v1', '/skill/briefing', array(
 			'callback' => array( $this, 'briefing_request' ),
 			'methods' => array( 'GET' ),
 		) );
 		// Endpoint for News skill
-		register_rest_route( 'alexawp/v1', '/skill/news', array(
+		register_rest_route( 'voicewp/v1', '/skill/news', array(
 			'callback' => array( $this, 'voicewp_news_request' ),
 			'methods' => array( 'POST', 'GET' ),
 		) );
 		// Endpoint for all other skills
-		register_rest_route( 'alexawp/v1', '/skill/(?P<id>\d+)', array(
+		register_rest_route( 'voicewp/v1', '/skill/(?P<id>\d+)', array(
 			'callback' => array( $this, 'voicewp_skill_request' ),
 			'methods' => array( 'POST', 'GET' ),
 		) );
@@ -176,6 +177,23 @@ class Voicewp {
 		$allowed_origins[] = 'http://ask-ifr-download.s3.amazonaws.com';
 		$allowed_origins[] = 'https://ask-ifr-download.s3.amazonaws.com';
 		return $allowed_origins;
+	}
+
+	/**
+	 * Allows request to be hijacked if a legact alexawp route is being used
+	 * redirects legacy routes to new voicewp route.
+	 * @param null $null
+	 * @param WP_REST_Server $that
+	 * @param WP_REST_Request $request
+	 * @return mixed
+	 */
+	public function rest_pre_dispatch( $null, $that, $request ) {
+		if ( 0 === strpos( $request->get_route(), '/alexawp' ) ) {
+			$route = str_replace( 'alexawp', 'voicewp', $request->get_route() );
+			$request->set_route( $route );
+			return rest_do_request( $request );
+		}
+		return null;
 	}
 
 	/**
