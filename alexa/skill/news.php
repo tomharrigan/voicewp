@@ -38,7 +38,7 @@ class News {
 				case 'LatestTerm':
 					$term_slot = strtolower( sanitize_text_field( $request->getSlot( 'TermName' ) ) );
 					if ( $term_slot ) {
-						$news_taxonomies = alexawp_news_taxonomies();
+						$news_taxonomies = voicewp_news_taxonomies();
 
 						if ( $news_taxonomies ) {
 							/*
@@ -69,7 +69,7 @@ class News {
 				case 'Latest':
 
 					$args = array(
-						'post_type' => alexawp_news_post_types(),
+						'post_type' => voicewp_news_post_types(),
 						'posts_per_page' => 5,
 						'tax_query' => isset( $tax_query ) ? $tax_query : array(),
 					);
@@ -79,7 +79,7 @@ class News {
 					$response
 						->respond( $result['content'] )
 						/* translators: %s: site title */
-						->with_card( sprintf( __( 'Latest on %s', 'alexawp' ), get_bloginfo( 'name' ) ) )
+						->with_card( sprintf( __( 'Latest on %s', 'voicewp' ), get_bloginfo( 'name' ) ) )
 						->add_session_attribute( 'post_ids', $result['ids'] );
 					break;
 				case 'ReadPost':
@@ -133,8 +133,8 @@ class News {
 	private function skill_intent( $intent, $request, $response ) {
 		$custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
 		if ( isset( $custom_skill_index[ $intent ] ) ) {
-			$alexawp = Alexawp::get_instance();
-			$alexawp->skill_dispatch( absint( $custom_skill_index[ $intent ] ), $request, $response );
+			$voicewp = Voicewp::get_instance();
+			$voicewp->skill_dispatch( absint( $custom_skill_index[ $intent ] ), $request, $response );
 		}
 	}
 
@@ -179,11 +179,11 @@ class News {
 	 * @param string $case The type of message to return
 	 */
 	private function message( $response, $case = 'missing' ) {
-		$alexawp_settings = get_option( 'alexawp-settings' );
-		if ( isset( $alexawp_settings[ $case ] ) ) {
-			$response->respond( $alexawp_settings[ $case ] );
+		$voicewp_settings = get_option( 'alexawp-settings' );
+		if ( isset( $voicewp_settings[ $case ] ) ) {
+			$response->respond( $voicewp_settings[ $case ] );
 		} else {
-			$response->respond( __( "Sorry! I couldn't find any news about that topic. Try asking something else!", 'alexawp' ) );
+			$response->respond( __( "Sorry! I couldn't find any news about that topic. Try asking something else!", 'voicewp' ) );
 		}
 		if ( 'stop_intent' === $case ) {
 			$response->end_session();

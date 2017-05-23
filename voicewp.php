@@ -1,69 +1,69 @@
 <?php
 /**
- * Plugin Name: Alexa WP
+ * Plugin Name: VoiceWP
  * Description: Create Alexa skills using your WordPress site
  * Plugin URI: https://github.com/tomharrigan/
  * Author: TomHarrigan
- * Author URI: https://alexawp.com
+ * Author URI: https://voicewp.com
  * Version: 0.2
- * Text Domain: alexawp
+ * Text Domain: voicewp
  * License: MIT
  */
 
-define( 'ALEXAWP_PATH', dirname( __FILE__ ) );
+define( 'VOICEWP_PATH', dirname( __FILE__ ) );
 
-register_activation_hook( __FILE__, 'alexawp_activate' );
-function alexawp_activate() {
-	Alexawp::get_instance();
+register_activation_hook( __FILE__, 'voicewp_activate' );
+function voicewp_activate() {
+	Voicewp::get_instance();
 	flush_rewrite_rules();
 }
 
-register_deactivation_hook( __FILE__, 'alexawp_deactivate' );
-function alexawp_deactivate() {
+register_deactivation_hook( __FILE__, 'voicewp_deactivate' );
+function voicewp_deactivate() {
 	flush_rewrite_rules();
 }
 
 /**
  * Compatibility requirements.
  */
-require_once( ALEXAWP_PATH . '/compat.php' );
+require_once( VOICEWP_PATH . '/compat.php' );
 
 /**
  * Post Type Base Class
  */
-require_once( ALEXAWP_PATH . '/post-types/class-alexawp-post-type.php' );
+require_once( VOICEWP_PATH . '/post-types/class-voicewp-post-type.php' );
 
 /**
  * Skill Post Type
  */
-require_once( ALEXAWP_PATH . '/post-types/class-alexawp-post-type-skill.php' );
+require_once( VOICEWP_PATH . '/post-types/class-voicewp-post-type-skill.php' );
 
 /**
  * Flash Briefing Post Type
  */
-require_once( ALEXAWP_PATH . '/post-types/class-alexawp-post-type-briefing.php' );
+require_once( VOICEWP_PATH . '/post-types/class-voicewp-post-type-briefing.php' );
 
 /**
  * Fieldmanager custom fields
  */
-function alexawp_load_fieldmanager_fields() {
-	require_once( ALEXAWP_PATH . '/fields.php' );
+function voicewp_load_fieldmanager_fields() {
+	require_once( VOICEWP_PATH . '/fields.php' );
 }
-add_action( 'init', 'alexawp_load_fieldmanager_fields' );
+add_action( 'init', 'voicewp_load_fieldmanager_fields' );
 
 /**
  * Load a class from within the plugin based on a class name.
  *
  * @param string $classname Class name to load.
  */
-function alexawp_autoload_function( $classname ) {
+function voicewp_autoload_function( $classname ) {
 	if ( class_exists( $classname ) || 0 !== strpos( $classname, 'Alexa' ) ) {
 		return;
 	}
 	$class = str_replace( '\\', DIRECTORY_SEPARATOR, str_replace( '_', '-', strtolower( $classname ) ) );
 
 	// create the actual filepath
-	$file_path = ALEXAWP_PATH . DIRECTORY_SEPARATOR . $class . '.php';
+	$file_path = VOICEWP_PATH . DIRECTORY_SEPARATOR . $class . '.php';
 
 	// check if the file exists
 	if ( file_exists( $file_path ) ) {
@@ -77,13 +77,13 @@ function alexawp_autoload_function( $classname ) {
  *
  * @return array Post type names.
  */
-function alexawp_news_post_types() {
+function voicewp_news_post_types() {
 	/**
 	 * Filters the post types whose content is included in the bundled News skill.
 	 *
 	 * @param array $post_types Post type names.
 	 */
-	return apply_filters( 'alexawp_post_types', array( 'post' ) );
+	return apply_filters( 'voicewp_post_types', array( 'post' ) );
 }
 
 /**
@@ -91,7 +91,7 @@ function alexawp_news_post_types() {
  *
  * @return array Taxonomy names.
  */
-function alexawp_news_taxonomies() {
+function voicewp_news_taxonomies() {
 	$option = get_option( 'alexawp-settings' );
 
 	$taxonomies = ( empty( $option['latest_taxonomies'] ) ) ? array() : $option['latest_taxonomies'];
@@ -100,16 +100,16 @@ function alexawp_news_taxonomies() {
 	return array_filter( $taxonomies, 'taxonomy_exists' );
 }
 
-spl_autoload_register( 'alexawp_autoload_function' );
+spl_autoload_register( 'voicewp_autoload_function' );
 
-add_action( 'init', array( 'Alexawp', 'get_instance' ), 0 );
+add_action( 'init', array( 'Voicewp', 'get_instance' ), 0 );
 
 use Alexa\Request\IntentRequest;
 use Alexa\Request\LaunchRequest;
 
 use Alexa\Response\Response;
 use Alexa\Request\Request;
-class Alexawp {
+class Voicewp {
 	protected static $instance;
 
 	public static function get_instance() {
@@ -125,14 +125,14 @@ class Alexawp {
 		add_filter( 'allowed_http_origins', array( $this, 'allowed_http_origins' ) );
 	}
 
-	public function alexawp_is_get_request() {
+	public function voicewp_is_get_request() {
 		return isset( $_SERVER['REQUEST_METHOD'] )
 			&& ( 'GET' === sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) );
 	}
 
-	public function alexawp_maybe_display_notice() {
-		if ( $this->alexawp_is_get_request() ) {
-			esc_html_e( 'To test your skill, use an Alexa enabled device or Echosim.io', 'alexawp' );
+	public function voicewp_maybe_display_notice() {
+		if ( $this->voicewp_is_get_request() ) {
+			esc_html_e( 'To test your skill, use an Alexa enabled device or Echosim.io', 'voicewp' );
 			exit();
 		}
 	}
@@ -148,12 +148,12 @@ class Alexawp {
 		) );
 		// Endpoint for News skill
 		register_rest_route( 'alexawp/v1', '/skill/news', array(
-			'callback' => array( $this, 'alexawp_news_request' ),
+			'callback' => array( $this, 'voicewp_news_request' ),
 			'methods' => array( 'POST', 'GET' ),
 		) );
 		// Endpoint for all other skills
 		register_rest_route( 'alexawp/v1', '/skill/(?P<id>\d+)', array(
-			'callback' => array( $this, 'alexawp_skill_request' ),
+			'callback' => array( $this, 'voicewp_skill_request' ),
 			'methods' => array( 'POST', 'GET' ),
 		) );
 	}
@@ -184,9 +184,9 @@ class Alexawp {
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function alexawp_skill_request( WP_REST_Request $request ) {
+	public function voicewp_skill_request( WP_REST_Request $request ) {
 
-		$this->alexawp_maybe_display_notice();
+		$this->voicewp_maybe_display_notice();
 
 		$body = $request->get_body();
 
@@ -226,9 +226,9 @@ class Alexawp {
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function alexawp_news_request( WP_REST_Request $request ) {
+	public function voicewp_news_request( WP_REST_Request $request ) {
 
-		$this->alexawp_maybe_display_notice();
+		$this->voicewp_maybe_display_notice();
 
 		$body = $request->get_body();
 
@@ -257,10 +257,10 @@ class Alexawp {
 	}
 
 	public function briefing_request() {
-		if ( false === ( $result = get_transient( 'alexawp-briefing' ) ) ) {
+		if ( false === ( $result = get_transient( 'voicewp-briefing' ) ) ) {
 			$briefing = new \Alexa\Skill\Briefing;
 			$result = $briefing->briefing_request();
-			set_transient( 'alexawp-briefing', $result );
+			set_transient( 'voicewp-briefing', $result );
 		}
 		return new WP_REST_Response( $result );
 	}
@@ -275,7 +275,7 @@ class Alexawp {
 				$quote->quote_request( $id, $request, $response );
 				break;
 			default:
-				do_action( 'alexawp_custom_skill', $skill_type, $id );
+				do_action( 'voicewp_custom_skill', $skill_type, $id );
 				break;
 		}
 	}

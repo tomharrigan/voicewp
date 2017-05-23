@@ -2,7 +2,7 @@
 /**
  * Custom post type for Skills.
  */
-class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
+class Voicewp_Post_Type_Skill extends Voicewp_Post_Type {
 
 	/**
 	 * Name of the custom post type.
@@ -32,18 +32,18 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 	public function create_post_type() {
 		register_post_type( $this->name, array(
 			'labels' => array(
-				'name'               => __( 'Skills', 'alexawp' ),
-				'singular_name'      => __( 'Skill', 'alexawp' ),
-				'add_new'            => __( 'Add New Skill', 'alexawp' ),
-				'add_new_item'       => __( 'Add New Skill', 'alexawp' ),
-				'edit_item'          => __( 'Edit Skill', 'alexawp' ),
-				'new_item'           => __( 'New Skill', 'alexawp' ),
-				'view_item'          => __( 'View Skill', 'alexawp' ),
-				'search_items'       => __( 'Search Skills', 'alexawp' ),
-				'not_found'          => __( 'No Skills found', 'alexawp' ),
-				'not_found_in_trash' => __( 'No Skills found in Trash', 'alexawp' ),
-				'parent_item_colon'  => __( 'Parent Skill:', 'alexawp' ),
-				'menu_name'          => __( 'Skills', 'alexawp' ),
+				'name'               => __( 'Skills', 'voicewp' ),
+				'singular_name'      => __( 'Skill', 'voicewp' ),
+				'add_new'            => __( 'Add New Skill', 'voicewp' ),
+				'add_new_item'       => __( 'Add New Skill', 'voicewp' ),
+				'edit_item'          => __( 'Edit Skill', 'voicewp' ),
+				'new_item'           => __( 'New Skill', 'voicewp' ),
+				'view_item'          => __( 'View Skill', 'voicewp' ),
+				'search_items'       => __( 'Search Skills', 'voicewp' ),
+				'not_found'          => __( 'No Skills found', 'voicewp' ),
+				'not_found_in_trash' => __( 'No Skills found in Trash', 'voicewp' ),
+				'parent_item_colon'  => __( 'Parent Skill:', 'voicewp' ),
+				'menu_name'          => __( 'Skills', 'voicewp' ),
 			),
 			'menu_icon' => 'dashicons-awards',
 			'public' => true,
@@ -162,4 +162,4 @@ class Alexawp_Post_Type_Skill extends Alexawp_Post_Type {
 	}
 }
 
-$post_type_skill = new Alexawp_Post_Type_Skill();
+$post_type_skill = new Voicewp_Post_Type_Skill();

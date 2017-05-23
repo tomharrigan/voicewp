@@ -3,7 +3,7 @@
 /**
  * Abstract class for post type classes
  */
-abstract class Alexawp_Post_Type {
+abstract class Voicewp_Post_Type {
 
 	/**
 	 * Name of the post type

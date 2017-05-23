@@ -2,7 +2,7 @@
 /**
  * Custom post type for Skills.
  */
-class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
+class Voicewp_Post_Type_Briefing extends Voicewp_Post_Type {
 
 	/**
 	 * Name of the custom post type.
@@ -23,18 +23,18 @@ class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
 	public function create_post_type() {
 		register_post_type( $this->name, array(
 			'labels' => array(
-				'name'               => __( 'Briefings', 'alexawp' ),
-				'singular_name'      => __( 'Briefing', 'alexawp' ),
-				'add_new'            => __( 'Add New Briefing', 'alexawp' ),
-				'add_new_item'       => __( 'Add New Briefing', 'alexawp' ),
-				'edit_item'          => __( 'Edit Briefing', 'alexawp' ),
-				'new_item'           => __( 'New Briefing', 'alexawp' ),
-				'view_item'          => __( 'View Briefing', 'alexawp' ),
-				'search_items'       => __( 'Search Briefing', 'alexawp' ),
-				'not_found'          => __( 'No Briefings found', 'alexawp' ),
-				'not_found_in_trash' => __( 'No Briefings found in Trash', 'alexawp' ),
-				'parent_item_colon'  => __( 'Parent Briefing:', 'alexawp' ),
-				'menu_name'          => __( 'Briefings', 'alexawp' ),
+				'name'               => __( 'Briefings', 'voicewp' ),
+				'singular_name'      => __( 'Briefing', 'voicewp' ),
+				'add_new'            => __( 'Add New Briefing', 'voicewp' ),
+				'add_new_item'       => __( 'Add New Briefing', 'voicewp' ),
+				'edit_item'          => __( 'Edit Briefing', 'voicewp' ),
+				'new_item'           => __( 'New Briefing', 'voicewp' ),
+				'view_item'          => __( 'View Briefing', 'voicewp' ),
+				'search_items'       => __( 'Search Briefing', 'voicewp' ),
+				'not_found'          => __( 'No Briefings found', 'voicewp' ),
+				'not_found_in_trash' => __( 'No Briefings found in Trash', 'voicewp' ),
+				'parent_item_colon'  => __( 'Parent Briefing:', 'voicewp' ),
+				'menu_name'          => __( 'Briefings', 'voicewp' ),
 			),
 			'menu_icon' => 'dashicons-microphone',
 			'public' => false,
@@ -64,4 +64,4 @@ class Alexawp_Post_Type_Briefing extends Alexawp_Post_Type {
 	}
 }
 
-$post_type_briefing = new Alexawp_Post_Type_Briefing();
+$post_type_briefing = new Voicewp_Post_Type_Briefing();

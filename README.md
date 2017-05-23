@@ -1,18 +1,18 @@
-# AlexaWP
+# VoiceWP
 
-AlexaWP is a WordPress plugin that integrates with Amazon Alexa to create and enable the creation of Alexa skills.
+VoiceWP is a WordPress plugin that integrates with Amazon Alexa to create and enable the creation of Alexa skills.
 
 It allows you to use WordPress as an endpoint.
 
-[Fieldmanager](http://fieldmanager.org) is a dependency and must be installed and activated for AlexaWP to function fully as intended.
+[Fieldmanager](http://fieldmanager.org) is a dependency and must be installed and activated for VoiceWP to function fully as intended.
 
 ## Installation
 
-- The minimum required PHP version for AlexaWP is PHP 5.3.
+- The minimum required PHP version for VoiceWP is PHP 5.3.
 
-- The minimum required WordPress version for AlexaWP is WordPress Version 4.4.
+- The minimum required WordPress version for VoiceWP is WordPress Version 4.4.
 
-- The [Fieldmanager](http://fieldmanager.org) plugin is required for AlexaWP to function properly. It is used for custom field, meta, and settings screens.
+- The [Fieldmanager](http://fieldmanager.org) plugin is required for VoiceWP to function properly. It is used for custom field, meta, and settings screens.
 
 - An SSL certificate is required on your site. You can use [Let's Encrypt](https://letsencrypt.org/).
 
