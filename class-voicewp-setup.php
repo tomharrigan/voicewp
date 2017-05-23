@@ -86,7 +86,7 @@ class Voicewp_Setup {
 
 	/**
 	 * Attempt to migrate meta and post types from an older version of this plugin.
-	 * Changes the meta key prefix
+	 * Changes the prefix of options, meta, post types
 	 *
 	 * @access public
 	 */
@@ -140,9 +140,7 @@ class Voicewp_Setup {
 	}
 
 	/**
-	 * Attempt to migrate options from an older version of this plugin.
-	 *
-	 * @access public
+	 * Update options from an older version of this plugin.
 	 */
 	public function upgrade_options() {
 		$voicewp_index_settings = get_option( 'alexawp_skill_index_map' );

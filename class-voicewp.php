@@ -15,16 +15,26 @@ class Voicewp {
 		return self::$instance;
 	}
 
+	/**
+	 * Constructor. Registers action hooks.
+	 */
 	protected function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 		add_action( 'rest_pre_dispatch', array( $this, 'rest_pre_dispatch' ), 10, 3 );
 	}
 
+	/**
+	 * Whether the request is a GET request
+	 * @return bool
+	 */
 	public function voicewp_is_get_request() {
 		return isset( $_SERVER['REQUEST_METHOD'] )
 			&& ( 'GET' === sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) );
 	}
 
+	/**
+	 * Display a notice if an endpoint is viewed directly in browser
+	 */
 	public function voicewp_maybe_display_notice() {
 		if ( $this->voicewp_is_get_request() ) {
 			esc_html_e( 'To test your skill, use an Alexa enabled device or Echosim.io', 'voicewp' );
@@ -148,6 +158,11 @@ class Voicewp {
 		}
 	}
 
+	/**
+	 * Returns a flash briefing
+	 *
+	 * @return WP_REST_Response
+	 */
 	public function briefing_request() {
 		if ( false === ( $result = get_transient( 'voicewp-briefing' ) ) ) {
 			$briefing = new \Alexa\Skill\Briefing;
@@ -157,6 +172,12 @@ class Voicewp {
 		return new WP_REST_Response( $result );
 	}
 
+	/**
+	 * Figures out what kind of skill is being
+	 * dealt with and dispatches appropriately
+	 *
+	 * @return WP_REST_Response
+	 */
 	public function skill_dispatch( $id, $request, $response ) {
 
 		$skill_type = get_post_meta( $id, 'alexawp_skill_type', true );
@@ -172,6 +193,11 @@ class Voicewp {
 		}
 	}
 
+	/**
+	 * In case of error, return response
+	 *
+	 * @return WP_REST_Response
+	 */
 	private function fail_response( $e ) {
 		return new WP_REST_Response(
 			array(
