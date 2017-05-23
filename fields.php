@@ -68,8 +68,6 @@ function voicewp_fm_briefing_content() {
 			'button_label' => __( 'Select a File', 'voicewp' ),
 			'modal_button_label' => __( 'Select File', 'voicewp' ),
 			'modal_title' => __( 'Select a File', 'voicewp' ),
-			'selected_file_label' => __( 'Selected File:', 'voicewp' ),
-			'remove_media_label' => __( 'Remove Selection', 'voicewp' ),
 		) ),
 		new \Fieldmanager_Link( __( 'HTTPS URL to an MP3', 'voicewp' ), array(
 			'name' => 'audio_url',
