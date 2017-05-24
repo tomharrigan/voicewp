@@ -106,10 +106,7 @@ class Voicewp_Setup {
 		 * If the option exists, trigger the update functions
 		 */
 		$settings = get_option( 'alexawp-settings' );
-		if ( empty( $settings ) ) {
-			update_option( 'voicewp_version', self::$version );
-			return;
-		} else {
+		if ( ! empty( $settings ) ) {
 			$this->upgrade_to_1_0_0();
 		}
 
