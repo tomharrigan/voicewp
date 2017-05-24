@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * This is the base request, used for types of requests such as IntentRequest and LaunchRequest
+ * Stores the data of a request and makes sure the request is valid
+ */
 namespace Alexa\Request;
 
 use RuntimeException;
@@ -11,21 +14,21 @@ use Alexa\Request\Application;
 
 class Request {
 
-	public $request_id;
 	public $timestamp;
 	/** @var Session */
 	public $session;
 	public $data;
 	public $raw_data;
-	public $applicationId;
+	public $application_id;
 
 	/**
-	 * Set up Request with RequestId, timestamp (DateTime) and user (User obj.)
-	 * @param type $data
+	 * Set up Request with timestamp (DateTime) and user (User obj.)
+	 * @param string $raw_data
+	 * @param string $application_id
 	 */
-	public function __construct( $raw_data, $applicationId = null ) {
+	public function __construct( $raw_data, $application_id = null ) {
 		if ( ! is_string( $raw_data ) ) {
-			throw new InvalidArgumentException( 'Alexa Request requires the raw JSON data to validate request signature' );
+			throw new InvalidArgumentException( __( 'Alexa Request requires the raw JSON data to validate request signature', 'voicewp' ) );
 		}
 
 		// Decode the raw data into a JSON array.
@@ -33,13 +36,12 @@ class Request {
 		$this->data = $data;
 		$this->raw_data = $raw_data;
 
-		$this->request_id = $data['request']['requestId'];
 		$this->timestamp = new DateTime( $data['request']['timestamp'] );
 		$this->session = new Session( $data['session'] );
 
-		$this->applicationId = ( is_null( $applicationId ) && isset($data['session']['application']['applicationId']))
+		$this->application_id = ( is_null( $application_id ) && isset( $data['session']['application']['applicationId'] ) )
 			? $data['session']['application']['applicationId']
-			: $applicationId;
+			: $application_id;
 
 	}
 
@@ -48,7 +50,7 @@ class Request {
 	 * to extend it to for example cache their certificates.
 	 * @param \Alexa\Request\Certificate $certificate
 	 */
-	public function setCertificateDependency( \Alexa\Request\Certificate $certificate ) {
+	public function set_certificate_dependency( \Alexa\Request\Certificate $certificate ) {
 		$this->certificate = $certificate;
 	}
 
@@ -57,7 +59,7 @@ class Request {
 	 * to extend it.
 	 * @param \Alexa\Request\Application $application
 	 */
-	public function setApplicationDependency( \Alexa\Request\Application $application ) {
+	public function set_application_dependency( \Alexa\Request\Application $application ) {
 		$this->application = $application;
 	}
 
@@ -68,7 +70,7 @@ class Request {
 	 * @return \Alexa\Request\Request   base class
 	 * @throws RuntimeException
 	 */
-	public function fromData() {
+	public function from_data() {
 		$data = $this->data;
 
 		// Instantiate a new Certificate validator if none is injected
@@ -77,23 +79,22 @@ class Request {
 			$this->certificate = new Certificate( $_SERVER['HTTP_SIGNATURECERTCHAINURL'], $_SERVER['HTTP_SIGNATURE'] );
 		}
 		if ( ! isset( $this->application ) ) {
-			$this->application = new Application( $this->applicationId );
+			$this->application = new Application( $this->application_id );
 		}
 
 		// We need to ensure that the request Application ID matches our Application ID.
-		$this->application->validateApplicationId( $data['session']['application']['applicationId'] );
+		$this->application->validate_application_id( $data['session']['application']['applicationId'] );
 		// Validate that the request signature matches the certificate.
 		$this->certificate->validate_request( $this->raw_data );
 
-
-		$requestType = $data['request']['type'];
-		if ( ! class_exists( '\\Alexa\\Request\\' . $requestType ) ) {
-			throw new RuntimeException( 'Unknown request type: ' . $requestType );
+		$request_type = $data['request']['type'];
+		if ( ! class_exists( '\\Alexa\\Request\\' . $request_type ) ) {
+			throw new RuntimeException( sprintf( esc_html__( 'Unknown request type: %s', 'voicewp' ), $request_type ) );
 		}
 
-		$className = '\\Alexa\\Request\\' . $requestType;
+		$class_name = '\\Alexa\\Request\\' . $request_type;
 
-		$request = new $className( $this->raw_data, $this->applicationId );
+		$request = new $class_name( $this->raw_data, $this->application_id );
 		return $request;
 	}
 }

@@ -1,14 +1,14 @@
 <?php
 /**
- * Class file for AlexaWP_Fieldmanager_Content_TextArea.
+ * Class file for VoiceWP_Fieldmanager_Content_TextArea.
  *
- * @package AlexaWP
+ * @package VoiceWP
  */
 
 /**
  * A Fieldmanager_TextArea masquerading as the post content field.
  */
-class AlexaWP_Fieldmanager_Content_TextArea extends \Fieldmanager_TextArea {
+class VoiceWP_Fieldmanager_Content_TextArea extends \Fieldmanager_TextArea {
 	/**
 	 * Set up.
 	 *

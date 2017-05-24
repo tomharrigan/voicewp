@@ -1,18 +1,21 @@
 <?php
-
+/**
+ * Data returned to Alexa/the user in response to a request.
+ * Contains the text, card, and associated info which can include session state, attributes
+ */
 namespace Alexa\Response;
 
 class Response {
 	public $version = '1.0';
-	public $sessionAttributes = array();
+	public $session_attributes = array();
 
-	public $outputSpeech = null;
+	public $output_speech = null;
 	public $card = null;
 	public $reprompt = null;
-	public $shouldEndSession = false;
+	public $should_end_session = false;
 
 	public function __construct() {
-		$this->outputSpeech = new OutputSpeech;
+		$this->output_speech = new OutputSpeech;
 	}
 
 	/**
@@ -21,8 +24,8 @@ class Response {
 	 * @return \Alexa\Response\Response
 	 */
 	public function respond( $text ) {
-		$this->outputSpeech = new OutputSpeech;
-		$this->outputSpeech->text = $text;
+		$this->output_speech = new OutputSpeech;
+		$this->output_speech->text = $text;
 
 		return $this;
 	}
@@ -32,10 +35,10 @@ class Response {
 	 * @param string $ssml
 	 * @return \Alexa\Response\Response
 	 */
-	public function respondSSML( $ssml ) {
-		$this->outputSpeech = new OutputSpeech;
-		$this->outputSpeech->type = 'SSML';
-		$this->outputSpeech->ssml = $ssml;
+	public function respond_ssml( $ssml ) {
+		$this->output_speech = new OutputSpeech;
+		$this->output_speech->type = 'SSML';
+		$this->output_speech->ssml = $ssml;
 
 		return $this;
 	}
@@ -47,7 +50,7 @@ class Response {
 	 */
 	public function reprompt( $text ) {
 		$this->reprompt = new Reprompt;
-		$this->reprompt->outputSpeech->text = $text;
+		$this->reprompt->output_speech->text = $text;
 
 		return $this;
 	}
@@ -57,10 +60,10 @@ class Response {
 	 * @param string $ssml
 	 * @return \Alexa\Response\Response
 	 */
-	public function repromptSSML( $ssml ) {
+	public function reprompt_ssml( $ssml ) {
 		$this->reprompt = new Reprompt;
-		$this->reprompt->outputSpeech->type = 'SSML';
-		$this->reprompt->outputSpeech->text = $ssml;
+		$this->reprompt->output_speech->type = 'SSML';
+		$this->reprompt->output_speech->text = $ssml;
 
 		return $this;
 	}
@@ -72,7 +75,7 @@ class Response {
 	 * @param null|int $image
 	 * @return \Alexa\Response\Response
 	 */
-	public function withCard( $title = '', $content = '', $image = null ) {
+	public function with_card( $title = '', $content = '', $image = null ) {
 
 		if ( $image ) {
 			$this->card = new StandardCard( $title, $content, $image );
@@ -85,11 +88,11 @@ class Response {
 
 	/**
 	 * Set if it should end the session
-	 * @param type $shouldEndSession
+	 * @param bool $should_end_session
 	 * @return \Alexa\Response\Response
 	 */
-	public function endSession( $shouldEndSession = true ) {
-		$this->shouldEndSession = $shouldEndSession;
+	public function end_session( $should_end_session = true ) {
+		$this->should_end_session = $should_end_session;
 
 		return $this;
 	}
@@ -99,23 +102,23 @@ class Response {
 	 * @param string $key
 	 * @param mixed $value
 	 */
-	public function addSessionAttribute( $key, $value ) {
-		$this->sessionAttributes[ $key ] = $value;
+	public function add_session_attribute( $key, $value ) {
+		$this->session_attributes[ $key ] = $value;
 	}
 
 	/**
 	 * Return the response as an array for JSON-ification
-	 * @return type
+	 * @return array
 	 */
 	public function render() {
 		return array(
 			'version' => $this->version,
-			'sessionAttributes' => $this->sessionAttributes,
+			'sessionAttributes' => $this->session_attributes,
 			'response' => array(
-				'outputSpeech' => $this->outputSpeech ? $this->outputSpeech->render() : null,
+				'outputSpeech' => $this->output_speech ? $this->output_speech->render() : null,
 				'card' => $this->card ? $this->card->render() : null,
 				'reprompt' => $this->reprompt ? $this->reprompt->render() : null,
-				'shouldEndSession' => $this->shouldEndSession ? true : false,
+				'shouldEndSession' => $this->should_end_session ? true : false,
 			),
 		);
 	}

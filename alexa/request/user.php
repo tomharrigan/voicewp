@@ -1,13 +1,17 @@
 <?php
-
+/**
+ * For keeping track of the user through their Session
+ */
 namespace Alexa\Request;
 
 class User {
-	public $userId;
-	public $accessToken;
-
+	public $user_id;
+	public $access_token;
+	/**
+	 * Store the user ID and access token if exists for keeping track of user through session
+	 */
 	public function __construct( $data ) {
-		$this->userId = isset( $data['userId'] ) ? $data['userId'] : null;
-		$this->accessToken = isset( $data['accessToken'] ) ? $data['accessToken'] : null;
+		$this->user_id = isset( $data['userId'] ) ? $data['userId'] : null;
+		$this->access_token = isset( $data['accessToken'] ) ? $data['accessToken'] : null;
 	}
 }

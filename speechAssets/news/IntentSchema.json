@@ -8,7 +8,7 @@
 			"slots": [
 				{
 					"name": "TermName",
-					"type": "ALEXAWP_TERM_NAME"
+					"type": "VOICEWP_TERM_NAME"
 				}
 			]
 		},
@@ -21,7 +21,7 @@
 				},
 				{
 					"name": "PostNumberWord",
-					"type": "ALEXAWP_POST_NUMBER_WORD"
+					"type": "VOICEWP_POST_NUMBER_WORD"
 				}
 			]
 		},

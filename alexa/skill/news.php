@@ -33,12 +33,12 @@ class News {
 		$response = $event->get_response();
 
 		if ( $request instanceof \Alexa\Request\IntentRequest ) {
-			$intent = $request->intentName;
+			$intent = $request->intent_name;
 			switch ( $intent ) {
 				case 'LatestTerm':
 					$term_slot = strtolower( sanitize_text_field( $request->getSlot( 'TermName' ) ) );
 					if ( $term_slot ) {
-						$news_taxonomies = alexawp_news_taxonomies();
+						$news_taxonomies = voicewp_news_taxonomies();
 
 						if ( $news_taxonomies ) {
 							/*
@@ -69,7 +69,7 @@ class News {
 				case 'Latest':
 
 					$args = array(
-						'post_type' => alexawp_news_post_types(),
+						'post_type' => voicewp_news_post_types(),
 						'posts_per_page' => 5,
 						'tax_query' => isset( $tax_query ) ? $tax_query : array(),
 					);
@@ -79,8 +79,8 @@ class News {
 					$response
 						->respond( $result['content'] )
 						/* translators: %s: site title */
-						->withCard( sprintf( __( 'Latest on %s', 'alexawp' ), get_bloginfo( 'name' ) ) )
-						->addSessionAttribute( 'post_ids', $result['ids'] );
+						->with_card( sprintf( __( 'Latest on %s', 'voicewp' ), get_bloginfo( 'name' ) ) )
+						->add_session_attribute( 'post_ids', $result['ids'] );
 					break;
 				case 'ReadPost':
 					if ( $post_number = $request->getSlot( 'PostNumberWord' ) ) {
@@ -102,8 +102,8 @@ class News {
 						$result = $this->endpoint_single_post( $post_id );
 						$response
 							->respond( $result['content'] )
-							->withCard( $result['title'], '', $result['image'] )
-							->endSession();
+							->with_card( $result['title'], '', $result['image'] )
+							->end_session();
 					} else {
 						$this->message( $response );
 					}
@@ -131,15 +131,15 @@ class News {
 	 * @param AlexaResponse $response
 	 */
 	private function skill_intent( $intent, $request, $response ) {
-		$custom_skill_index = get_option( 'alexawp_skill_index_map', array() );
+		$custom_skill_index = get_option( 'voicewp_skill_index_map', array() );
 		if ( isset( $custom_skill_index[ $intent ] ) ) {
-			$alexawp = Alexawp::get_instance();
-			$alexawp->skill_dispatch( absint( $custom_skill_index[ $intent ] ), $request, $response );
+			$voicewp = Voicewp::get_instance();
+			$voicewp->skill_dispatch( absint( $custom_skill_index[ $intent ] ), $request, $response );
 		}
 	}
 
 	/**
-	 * Packages up the post data that will be served in the response
+	 * Gets formatted post data that will be served in the response
 	 * @param int $id ID of post to get data for
 	 * @return array Data from the post being returned
 	 */
@@ -147,17 +147,26 @@ class News {
 		$transient_key = 'voicewp_single_' . $id;
 		if ( false === ( $result = get_transient( $transient_key ) ) ) {
 			$single_post = get_post( $id );
-			$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', strip_tags( strip_shortcodes( $single_post->post_content ) ) );
-			$result = array(
-				'content' => $post_content,
-				'title' => $single_post->post_title,
-				'image' => get_post_thumbnail_id( $id ),
-			);
-			// TODO: If content of the post changes,
-			// repopulate this cache entry with the fresh data
-			set_transient( $transient_key, $result, 60 * MINUTE_IN_SECONDS );
+			$result = $this->format_single_post( $id, $single_post );
+			// Set long cache time instead of 0 to prevent autoload
+			set_transient( $transient_key, $result, WEEK_IN_SECONDS );
 		}
 		return $result;
+	}
+
+	/**
+	 * Packages up the post data that will be served in the response
+	 * @param int $id ID of post to get data for
+	 * @param Object $single_post Post object
+	 * @return array Data from the post being returned
+	 */
+	public function format_single_post( $id, $single_post ) {
+		$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', strip_tags( strip_shortcodes( $single_post->post_content ) ) );
+		return array(
+			'content' => $post_content,
+			'title' => $single_post->post_title,
+			'image' => get_post_thumbnail_id( $id ),
+		);
 	}
 
 	/**
@@ -179,14 +188,14 @@ class News {
 	 * @param string $case The type of message to return
 	 */
 	private function message( $response, $case = 'missing' ) {
-		$alexawp_settings = get_option( 'alexawp-settings' );
-		if ( isset( $alexawp_settings[ $case ] ) ) {
-			$response->respond( $alexawp_settings[ $case ] );
+		$voicewp_settings = get_option( 'voicewp-settings' );
+		if ( isset( $voicewp_settings[ $case ] ) ) {
+			$response->respond( $voicewp_settings[ $case ] );
 		} else {
-			$response->respond( __( "Sorry! I couldn't find any news about that topic. Try asking something else!", 'alexawp' ) );
+			$response->respond( __( "Sorry! I couldn't find any news about that topic. Try asking something else!", 'voicewp' ) );
 		}
 		if ( 'stop_intent' === $case ) {
-			$response->endSession();
+			$response->end_session();
 		}
 	}
 
@@ -197,7 +206,7 @@ class News {
 	 * @param array $response
 	 * @return array array of post IDs and titles
 	 */
-	private function endpoint_content( $args ) {
+	public function endpoint_content( $args ) {
 		$transient_key = isset( $args['tax_query']['terms'][0] ) ? 'voicewp_latest_' . $args['tax_query']['terms'][0] : 'voicewp_latest';
 		if ( false === ( $result = get_transient( $transient_key ) ) ) {
 			$news_posts = get_posts( array_merge( $args, array(
@@ -210,8 +219,8 @@ class News {
 			if ( ! empty( $news_posts ) && ! is_wp_error( $news_posts ) ) {
 
 				foreach ( $news_posts as $key => $news_post ) {
-					// TODO: Sounds a little strange when there's only one result.
 					// Appending 'th' to any number results in proper ordinal pronunciation
+					// TODO: Sounds a little strange when there's only one result.
 					$content .= ( $key + 1 ) . 'th, ' . $news_post->post_title . '. ';
 					$ids[] = $news_post->ID;
 				}
@@ -221,9 +230,15 @@ class News {
 				'content' => $content,
 				'ids' => $ids,
 			);
-			// TODO: hook on 'publish_*' to clear cache entry when a post type served
-			// in news content is published and remove the cache time here
-			set_transient( $transient_key, $result, 15 * MINUTE_IN_SECONDS );
+			/**
+			 * If this is the main latest feed, the content will be cleared
+			 * when a post is published. We're setting a very long defined cache time
+			 * so that if it's on a site without external object cache, it won't be autoloaded.
+			 * For taxonomy feeds, cache for 15 minutes
+			 */
+			$expiration = ( 'voicewp_latest' == $transient_key ) ? WEEK_IN_SECONDS : 15 * MINUTE_IN_SECONDS;
+
+			set_transient( $transient_key, $result, $expiration );
 		}
 		return $result;
 	}
