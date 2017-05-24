@@ -1,0 +1,14 @@
+Tom Harrigan - Plugin author
+
+David Herrera ( dlh01 )
+Sam Turner ( digiltd )
+Chris Scott ( chrisscott )
+
+Jakub Suchy, Emanuele Corradini, Mathias Hansen - Wrote and contributed to ‘Amazon Alexa PHP’, a library included in and modified in this codebase
+Chris Hamper - The Drupal project linked below, which was also used as a starting point
+
+Open Source components consulted or used:
+
+https://github.com/jakubsuchy/amazon-alexa-php
+https://www.drupal.org/project/alexa
+https://github.com/alleyinteractive/wordpress-fieldmanager - Fieldmanager is a dependency of this plugin and must be enabled for custom field creation.

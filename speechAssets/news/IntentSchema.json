@@ -1,0 +1,38 @@
+{
+	"intents": [
+		{
+			"intent": "Latest"
+		},
+		{
+			"intent": "LatestTerm",
+			"slots": [
+				{
+					"name": "TermName",
+					"type": "VOICEWP_TERM_NAME"
+				}
+			]
+		},
+		{
+			"intent": "ReadPost",
+			"slots": [
+				{
+					"name": "PostNumber",
+					"type": "AMAZON.NUMBER"
+				},
+				{
+					"name": "PostNumberWord",
+					"type": "VOICEWP_POST_NUMBER_WORD"
+				}
+			]
+		},
+		{
+			"intent": "AMAZON.StopIntent"
+		},
+		{
+			"intent": "AMAZON.CancelIntent"
+		},
+		{
+			"intent": "AMAZON.HelpIntent"
+		}
+	]
+}
