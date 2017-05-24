@@ -181,7 +181,7 @@ class Voicewp {
 	 */
 	public function skill_dispatch( $id, $request, $response ) {
 
-		$skill_type = get_post_meta( $id, 'alexawp_skill_type', true );
+		$skill_type = get_post_meta( $id, 'voicewp_skill_type', true );
 
 		switch ( $skill_type ) {
 			case 'fact_quote':
