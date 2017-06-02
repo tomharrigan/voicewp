@@ -136,7 +136,7 @@ class Voicewp {
 
 		if ( ! empty( $body ) ) {
 			try {
-				$alexa_settings = get_option( 'alexawp-settings' );
+				$alexa_settings = get_option( 'voicewp-settings' );
 				// The main amazon Application ID
 				$app_id = $alexa_settings['news_id'];
 				$certificate = new \Alexa\Request\Certificate( $request->get_header( 'signaturecertchainurl' ), $request->get_header( 'signature' ), $app_id );
