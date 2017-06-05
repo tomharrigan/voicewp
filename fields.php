@@ -5,6 +5,8 @@
  */
 function voicewp_fm_alexa_app_settings() {
 
+	$post_id = ( isset( $_GET['post'] ) ) ? absint( $_GET['post'] ) : 0;
+
 	$children = array(
 		new \Fieldmanager_Select( __( 'Skill Type', 'voicewp' ), array(
 			'name' => 'type',
@@ -33,6 +35,23 @@ function voicewp_fm_alexa_app_settings() {
 			),
 		) ),
 	);
+
+	// If there's a post ID, output the REST endpoint for use in the amazon developer portal
+	if ( $post_id ) {
+		$children['readonly_skill_url'] = new \Fieldmanager_TextField( array(
+			'label' => __( 'This is the endpoint URL of your skill. Paste this within the configuration tab for your skill in the developer portal.', 'voicewp' ),
+			'default_value' => home_url( '/wp-json/voicewp/v1/skill/' ) . $post_id,
+			'skip_save' => true,
+			'attributes' => array(
+				'readonly' => 'readonly',
+				'style' => 'width: 95%;',
+			),
+			'display_if' => array(
+				'src' => 'is_standalone',
+				'value' => true,
+			),
+		) );
+	}
 
 	$fm = new \Fieldmanager_Group( array(
 		'name' => 'voicewp_skill',
