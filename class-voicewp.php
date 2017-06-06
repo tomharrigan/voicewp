@@ -80,6 +80,36 @@ class Voicewp {
 		return null;
 	}
 
+	public function voicewp_get_request_response_objects( $request, $app_id ) {
+		$body = $request->get_body();
+
+		$this->voicewp_maybe_display_notice();
+
+		if ( empty( $body ) ) {
+			return;
+		}
+
+		try {
+			$certificate = new \Alexa\Request\Certificate( $request->get_header( 'signaturecertchainurl' ), $request->get_header( 'signature' ), $app_id );
+			$alexa = new \Alexa\Request\Request( $body, $app_id );
+			$alexa->set_certificate_dependency( $certificate );
+
+			// Parse and validate the request.
+			$alexa_request = $alexa->from_data();
+
+		} catch ( InvalidArgumentException $e ) {
+			$this->fail_response( $e );
+		}
+
+		$response_object = new \Alexa\Response\Response;
+		$event = new AlexaEvent( $alexa_request, $response_object );
+
+		return array(
+			$event->get_request(),
+			$event->get_response(),
+		);
+	}
+
 	/**
 	 * Get one item from the collection
 	 *
@@ -88,38 +118,16 @@ class Voicewp {
 	 */
 	public function voicewp_skill_request( WP_REST_Request $request ) {
 
-		$this->voicewp_maybe_display_notice();
-
-		$body = $request->get_body();
-
 		$id = absint( $request->get_param( 'id' ) );
+		// get config based on url
+		$app_id = get_post_meta( $id, 'voicewp_skill_app_id', true );
 
-		if ( ! empty( $body ) ) {
-			try {
-				// get config based on url
-				//This ID will be made optional, first do a check for if standalone or not
-				$app_id = get_post_meta( $id, 'voicewp_skill_app_id', true );
-				$certificate = new \Alexa\Request\Certificate( $request->get_header( 'signaturecertchainurl' ), $request->get_header( 'signature' ), $app_id );
-				$alexa = new \Alexa\Request\Request( $body, $app_id );
-				$alexa->set_certificate_dependency( $certificate );
+		list( $request, $response ) = $this->voicewp_get_request_response_objects( $request, $app_id );
+		return $request;
 
-				// Parse and validate the request.
-				$alexa_request = $alexa->from_data();
+		$this->skill_dispatch( $id, $request, $response );
 
-			} catch ( InvalidArgumentException $e ) {
-				return $this->fail_response( $e );
-			}
-
-			$response_object = new \Alexa\Response\Response;
-			$event = new AlexaEvent( $alexa_request, $response_object );
-
-			$request = $event->get_request();
-			$response = $event->get_response();
-
-			$this->skill_dispatch( $id, $request, $response );
-
-			return new WP_REST_Response( $response_object->render() );
-		}
+		return new WP_REST_Response( $response->render() );
 	}
 
 	/**
@@ -130,32 +138,16 @@ class Voicewp {
 	 */
 	public function voicewp_news_request( WP_REST_Request $request ) {
 
-		$this->voicewp_maybe_display_notice();
+		$alexa_settings = get_option( 'alexawp-settings' );
+		// The main amazon Application ID
+		$app_id = $alexa_settings['news_id'];
 
-		$body = $request->get_body();
+		list( $request, $response ) = $this->voicewp_get_request_response_objects( $request, $app_id );
 
-		if ( ! empty( $body ) ) {
-			try {
-				$alexa_settings = get_option( 'voicewp-settings' );
-				// The main amazon Application ID
-				$app_id = $alexa_settings['news_id'];
-				$certificate = new \Alexa\Request\Certificate( $request->get_header( 'signaturecertchainurl' ), $request->get_header( 'signature' ), $app_id );
-				$alexa = new \Alexa\Request\Request( $body, $app_id );
-				$alexa->set_certificate_dependency( $certificate );
+		$news = new \Alexa\Skill\News;
+		$news->news_request( $request, $response );
 
-				// Parse and validate the request.
-				$alexa_request = $alexa->from_data();
-			} catch ( InvalidArgumentException $e ) {
-				return $this->fail_response( $e );
-			}
-			$response = new \Alexa\Response\Response;
-			$event = new AlexaEvent( $alexa_request, $response );
-
-			$news = new \Alexa\Skill\News;
-			$news->news_request( $event );
-
-			return new WP_REST_Response( $response->render() );
-		}
+		return new WP_REST_Response( $response->render() );
 	}
 
 	/**
@@ -201,7 +193,7 @@ class Voicewp {
 	 * @return WP_REST_Response
 	 */
 	private function fail_response( $e ) {
-		return new WP_REST_Response(
+		wp_send_json(
 			array(
 				'version' => '1.0',
 				'response' => array(
