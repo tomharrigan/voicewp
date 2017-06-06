@@ -21,13 +21,6 @@ class Briefing {
 		// This logic could be both abstracted and used with array_map().
 		foreach (
 			get_posts( array(
-				'meta_query' => array(
-					array(
-						'key' => 'voicewp_briefing_source',
-						'compare' => '!=',
-						'value' => '',
-					),
-				),
 				'no_found_rows' => true,
 				'post_status' => 'publish',
 				'post_type' => 'voicewp-briefing',
@@ -44,7 +37,7 @@ class Briefing {
 				'redirectionUrl' => home_url(),
 			);
 
-			switch ( get_post_meta( $post->ID, 'voicewp_briefing_source', true ) ) {
+			switch ( $source = get_post_meta( $post->ID, 'voicewp_briefing_source', true ) ) {
 				case 'content' :
 					$response['mainText'] = $post->post_content;
 				break;
@@ -56,6 +49,10 @@ class Briefing {
 				case 'audio_url' :
 					$response['streamUrl'] = get_post_meta( $post->ID, 'voicewp_briefing_audio_url', true );
 				break;
+
+				default :
+					$response = apply_filters( 'voicewp_briefing_source', $response, $source, $post->ID, $post );
+				break;
 			}
 
 			$response['mainText'] = wp_strip_all_tags( strip_shortcodes( $response['mainText'] ) );
@@ -63,6 +60,8 @@ class Briefing {
 			if ( isset( $response['streamUrl'] ) ) {
 				$response['streamUrl'] = esc_url_raw( $response['streamUrl'] );
 			}
+
+			$response = apply_filters( 'voicewp_briefing_response', $response, $post->ID, $post );
 
 			$responses[] = $response;
 		}
