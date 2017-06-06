@@ -74,57 +74,59 @@ function voicewp_fm_briefing_content() {
 	$allowed_formats = array( 'mp3' );
 
 	$children = array(
-		new \VoiceWP_Fieldmanager_Content_TextArea( __( 'Text', 'voicewp' ), array(
+		// Display-if control.
+		'source' => new \Fieldmanager_Radios( __( 'Source', 'voicewp' ), array(
+			'options' => apply_filters( 'voicewp_briefing_source_options', array(
+				'content' => __( 'Text', 'voicewp' ),
+				'audio_url' => __( 'HTTPS URL to an MP3', 'voicewp' ),
+				'attachment_id' => __( 'Uploaded MP3', 'voicewp' ),
+			) ),
+			'default_value' => apply_filters( 'voicewp_default_briefing_source', 'content' ),
+		) ),
+		'content' => new \VoiceWP_Fieldmanager_Content_TextArea( __( 'Text', 'voicewp' ), array(
 			'description' => __( 'Text should be under 4,500 characters.', 'voicewp' ),
 			'attributes' => array(
 				'style' => 'width: 100%; height: 400px',
 				'maxlength' => 4500,
 			),
+			'display_if' => array(
+				'src' => 'source',
+				'value' => 'content',
+			),
 		) ),
-		new \Fieldmanager_Media( __( 'Uploaded MP3', 'voicewp' ), array(
-			'name' => 'attachment_id',
-			'mime_type' => 'audio/mpeg',
-			'button_label' => __( 'Select a File', 'voicewp' ),
-			'modal_button_label' => __( 'Select File', 'voicewp' ),
-			'modal_title' => __( 'Select a File', 'voicewp' ),
-		) ),
-		new \Fieldmanager_Link( __( 'HTTPS URL to an MP3', 'voicewp' ), array(
-			'name' => 'audio_url',
+		'audio_url' => new \Fieldmanager_Link( __( 'HTTPS URL to an MP3', 'voicewp' ), array(
 			'attributes' => array(
 				'style' => 'width: 100%;',
 			),
+			'display_if' => array(
+				'src' => 'source',
+				'value' => apply_filters( 'voicewp_briefing_audio_url_display_if', 'audio_url' ),
+			),
 		) ),
+		'attachment_id' => new \Fieldmanager_Media( __( 'Uploaded MP3', 'voicewp' ), array(
+			'mime_type' => 'audio',
+			'button_label' => __( 'Select a File', 'voicewp' ),
+			'modal_button_label' => __( 'Select File', 'voicewp' ),
+			'modal_title' => __( 'Select a File', 'voicewp' ),
+			'display_if' => array(
+				'src' => 'source',
+				'value' => 'attachment_id',
+			),
+		) ),
+		'uuid' => new \Fieldmanager_Hidden( array() ),
 	);
 
-	foreach ( $children as $key => $value ) {
-		$children[ $key ]->display_if = array(
-			'src' => 'source',
-			'value' => $children[ $key ]->name,
-		);
-	}
-
-	// Display-if control.
-	$display_if = new \Fieldmanager_Radios( __( 'Source', 'voicewp' ), array(
-		'name' => 'source',
-		'options' => wp_list_pluck( $children, 'label', 'name' ),
-	) );
-
-	// Briefing UUID, saved the first time and used thereafter.
-	$uuid = new \Fieldmanager_Hidden( array(
-		'name' => 'uuid',
-	) );
-
 	if ( ! get_post_meta( $post_id, 'voicewp_briefing_uuid', true ) ) {
-		$uuid->default_value = voicewp_generate_uuid4();
+		$children['uuid']->default_value = voicewp_generate_uuid4();
 	}
 
-	array_unshift( $children, $display_if, $uuid );
+	$children = apply_filters( 'voicewp_briefing_fields', $children );
 
 	$fm = new \Fieldmanager_Group( array(
 		'name' => 'voicewp_briefing',
 		'serialize_data' => false,
 		// Needs to be name => field for compat with FM's validation routines.
-		'children' => array_combine( wp_list_pluck( $children, 'name' ), $children ),
+		'children' => $children,
 	) );
 
 	// Help text.
