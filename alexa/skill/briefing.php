@@ -51,6 +51,16 @@ class Briefing {
 				break;
 
 				default :
+					/**
+					 * Allows for including custom parameters within flash briefing items
+					 *
+					 * @since 1.1.0
+					 *
+					 * @param array $response A single briefing item
+					 * @param string $source The type of data populating this feed item
+					 * @param int $post->ID ID of post object
+					 * @param Object $post Post object
+					 */
 					$response = apply_filters( 'voicewp_briefing_source', $response, $source, $post->ID, $post );
 				break;
 			}
@@ -61,6 +71,15 @@ class Briefing {
 				$response['streamUrl'] = esc_url_raw( $response['streamUrl'] );
 			}
 
+			/**
+			 * Allows for filtering a flash briefing item
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param array $response A single briefing item
+			 * @param int $post->ID ID of post object
+			 * @param Object $post Post object
+			 */
 			$response = apply_filters( 'voicewp_briefing_response', $response, $post->ID, $post );
 
 			$responses[] = $response;

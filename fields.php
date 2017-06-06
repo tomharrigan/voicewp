@@ -76,6 +76,14 @@ function voicewp_fm_briefing_content() {
 	$children = array(
 		// Display-if control.
 		'source' => new \Fieldmanager_Radios( __( 'Source', 'voicewp' ), array(
+			/**
+			 * Allows for filtering the available sources that
+			 * can be used for populating a flash briefing
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param array Flash briefing source options
+			 */
 			'options' => apply_filters( 'voicewp_briefing_source_options', array(
 				'content' => __( 'Text', 'voicewp' ),
 				'audio_url' => __( 'HTTPS URL to an MP3', 'voicewp' ),
@@ -100,6 +108,13 @@ function voicewp_fm_briefing_content() {
 			),
 			'display_if' => array(
 				'src' => 'source',
+				/**
+				 * Allow filtering of what sources an audio link is used with
+				 *
+				 * @since 1.1.0
+				 *
+				 * @param string Comma separated list of source options to display the field for
+				 */
 				'value' => apply_filters( 'voicewp_briefing_audio_url_display_if', 'audio_url' ),
 			),
 		) ),
@@ -120,6 +135,13 @@ function voicewp_fm_briefing_content() {
 		$children['uuid']->default_value = voicewp_generate_uuid4();
 	}
 
+	/**
+	 * Allow addition, removal, or modification of briefing fields
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param array $children The Fieldmanager fields used with a flash briefing
+	 */
 	$children = apply_filters( 'voicewp_briefing_fields', $children );
 
 	$fm = new \Fieldmanager_Group( array(
