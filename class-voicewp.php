@@ -123,7 +123,6 @@ class Voicewp {
 		$app_id = get_post_meta( $id, 'voicewp_skill_app_id', true );
 
 		list( $request, $response ) = $this->voicewp_get_request_response_objects( $request, $app_id );
-		return $request;
 
 		$this->skill_dispatch( $id, $request, $response );
 
