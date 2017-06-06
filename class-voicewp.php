@@ -184,12 +184,13 @@ class Voicewp {
 		$skill_type = get_post_meta( $id, 'voicewp_skill_type', true );
 
 		switch ( $skill_type ) {
+			case 'Quote':
 			case 'fact_quote':
 				$quote = new \Alexa\Skill\Quote;
 				$quote->quote_request( $id, $request, $response );
 				break;
 			default:
-				do_action( 'voicewp_custom_skill', $skill_type, $id );
+				do_action( 'voicewp_custom_skill', $skill_type, $id, $request, $response );
 				break;
 		}
 	}
