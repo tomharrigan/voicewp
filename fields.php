@@ -89,6 +89,13 @@ function voicewp_fm_briefing_content() {
 				'audio_url' => __( 'HTTPS URL to an MP3', 'voicewp' ),
 				'attachment_id' => __( 'Uploaded MP3', 'voicewp' ),
 			) ),
+			/**
+			 * String defining the default content source of a flash briefing
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param string default value
+			 */
 			'default_value' => apply_filters( 'voicewp_default_briefing_source', 'content' ),
 		) ),
 		'content' => new \VoiceWP_Fieldmanager_Content_TextArea( __( 'Text', 'voicewp' ), array(
