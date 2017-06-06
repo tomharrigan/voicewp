@@ -80,13 +80,21 @@ class Voicewp {
 		return null;
 	}
 
+	/**
+	 * Get one item from the collection
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @param int $app_id The amazon app ID
+	 * @return JSON|array A JSON response is sent if there is an error
+	 * otherwise an array containing an alexa request and response object is returned
+	 */
 	public function voicewp_get_request_response_objects( $request, $app_id ) {
 		$body = $request->get_body();
 
 		$this->voicewp_maybe_display_notice();
 
 		if ( empty( $body ) ) {
-			return;
+			$this->fail_response( new InvalidArgumentException( __( 'Request body is empty', 'voicewp' ) ) );
 		}
 
 		try {
@@ -187,9 +195,9 @@ class Voicewp {
 	}
 
 	/**
-	 * In case of error, return response
+	 * In case of error, output JSON response and exit
 	 *
-	 * @return WP_REST_Response
+	 * @return JSON
 	 */
 	private function fail_response( $e ) {
 		wp_send_json(
