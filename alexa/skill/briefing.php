@@ -16,7 +16,14 @@ class Briefing {
 	 * @return array Response for Flash Briefing
 	 */
 	public function briefing_request() {
-		$responses = apply_filters( 'voicewp_override_briefing', array() );
+		/**
+		 * Allows briefing content to be overridden for customization purposes.
+		 *
+		 * @since 1.1.0
+		 *
+		 * @param array An array of briefing items.
+		 */
+		$responses = apply_filters( 'voicewp_pre_get_briefing', array() );
 
 		if ( ! empty( $responses ) ) {
 			return $responses;
