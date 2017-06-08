@@ -263,6 +263,37 @@ function voicewp_fm_alexa_settings() {
 		) ),
 	);
 
+	$children['user_dictionary'] = new Fieldmanager_Group( array(
+		'label' => __( 'Word Pronunciation Substitutions', 'voicewp' ),
+		'collapsible' => true,
+		'description' => __( "This allows you to define a global dictionary of words, phrases, abbreviations that Alexa should pronounce a certain way. For example, perhaps every occurrance of the state abreviation 'TN' should be pronounced as 'Tennessee', or 'NYC should be read as 'New York City' or the chemical 'Mg' read as 'Magnesium'. ", 'voicewp' ),
+		'description_after_element' => false,
+		'children' => array(
+			'dictionary' => new Fieldmanager_Group( array(
+				'limit' => 0,
+				'extra_elements' => 0,
+				'label' => __( 'Phrase / Word / Abbreviation', 'voicewp' ),
+				'label_macro' => array( '%s', 'search' ),
+				'add_more_label' => __( 'Add another phrase, word, or abbreviation', 'voicewp' ),
+				'collapsible' => true,
+				'children' => array(
+					'search' => new Fieldmanager_TextField( array(
+						'description' => __( 'Phrase to pronounce differently', 'voicewp' ),
+						'attributes' => array(
+							'style' => 'width: 45%;',
+						),
+					) ),
+					'replace' => new Fieldmanager_TextField( array(
+						'description' => __( 'How the above phrase should be pronounced.', 'voicewp' ),
+						'attributes' => array(
+							'style' => 'width: 45%;',
+						),
+					) ),
+				),
+			) ),
+		),
+	) );
+
 	$children['news_utterances'] = new Fieldmanager_TextArea( array(
 		'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'voicewp' ),
 		'default_value' => file_get_contents( 'speechAssets/news/Utterances.txt', FILE_USE_INCLUDE_PATH ),
@@ -349,3 +380,26 @@ add_action( 'fm_submenu_voicewp-settings', 'voicewp_fm_alexa_settings' );
 if ( function_exists( 'fm_register_submenu_page' ) ) {
 	fm_register_submenu_page( 'voicewp-settings', 'tools.php', __( 'Alexa Skill Settings', 'voicewp' ), __( 'Alexa Skill Settings', 'voicewp' ), 'manage_options', 'voicewp-settings' );
 }
+
+/**
+ * Creates option of user defined dictionary terms for replacement within
+ * Alexa content. Uses the 'sub' element to specify pronunciations of words.
+ *
+ * @param array $data FM data
+ * @return array
+ */
+function voicewp_fm_submenu_presave_data( $data ) {
+	if ( empty( $data['user_dictionary']['dictionary'] ) ) {
+		return;
+	}
+
+	$dictionary = get_option( 'voicewp_user_dictionary', array() );
+	foreach ( $data['user_dictionary']['dictionary'] as $key => $value ) {
+		if ( ! empty( $value['search'] ) ) {
+			$dictionary[ $value['search'] ] = sprintf( '<sub alias="%s">%s</sub>', $value['replace'], $value['search'] );
+		}
+	}
+	update_option( 'voicewp_user_dictionary', $dictionary );
+	return $data;
+}
+add_filter( 'fm_submenu_presave_data', 'voicewp_fm_submenu_presave_data' );
