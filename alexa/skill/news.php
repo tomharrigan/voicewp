@@ -161,7 +161,8 @@ class News {
 	 * @return array Data from the post being returned
 	 */
 	public function format_single_post( $id, $single_post ) {
-		$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', strip_tags( strip_shortcodes( $single_post->post_content ) ) );
+		$voicewp_instance = Voicewp_Setup::get_instance();
+		$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', wp_kses( strip_shortcodes( $single_post->post_content ), $voicewp_instance::$ssml ) );
 		return array(
 			'content' => $post_content,
 			'title' => $single_post->post_title,
