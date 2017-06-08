@@ -5,6 +5,8 @@
  */
 function voicewp_fm_alexa_app_settings() {
 
+	$post_id = ( isset( $_GET['post'] ) ) ? absint( $_GET['post'] ) : 0;
+
 	$children = array(
 		new \Fieldmanager_Select( __( 'Skill Type', 'voicewp' ), array(
 			'name' => 'type',
@@ -34,6 +36,23 @@ function voicewp_fm_alexa_app_settings() {
 		) ),
 	);
 
+	// If there's a post ID, output the REST endpoint for use in the amazon developer portal
+	if ( $post_id ) {
+		$children['readonly_skill_url'] = new \Fieldmanager_TextField( array(
+			'label' => __( 'This is the endpoint URL of your skill. Paste this within the configuration tab for your skill in the developer portal.', 'voicewp' ),
+			'default_value' => home_url( '/wp-json/voicewp/v1/skill/' ) . $post_id,
+			'skip_save' => true,
+			'attributes' => array(
+				'readonly' => 'readonly',
+				'style' => 'width: 95%;',
+			),
+			'display_if' => array(
+				'src' => 'is_standalone',
+				'value' => true,
+			),
+		) );
+	}
+
 	$fm = new \Fieldmanager_Group( array(
 		'name' => 'voicewp_skill',
 		'serialize_data' => false,
@@ -55,57 +74,88 @@ function voicewp_fm_briefing_content() {
 	$allowed_formats = array( 'mp3' );
 
 	$children = array(
-		new \VoiceWP_Fieldmanager_Content_TextArea( __( 'Text', 'voicewp' ), array(
+		// Display-if control.
+		'source' => new \Fieldmanager_Radios( __( 'Source', 'voicewp' ), array(
+			/**
+			 * Allows for filtering the available sources that
+			 * can be used for populating a flash briefing
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param array Flash briefing source options
+			 */
+			'options' => apply_filters( 'voicewp_briefing_source_options', array(
+				'content' => __( 'Text', 'voicewp' ),
+				'audio_url' => __( 'HTTPS URL to an MP3', 'voicewp' ),
+				'attachment_id' => __( 'Uploaded MP3', 'voicewp' ),
+			) ),
+			/**
+			 * String defining the default content source of a flash briefing
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param string default value
+			 */
+			'default_value' => apply_filters( 'voicewp_default_briefing_source', 'content' ),
+		) ),
+		'content' => new \VoiceWP_Fieldmanager_Content_TextArea( __( 'Text', 'voicewp' ), array(
 			'description' => __( 'Text should be under 4,500 characters.', 'voicewp' ),
 			'attributes' => array(
 				'style' => 'width: 100%; height: 400px',
 				'maxlength' => 4500,
 			),
+			'display_if' => array(
+				'src' => 'source',
+				'value' => 'content',
+			),
 		) ),
-		new \Fieldmanager_Media( __( 'Uploaded MP3', 'voicewp' ), array(
-			'name' => 'attachment_id',
-			'mime_type' => 'audio/mpeg',
-			'button_label' => __( 'Select a File', 'voicewp' ),
-			'modal_button_label' => __( 'Select File', 'voicewp' ),
-			'modal_title' => __( 'Select a File', 'voicewp' ),
-		) ),
-		new \Fieldmanager_Link( __( 'HTTPS URL to an MP3', 'voicewp' ), array(
-			'name' => 'audio_url',
+		'audio_url' => new \Fieldmanager_Link( __( 'HTTPS URL to an MP3', 'voicewp' ), array(
 			'attributes' => array(
 				'style' => 'width: 100%;',
 			),
+			'display_if' => array(
+				'src' => 'source',
+				/**
+				 * Allow filtering of what sources an audio link is used with
+				 *
+				 * @since 1.1.0
+				 *
+				 * @param string Comma separated list of source options to display the field for
+				 */
+				'value' => apply_filters( 'voicewp_briefing_audio_url_display_if', 'audio_url' ),
+			),
 		) ),
+		'attachment_id' => new \Fieldmanager_Media( __( 'Uploaded MP3', 'voicewp' ), array(
+			'mime_type' => 'audio',
+			'button_label' => __( 'Select a File', 'voicewp' ),
+			'modal_button_label' => __( 'Select File', 'voicewp' ),
+			'modal_title' => __( 'Select a File', 'voicewp' ),
+			'display_if' => array(
+				'src' => 'source',
+				'value' => 'attachment_id',
+			),
+		) ),
+		'uuid' => new \Fieldmanager_Hidden( array() ),
 	);
 
-	foreach ( $children as $key => $value ) {
-		$children[ $key ]->display_if = array(
-			'src' => 'source',
-			'value' => $children[ $key ]->name,
-		);
-	}
-
-	// Display-if control.
-	$display_if = new \Fieldmanager_Radios( __( 'Source', 'voicewp' ), array(
-		'name' => 'source',
-		'options' => wp_list_pluck( $children, 'label', 'name' ),
-	) );
-
-	// Briefing UUID, saved the first time and used thereafter.
-	$uuid = new \Fieldmanager_Hidden( array(
-		'name' => 'uuid',
-	) );
-
 	if ( ! get_post_meta( $post_id, 'voicewp_briefing_uuid', true ) ) {
-		$uuid->default_value = voicewp_generate_uuid4();
+		$children['uuid']->default_value = voicewp_generate_uuid4();
 	}
 
-	array_unshift( $children, $display_if, $uuid );
+	/**
+	 * Allow addition, removal, or modification of briefing fields
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param array $children The Fieldmanager fields used with a flash briefing
+	 */
+	$children = apply_filters( 'voicewp_briefing_fields', $children );
 
 	$fm = new \Fieldmanager_Group( array(
 		'name' => 'voicewp_briefing',
 		'serialize_data' => false,
 		// Needs to be name => field for compat with FM's validation routines.
-		'children' => array_combine( wp_list_pluck( $children, 'name' ), $children ),
+		'children' => $children,
 	) );
 
 	// Help text.
@@ -213,6 +263,37 @@ function voicewp_fm_alexa_settings() {
 		) ),
 	);
 
+	$children['user_dictionary'] = new Fieldmanager_Group( array(
+		'label' => __( 'Word Pronunciation Substitutions', 'voicewp' ),
+		'collapsible' => true,
+		'description' => __( "This allows you to define a global dictionary of words, phrases, abbreviations that Alexa should pronounce a certain way. For example, perhaps every occurrance of the state abreviation 'TN' should be pronounced as 'Tennessee', or 'NYC should be read as 'New York City' or the chemical 'Mg' read as 'Magnesium'. ", 'voicewp' ),
+		'description_after_element' => false,
+		'children' => array(
+			'dictionary' => new Fieldmanager_Group( array(
+				'limit' => 0,
+				'extra_elements' => 0,
+				'label' => __( 'Phrase / Word / Abbreviation', 'voicewp' ),
+				'label_macro' => array( '%s', 'search' ),
+				'add_more_label' => __( 'Add another phrase, word, or abbreviation', 'voicewp' ),
+				'collapsible' => true,
+				'children' => array(
+					'search' => new Fieldmanager_TextField( array(
+						'description' => __( 'Phrase to pronounce differently', 'voicewp' ),
+						'attributes' => array(
+							'style' => 'width: 45%;',
+						),
+					) ),
+					'replace' => new Fieldmanager_TextField( array(
+						'description' => __( 'How the above phrase should be pronounced.', 'voicewp' ),
+						'attributes' => array(
+							'style' => 'width: 45%;',
+						),
+					) ),
+				),
+			) ),
+		),
+	) );
+
 	$children['news_utterances'] = new Fieldmanager_TextArea( array(
 		'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'voicewp' ),
 		'default_value' => file_get_contents( 'speechAssets/news/Utterances.txt', FILE_USE_INCLUDE_PATH ),
@@ -299,3 +380,26 @@ add_action( 'fm_submenu_voicewp-settings', 'voicewp_fm_alexa_settings' );
 if ( function_exists( 'fm_register_submenu_page' ) ) {
 	fm_register_submenu_page( 'voicewp-settings', 'tools.php', __( 'Alexa Skill Settings', 'voicewp' ), __( 'Alexa Skill Settings', 'voicewp' ), 'manage_options', 'voicewp-settings' );
 }
+
+/**
+ * Creates option of user defined dictionary terms for replacement within
+ * Alexa content. Uses the 'sub' element to specify pronunciations of words.
+ *
+ * @param array $data FM data
+ * @return array
+ */
+function voicewp_fm_submenu_presave_data( $data ) {
+	if ( empty( $data['user_dictionary']['dictionary'] ) || ! is_array( $data['user_dictionary']['dictionary'] ) ) {
+		return;
+	}
+
+	$dictionary = get_option( 'voicewp_user_dictionary', array() );
+	foreach ( $data['user_dictionary']['dictionary'] as $key => $value ) {
+		if ( ! empty( $value['search'] ) ) {
+			$dictionary[ $value['search'] ] = sprintf( '<sub alias="%s">%s</sub>', $value['replace'], $value['search'] );
+		}
+	}
+	update_option( 'voicewp_user_dictionary', $dictionary );
+	return $data;
+}
+add_filter( 'fm_submenu_presave_data', 'voicewp_fm_submenu_presave_data' );

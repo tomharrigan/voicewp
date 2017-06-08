@@ -46,7 +46,10 @@ class Voicewp_Post_Type_Skill extends Voicewp_Post_Type {
 				'menu_name'          => __( 'Skills', 'voicewp' ),
 			),
 			'menu_icon' => 'dashicons-awards',
-			'public' => true,
+			'public' => false,
+			'publicly_queryable' => true,
+			'show_in_menu' => true,
+			'show_ui' => true,
 			'supports' => array( 'title' ),
 		) );
 	}
@@ -74,6 +77,9 @@ class Voicewp_Post_Type_Skill extends Voicewp_Post_Type {
 		if ( empty( $is_standalone ) && ! empty( $skill_type ) ) {
 			$old_index = $custom_skill_index = get_option( 'voicewp_skill_index_map', array() );
 			$skill = '\Alexa\Skill\\' . $skill_type;
+			if ( ! class_exists( $skill ) ) {
+				return;
+			}
 			$skill = new $skill;
 
 			foreach ( $skill->intents as $intent ) {

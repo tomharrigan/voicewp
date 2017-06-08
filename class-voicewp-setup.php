@@ -11,6 +11,49 @@ class Voicewp_Setup {
 
 	protected static $instance;
 
+	/**
+	 * Array of SSML to allow in content markup.
+	 *
+	 * https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/speech-synthesis-markup-language-ssml-reference
+	 *
+	 * @var array
+	 * @access public
+	 */
+	public static $ssml = array(
+		'amazon:effect' => array(
+			'name' => array(),
+		),
+		'audio' => array(
+			'src' => array(),
+		),
+		'break' => array(
+			'strenth' => array(),
+			'time' => array(),
+		),
+		'emphasis' => array(
+			'level' => array(),
+		),
+		'phoneme' => array(
+			'alphabet' => array(),
+			'ph' => array(),
+		),
+		'prosody' => array(
+			'rate' => array(),
+			'pitch' => array(),
+			'volume' => array(),
+		),
+		'say-as' => array(
+			'interpret-as' => array(),
+			'format' => array(),
+		),
+		'sub' => array(
+			'alias' => array(),
+		),
+		'w' => array(
+			'role' => array(),
+		),
+	);
+
 	public static function get_instance() {
 		if ( ! isset( self::$instance ) ) {
 			self::$instance = new self;
@@ -21,6 +64,7 @@ class Voicewp_Setup {
 	public function __construct() {
 		add_action( 'after_setup_theme', array( $this, 'add_image_size' ) );
 		add_filter( 'allowed_http_origins', array( $this, 'allowed_http_origins' ) );
+		add_filter( 'tiny_mce_before_init', array( $this, 'tiny_mce_before_init' ) );
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 		add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
 		foreach ( voicewp_news_post_types() as $post_type ) {
@@ -85,6 +129,34 @@ class Voicewp_Setup {
 		$allowed_origins[] = 'http://ask-ifr-download.s3.amazonaws.com';
 		$allowed_origins[] = 'https://ask-ifr-download.s3.amazonaws.com';
 		return $allowed_origins;
+	}
+
+	/**
+	 * Add SSML as valid elements within tinymce
+	 *
+	 * @param array $settings TinyMCE settings
+	 * @return array
+	 */
+	public function tiny_mce_before_init( $settings ) {
+
+		if ( ! isset( $settings['extended_valid_elements'] ) ) {
+			$settings['extended_valid_elements'] = '';
+		}
+		if ( ! isset( $settings['custom_elements'] ) ) {
+			$settings['custom_elements'] = '';
+		}
+
+		foreach ( self::$ssml as $tag => $attributes ) {
+			// tilda character denotes rendering as span rather than div
+			$settings['custom_elements'] .= ',~' . $tag;
+			if ( ! empty( $attributes ) ) {
+				$settings['extended_valid_elements'] .= ',' . $tag . '['. implode( '|', array_keys( $attributes ) ) . ']';
+			}
+		}
+		$settings['extended_valid_elements'] = ltrim( $settings['extended_valid_elements'], ',' );
+		$settings['custom_elements'] = ltrim( $settings['custom_elements'], ',' );
+
+		return $settings;
 	}
 
 	/**
