@@ -159,7 +159,16 @@ class News {
 	 */
 	public function format_single_post( $id, $single_post ) {
 		$voicewp_instance = \Voicewp_Setup::get_instance();
+		// Strip shortcodes and markup other than SSML
 		$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', wp_kses( strip_shortcodes( $single_post->post_content ), $voicewp_instance::$ssml ) );
+		// Apply user defined dictionary to content as ssml
+		$dictionary = get_option( 'voicewp_user_dictionary', array() );
+		if ( ! empty( $dictionary ) ) {
+			$dictionary_keys = array_map( function( $key ) {
+				return ' ' . $key;
+			}, array_keys( $dictionary ) );
+			$post_content = str_ireplace( $dictionary_keys, $dictionary, $post_content );
+		}
 		return array(
 			'content' => sprintf( '<speak>%s</speak>', $post_content ),
 			'title' => $single_post->post_title,
