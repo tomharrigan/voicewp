@@ -27,10 +27,7 @@ class News {
 	 * Handles grabbing the needed data and delivering the response
 	 * @param AlexaEvent $event
 	 */
-	public function news_request( $event ) {
-
-		$request = $event->get_request();
-		$response = $event->get_response();
+	public function news_request( $request, $response ) {
 
 		if ( $request instanceof \Alexa\Request\IntentRequest ) {
 			$intent = $request->intent_name;
@@ -101,7 +98,7 @@ class News {
 						$post_id = $this->get_post_id( $request->session->attributes['post_ids'], $post_number );
 						$result = $this->endpoint_single_post( $post_id );
 						$response
-							->respond( $result['content'] )
+							->respond_ssml( $result['content'] )
 							->with_card( $result['title'], '', $result['image'] )
 							->end_session();
 					} else {
@@ -161,9 +158,10 @@ class News {
 	 * @return array Data from the post being returned
 	 */
 	public function format_single_post( $id, $single_post ) {
-		$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', strip_tags( strip_shortcodes( $single_post->post_content ) ) );
+		$voicewp_instance = \Voicewp_Setup::get_instance();
+		$post_content = preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', wp_kses( strip_shortcodes( $single_post->post_content ), $voicewp_instance::$ssml ) );
 		return array(
-			'content' => $post_content,
+			'content' => sprintf( '<speak>%s</speak>', $post_content ),
 			'title' => $single_post->post_title,
 			'image' => get_post_thumbnail_id( $id ),
 		);
