@@ -39,7 +39,8 @@ function voicewp_fm_alexa_app_settings() {
 	// If there's a post ID, output the REST endpoint for use in the amazon developer portal
 	if ( $post_id ) {
 		$children['readonly_skill_url'] = new \Fieldmanager_TextField( array(
-			'label' => __( 'This is the endpoint URL of your skill. Paste this within the configuration tab for your skill in the developer portal.', 'voicewp' ),
+			'label' => __( 'This is the endpoint URL of your skill. Paste this within the configuration tab for your skill in the <a href="https://developer.amazon.com" target="_blank">Amazon developer console</a>.', 'voicewp' ),
+			'escape' => array( 'label' => 'wp_kses_post' ),
 			'default_value' => home_url( '/wp-json/voicewp/v1/skill/' ) . $post_id,
 			'skip_save' => true,
 			'attributes' => array(
@@ -295,7 +296,8 @@ function voicewp_fm_alexa_settings() {
 	) );
 
 	$children['news_utterances'] = new Fieldmanager_TextArea( array(
-		'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'voicewp' ),
+		'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the <a href='https://developer.amazon.com' target='_blank'>Amazon developer console</a>.", 'voicewp' ),
+		'escape' => array( 'label' => 'wp_kses_post' ),
 		'default_value' => file_get_contents( 'speechAssets/news/Utterances.txt', FILE_USE_INCLUDE_PATH ),
 		'skip_save' => true,
 		'attributes' => array_merge(
