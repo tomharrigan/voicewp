@@ -37,7 +37,7 @@ For more on how Alexa skills work in general, [see here](https://developer.amazo
 		- Users can ask for content from a specific category/taxonomy
 		- Full SSML support within post content
 		- Full utterances/intent schema provided as starting point to easily copy/paste into theh Amazon Developer console
-		- Does your site use acronyms or other abbreviations? Settings screen provides an interface for defining items Alexa should pronounce a certain way (ex. A site may want all instances of 'DoT' within text to be read as 'Department of transportation' )
+		- Does your site use acronyms or other abbreviations? Settings screen provides an interface for defining items Alexa should pronounce a certain way (For example, a site may want all instances of 'DoT' within text to be read as 'Department of transportation' )
 	- __Facts/Quotes__: Create simple skills for serving facts or quotes on your favorite topics. For example, 'Cat Facts', or 'Developer Quotes'.
 		- Ability to include custom images as part of the app cards.
 		- Ability to include this as a subset of functionality within the main News skill.
