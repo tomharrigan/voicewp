@@ -34,11 +34,11 @@ Out of the box, a few different types of skills can be created:
 - News. This makes the content/posts from your site accessible to users for consumption via Alexa.
 - Facts/Quotes - Create simple skills for delivering facts or quotes on your favorite topics. For example, 'Cat Facts', or 'Developer Quotes'.
 
--list
--list
-  -sublist
-  -sublist
--list
+- list
+- list
+  - sublist
+  - sublist
+- list
 
 In addition, the plugin allows developers to create completely new types of skills via provided hooks, filters and functions. Documentation for this is outlined here.[link]
 
