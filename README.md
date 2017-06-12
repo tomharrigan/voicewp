@@ -16,14 +16,14 @@ For more on how Alexa skills work in general, [see here](https://developer.amazo
 
 ## Requirements
 
-- [Fieldmanager](http://fieldmanager.org)
-- An SSL certificate is required on your site.
-- Minimum required PHP version for VoiceWP is PHP 5.3.
-- Minimum required WordPress version for VoiceWP is WordPress Version 4.4.
+- [Fieldmanager](http://fieldmanager.org).
+- SSL certificate.
+- Minimum version of PHP: 5.3.
+- Minimum version of WordPress: 4.4.
 
 ## Installation
 
-- Install and activate [Fieldmanager](https://github.com/alleyinteractive/wordpress-fieldmanager/archive/1.0.0.zip)
+- Install and activate [Fieldmanager](https://github.com/alleyinteractive/wordpress-fieldmanager/archive/1.0.0.zip).
 - Download the .zip file of this repo and upload to your WordPress site by navigating to WP Admin and navigating to **Plugins -> Add New**. Select the 'Upload Plugin' button near the top of the top of the screen to upload the .zip file.
 
 ## Skills
@@ -63,6 +63,6 @@ All development of VoiceWP happens transparently on Github. [Github Issues](http
 
 Join us on [Gitter](https://gitter.im/voicewp/Lobby) for general discussions or questions.
 
-## Credit
+## Credits
 
-See [credits.txt]
+See [credits.txt](/credits.txt)
