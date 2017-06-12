@@ -52,9 +52,10 @@ Join us on [Gitter](https://gitter.im/voicewp/Lobby) for general discussions or 
 ## Documentation
 
 - [Skills](#skills)
-- Settings
-- Creating your own custom skills
-- Hook/Filter reference
+- [Settings](#settings)
+- [Creating your own custom skills]
+- [Hook/Filter reference]
+- [Removing unused components]
 
 ### Skills
 
@@ -78,6 +79,14 @@ This news/content skill will currently read the 5 latest headlines from your Wor
 
 The endpoint for this will be at:
 `https://yourdomain.com/wp-json/voicewp/v1/skill/news`
+
+### Settings
+
+### Creating your own custom skills
+
+### Hook/Filter reference
+
+### Removing unused components
 
 ## Credits
 
