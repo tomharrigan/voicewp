@@ -28,17 +28,17 @@ For more on how Alexa skills work in general, [see here](https://developer.amazo
 
 ## Features
 
-Out of the box, a few different types of skills can be created:
-
-- Flash Briefings, which deliver original content to users as part of their flash briefing. For more on Flash Briefings, [see here](https://developer.amazon.com/alexa-skills-kit/flash-briefing).
-- News. This makes the content/posts from your site accessible to users for consumption via Alexa.
-- Facts/Quotes - Create simple skills for delivering facts or quotes on your favorite topics. For example, 'Cat Facts', or 'Developer Quotes'.
-
-- list
-- list
-  - sublist
-  - sublist
-- list
+- 3 different types of skills can be created out of the box
+	- Flash Briefings, which deliver original content to users as part of their flash briefing. For more on Flash Briefings, [see here](https://developer.amazon.com/alexa-skills-kit/flash-briefing).
+	- News : Allow users to listen to your content/posts
+		- Fully editable 'Welcome', 'Help', and 'Stop' messaging
+		- Presents users with a list of posts to select from
+		- Selected content/post is read in full
+		- Users can ask for content from a specific category/taxonomy
+		- Full SSML support within post content
+		- Full utterances/intent schema provided as starting point to easily copy/paste into theh Amazon Developer console
+		- Does your site use acronyms or other abbreviations? Settings screen provides an interface for defining items Alexa should pronounce a certain way (ex. A site may want all instances of 'DoT' within text to be read as 'Department of transportation' )
+	- Facts/Quotes - Create simple skills for delivering facts or quotes on your favorite topics. For example, 'Cat Facts', or 'Developer Quotes'.
 
 In addition, the plugin allows developers to create completely new types of skills via provided hooks, filters and functions. Documentation for this is outlined here.[link]
 
