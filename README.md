@@ -26,13 +26,19 @@ For more on how Alexa skills work in general, [see here](https://developer.amazo
 - Install and activate [Fieldmanager](https://github.com/alleyinteractive/wordpress-fieldmanager/archive/1.0.0.zip).
 - Download the .zip file of this repo and upload to your WordPress site by navigating to WP Admin and navigating to **Plugins -> Add New**. Select the 'Upload Plugin' button near the top of the top of the screen to upload the .zip file.
 
-## Skills
+## Features
 
 Out of the box, a few different types of skills can be created:
 
 - Flash Briefings, which deliver original content to users as part of their flash briefing. For more on Flash Briefings, [see here](https://developer.amazon.com/alexa-skills-kit/flash-briefing).
 - News. This makes the content/posts from your site accessible to users for consumption via Alexa.
 - Facts/Quotes - Create simple skills for delivering facts or quotes on your favorite topics. For example, 'Cat Facts', or 'Developer Quotes'.
+
+-list
+-list
+  -sublist
+  -sublist
+-list
 
 In addition, the plugin allows developers to create completely new types of skills via provided hooks, filters and functions. Documentation for this is outlined here.[link]
 
@@ -62,6 +68,8 @@ The endpoint for this will be at:
 All development of VoiceWP happens transparently on Github. [Github Issues](https://github.com/alleyinteractive/voicewp/issues) are used for identifying and discussing bugs and features. Code contributions, whether fixes or enhancements, should be submitted as Pull Requests.
 
 Join us on [Gitter](https://gitter.im/voicewp/Lobby) for general discussions or questions.
+
+## Documentation
 
 ## Credits
 
