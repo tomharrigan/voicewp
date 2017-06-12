@@ -53,9 +53,9 @@ Join us on [Gitter](https://gitter.im/voicewp/Lobby) for general discussions or 
 
 - [Skills](#skills)
 - [Settings](#settings)
-- [Creating your own custom skills]
-- [Hook/Filter reference]
-- [Removing unused components]
+- [Creating your own custom skills](#creating-your-own-custom-skills)
+- [Hook/Filter reference](#hookfilter-reference)
+- [Removing unused components](#removing-unused-components)
 
 ### Skills
 
