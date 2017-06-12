@@ -29,8 +29,8 @@ For more on how Alexa skills work in general, [see here](https://developer.amazo
 ## Features
 
 - 3 different types of skills can be created out of the box
-	- Flash Briefings, which deliver original content to users as part of their flash briefing. For more on Flash Briefings, [see here](https://developer.amazon.com/alexa-skills-kit/flash-briefing).
-	- News : Allow users to listen to your content/posts
+	- __Flash Briefings__: Deliver original content to users as part of their flash briefing. For more on Flash Briefings, [see here](https://developer.amazon.com/alexa-skills-kit/flash-briefing).
+	- __News__: Allow users to listen to your content/posts
 		- Fully editable 'Welcome', 'Help', and 'Stop' messaging
 		- Presents users with a list of posts to select from
 		- Selected content/post is read in full
@@ -38,30 +38,10 @@ For more on how Alexa skills work in general, [see here](https://developer.amazo
 		- Full SSML support within post content
 		- Full utterances/intent schema provided as starting point to easily copy/paste into theh Amazon Developer console
 		- Does your site use acronyms or other abbreviations? Settings screen provides an interface for defining items Alexa should pronounce a certain way (ex. A site may want all instances of 'DoT' within text to be read as 'Department of transportation' )
-	- Facts/Quotes - Create simple skills for delivering facts or quotes on your favorite topics. For example, 'Cat Facts', or 'Developer Quotes'.
-
-In addition, the plugin allows developers to create completely new types of skills via provided hooks, filters and functions. Documentation for this is outlined here.[link]
-
-### Flash Briefing Skill
-
-A Briefings post type is created which is intended to be used for the Flash Briefing skill.
-
-The endpoint for this will be at:
-`https://yourdomain.com/wp-json/voicewp/v1/skill/briefing`
-
-### Fact/Quote Skills
-
-A Skills post type is created for generic skill creation. Out of the box, Fact/Quote skills can be created.
-
-The endpoint for this will be at:
-`https://yourdomain.com/wp-json/voicewp/v1/skill/(post_id)`
-
-### News from your posts Skill
-
-This news/content skill will currently read the 5 latest headlines from your WordPress posts and allows the user to choose a post to be read in full.
-
-The endpoint for this will be at:
-`https://yourdomain.com/wp-json/voicewp/v1/skill/news`
+	- __Facts/Quotes__: Create simple skills for serving facts or quotes on your favorite topics. For example, 'Cat Facts', or 'Developer Quotes'.
+		- Ability to include custom images as part of the app cards.
+		- Ability to include this as a subset of functionality within the main News skill.
+- Developers can create completely new types of skills or customize the existing functionality of the plugin via provided hooks, filters and functions. Documentation [outlined here](#documentation).
 
 ## Contribute
 
@@ -70,6 +50,34 @@ All development of VoiceWP happens transparently on Github. [Github Issues](http
 Join us on [Gitter](https://gitter.im/voicewp/Lobby) for general discussions or questions.
 
 ## Documentation
+
+- [Skills](#skills)
+- Settings
+- Creating your own custom skills
+- Hook/Filter reference
+
+### Skills
+
+#### Flash Briefing Skill
+
+A Briefings post type is created which is intended to be used for the Flash Briefing skill.
+
+The endpoint for this will be at:
+`https://yourdomain.com/wp-json/voicewp/v1/skill/briefing`
+
+#### Fact/Quote Skills
+
+A Skills post type is created for generic skill creation. Out of the box, Fact/Quote skills can be created.
+
+The endpoint for this will be at:
+`https://yourdomain.com/wp-json/voicewp/v1/skill/(post_id)`
+
+#### News from your posts Skill
+
+This news/content skill will currently read the 5 latest headlines from your WordPress posts and allows the user to choose a post to be read in full.
+
+The endpoint for this will be at:
+`https://yourdomain.com/wp-json/voicewp/v1/skill/news`
 
 ## Credits
 
