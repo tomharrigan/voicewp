@@ -54,10 +54,8 @@ Join us on [Gitter](https://gitter.im/voicewp/Lobby) for general discussions or 
 - [Skills](#skills)
 - [Amazon Developer Console](#amazon-developer-console)
 - [Settings](#settings)
-- [Testing](#testing)
 - [Creating your own custom skills](#creating-your-own-custom-skills)
-- [Hook/Filter reference](#hookfilter-reference)
-- [Removing unused components](#removing-unused-components)
+- [Filter reference](#hookfilter-reference)
 
 ### Skills
 
@@ -85,8 +83,6 @@ The endpoint for this will be at:
 ### Amazon Developer Console
 
 ### Settings
-
-### Testing
 
 ### Creating your own custom skills
 
@@ -149,9 +145,32 @@ The response is sent back to the user. Alexa will say 'Hello World!', in the use
 
 A more advanced version of the above sample skill with additional details is [included here](/docs-examples/class-hello-world-example.php).
 
-### Hook/Filter reference
+### Filter reference
 
-### Removing unused components
+`voicewp_briefing_source_options`
+
+Allows for filtering the available sources that can be used for populating a flash briefing.
+
+@param array Flash briefing source options
+
+Example:
+
+
+`voicewp_briefing_audio_url_display_if`
+
+`voicewp_default_briefing_source`
+
+`voicewp_briefing_fields`
+
+
+`voicewp_pre_get_briefing`
+
+`voicewp_briefing_source`
+
+`voicewp_briefing_response`
+
+
+`voicewp_post_types`
 
 ## Credits
 
