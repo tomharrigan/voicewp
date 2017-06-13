@@ -104,12 +104,12 @@ function hello_world_register_routes() {
 add_action( 'rest_api_init', 'hello_world_register_routes' );
 ```
 
-This registers the REST endpoint, defining the URL that our skill lives at. Our `hello_world_register_routes` function is hooked on the `rest_api_init` action.
+This registers the REST endpoint, defining the URL that our skill lives at. Our `hello_world_register_routes()` function is hooked on the `rest_api_init` action.
 
 - The URL of this skill would be `https://{yourdomain.com}/wp-json/voicewp/v1/hello-world`
 - When a request is made by Alexa to this URL, a function named `hello_world_skill` is called.
 
-Now let's define our `hello_world_skill` function:
+Now let's define our `hello_world_skill()` function:
 
 ```php
 function hello_world_skill( WP_REST_Request $request ) {
@@ -141,7 +141,7 @@ function hello_world_skill( WP_REST_Request $request ) {
 }
 ```
 
-The `hello_world_skill` function begins with a few lines of boilerplate, each line above is commented to describe what it is doing. Don't forget to replace `add_your_amazon_app_ID_here` with your own app ID.
+The `hello_world_skill()` function begins with a few lines of boilerplate, each line above is commented to describe what it is doing. Don't forget to replace `add_your_amazon_app_ID_here` with your own app ID.
 
 After the boilerplate is the main functionality of the skill. In this simple example, it is included directly here, but you may wish to break this out into a separate function in your own code.
 
