@@ -149,11 +149,30 @@ A more advanced version of the above sample skill with additional details is [in
 
 `voicewp_briefing_source_options`
 
-Allows for filtering the available sources that can be used for populating a flash briefing.
+```php
+apply_filters( 'voicewp_briefing_source_options', array $sources );
+```
 
-@param array Flash briefing source options
+Allows for filtering the available sources that can be used for populating a flash briefing. Each source is a radio button option. This filter is only for adding an option to the radio buttons, it does not add a new field to the interface, see `voicewp_default_briefing_source`.
+
+![briefing content source options](https://user-images.githubusercontent.com/784167/27094034-c8d53224-5036-11e7-8d82-44b503892fa8.png)
+
+Parameters
+
+$sources (array) Flash briefing source options. Key is field name, value is text label.
 
 Example:
+
+```php
+function my_voicewp_briefing_source_options( $sources ) {
+    // To remove an existing source option
+    unset( $sources['attachment_id'] );
+    // To add a new source option
+    $sources['my_link'] = __( 'My link', 'voicewp' );
+    return $sources;
+}
+add_filter( 'voicewp_briefing_source_options', 'my_voicewp_briefing_source_options' );
+```
 
 
 `voicewp_briefing_audio_url_display_if`
