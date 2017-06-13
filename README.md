@@ -106,7 +106,7 @@ add_action( 'rest_api_init', 'hello_world_register_routes' );
 
 This registers the REST endpoint, defining the URL that our skill lives at. Our `hello_world_register_routes` function is hooked on the `rest_api_init` action.
 
-- The URL of this skill would be `https://yourdomain.com/wp-json/voicewp/v1/hello-world
+- The URL of this skill would be `https://{yourdomain.com}/wp-json/voicewp/v1/hello-world`
 - When a request is made by Alexa to this URL, a function named `hello_world_skill` is called.
 
 Now let's define our 'hello_world_skill' function:
