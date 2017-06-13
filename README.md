@@ -141,13 +141,13 @@ function hello_world_skill( WP_REST_Request $request ) {
 }
 ```
 
-The `hello_world_skill` function accepts one parameter, which we get automatically. The function begins with a few lines of boilerplate, each line above is commented to describe what it is doing. Don't forget to replace `add_your_amazon_app_ID_here` with your own app ID.
+The `hello_world_skill` function begins with a few lines of boilerplate, each line above is commented to describe what it is doing. Don't forget to replace `add_your_amazon_app_ID_here` with your own app ID.
 
 After the boilerplate is the main functionality of the skill. In this simple example, it is included directly here, but you may wish to break this out into a separate function in your own code.
 
 The response is sent back to the user. Alexa will say 'Hello World!', in the users' app, there will be an app card that says 'Hello from {your site name}'. That's it, simple!
 
-The complete above sample skill, formatted nicely into a class, is [included here](/docs-examples/class-hello-world-example.php).
+A more advanced version of the above sample skill with additional details is [included here](/docs-examples/class-hello-world-example.php).
 
 ### Hook/Filter reference
 
