@@ -82,6 +82,30 @@ The endpoint for this will be at:
 
 ### Settings
 
+The main Alexa Skill Settings screen is located at __Tools -> Alexa Skill Settings__
+
+![setting_menu](https://user-images.githubusercontent.com/784167/27144151-c7ff3b2e-50fe-11e7-8043-431090ec8646.png)
+
+The most important field that needs to be filled in for the news functionality to work is the `News skill ID` field. The Skill ID can be retrieved from the Amazon Developer Console:
+
+![skill_id](https://user-images.githubusercontent.com/784167/27146948-11a683cc-5109-11e7-9afc-502b85696cfa.png)
+
+The top of the settings screen provides the ability to set and customize a number of messages used in the skill. The Welcome message is triggered when a user opens your skill, for example 'Alexa, open Developer Quotes'. (This occurs by Alexa sending a 'LanchIntent' to your skill). The welcome message can prompt the user to take a certain action, or give them a brief intro to the skill.
+
+The Help message should provide information for the different actions a user can take and occurs when the user asks for help. This occurs by Alexa sending a 'AMAZON.HelpIntent' to your skill.
+e
+The Stop message is completely optional. When a user asks the skill to stop or cancel, you can provide a parting message.
+
+![intent_messages](https://user-images.githubusercontent.com/784167/27147008-496cb858-5109-11e7-8565-91d288aab637.png)
+
+Many sites have a set of abreviations, acronyms, etc. That should be spoken differently by Alexa than how they appear in text. For example, the state abbreviation 'TN' should be pronounced as 'Tennessee'. A meta box with repeating field is available for you to define these words and phrases. Simply add the item in the first field, and how it should be read by Alexa in the second field.
+
+![dictionary](https://user-images.githubusercontent.com/784167/27150410-23d9ebb8-5115-11e7-8938-e75fb4c4e2c1.png)
+
+Defining the interaction model can be tedious phase in skill creation. To get you up and running quickly, the settings screen provides utterances, custom slot types, and an intent schema. The content of these fields can be quickly copied and pasted into the 'Interaction Model' tab for your skill in the Amazon Developer Console.
+
+![interaction_model](https://user-images.githubusercontent.com/784167/27150639-fef6fcae-5115-11e7-8f47-8c776d37402f.png)
+
 ### Amazon Developer Console
 
 ### Creating your own custom skills
