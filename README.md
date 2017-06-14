@@ -229,6 +229,8 @@ function my_voicewp_briefing_fields( $children ) {
 add_filter( 'voicewp_briefing_fields', 'my_voicewp_briefing_fields' );
 ```
 
+---
+
 #### voicewp_pre_get_briefing
 
 ```php
@@ -240,6 +242,8 @@ Allows briefing content to be overridden for customization purposes.
 Parameters
 
 $array (array) An empty array. If not empty, it will be immediately returned as the response to the user.
+
+---
 
 #### voicewp_briefing_source
 
@@ -267,6 +271,8 @@ function my_voicewp_briefing_source( $response, $source, $post_id ) {
 add_filter( 'voicewp_briefing_source', 'my_voicewp_briefing_source', 10, 3 );
 ```
 
+---
+
 #### voicewp_briefing_response
 
 ```php
@@ -279,6 +285,8 @@ Parameters
 $response (array) A single briefing item
 $post->ID (int) ID of post object
 $post (Object) Post object
+
+---
 
 #### voicewp_post_types
 
