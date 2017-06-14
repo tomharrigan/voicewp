@@ -73,7 +73,7 @@ A Skills post type is created for generic skill creation. Out of the box, Fact/Q
 The endpoint for this will be at:
 `https://yourdomain.com/wp-json/voicewp/v1/skill/(post_id)`
 
-#### News from your posts Skill
+#### News Skill
 
 This news/content skill will currently read the 5 latest headlines from your WordPress posts and allows the user to choose a post to be read in full.
 
@@ -147,7 +147,7 @@ A more advanced version of the above sample skill with additional details is [in
 
 ### Filter reference
 
-`voicewp_briefing_source_options`
+#### voicewp_briefing_source_options
 
 ```php
 apply_filters( 'voicewp_briefing_source_options', array $sources );
@@ -159,7 +159,7 @@ Allows for filtering the available sources that can be used for populating a fla
 
 Parameters
 
-$sources (array) Flash briefing source options. Key is field name, value is text label.
+$sources (array) Flash briefing source options. Array key is field name, value is text label.
 
 Example:
 
@@ -168,28 +168,135 @@ function my_voicewp_briefing_source_options( $sources ) {
     // To remove an existing source option
     unset( $sources['attachment_id'] );
     // To add a new source option
-    $sources['my_link'] = __( 'My link', 'voicewp' );
+    $sources['my_url'] = __( 'My URL', 'voicewp' );
     return $sources;
 }
 add_filter( 'voicewp_briefing_source_options', 'my_voicewp_briefing_source_options' );
 ```
 
+---
 
-`voicewp_briefing_audio_url_display_if`
+#### voicewp_default_briefing_source
 
-`voicewp_default_briefing_source`
+```php
+apply_filters( 'voicewp_default_briefing_source', string $default_source );
+```
 
-`voicewp_briefing_fields`
+String defining the default content source of a flash briefing. The text area is the default source.
 
+Parameters
 
-`voicewp_pre_get_briefing`
+$sources (string) The default selected content source for a flash briefing. The string is the array key of the source option.
 
-`voicewp_briefing_source`
+Example:
 
-`voicewp_briefing_response`
+```php
+function my_voicewp_default_briefing_source( $default_source ) {
+    return 'my_url';
+}
+add_filter( 'voicewp_default_briefing_source', 'my_voicewp_default_briefing_source' );
+```
 
+---
 
-`voicewp_post_types`
+#### voicewp_briefing_fields
+
+```php
+apply_filters( 'voicewp_briefing_fields', array $children );
+```
+
+Allow addition, removal, or modification of briefing fields. The name of the meta field will be prefixed with `voicewp_briefing_`, so in the below example, the `my_url_field` will be saved as `voicewp_briefing_my_url_field`.
+
+Parameters
+
+$children (array) An array of Fieldmanager fields. The array of fields is a child of a Fieldmanager Group.
+
+Example:
+
+```php
+function my_voicewp_briefing_fields( $children ) {
+    $children['my_url_field'] = new Fieldmanager_Link( __( 'HTTPS URL to my audio file', 'voicewp' ), array(
+        'attributes' => array(
+            'style' => 'width: 100%;',
+        ),
+        'display_if' => array(
+            'src' => 'source',
+            'value' => 'my_url',
+        ),
+    ) );
+    return $children;
+}
+add_filter( 'voicewp_briefing_fields', 'my_voicewp_briefing_fields' );
+```
+
+#### voicewp_pre_get_briefing
+
+```php
+apply_filters( 'voicewp_pre_get_briefing', array $array );
+```
+
+Allows briefing content to be overridden for customization purposes.
+
+Parameters
+
+$array (array) An empty array. If not empty, it will be immediately returned as the response to the user.
+
+#### voicewp_briefing_source
+
+```php
+apply_filters( 'voicewp_briefing_source', array $response, string $source, int $post_id, Object $post );
+```
+
+Parameters
+
+$response (array) The formatted briefing item.
+
+$source (string) The defined source of the briefing content. If this filter is reached, it's because a custom source is being used.
+
+$post_id (int) Post ID
+
+$post (object) Post object
+
+Example:
+
+```php
+function my_voicewp_briefing_source( $response, $source, $post_id ) {
+    $response['streamUrl'] = get_post_meta( $post_id, 'voicewp_briefing_my_url_field', true );
+    return $response;
+}
+add_filter( 'voicewp_briefing_source', 'my_voicewp_briefing_source', 10, 3 );
+```
+
+#### voicewp_briefing_response
+
+```php
+apply_filters( 'voicewp_briefing_response', array $response, int $post_id, Object $post );
+```
+
+Allows for filtering a flash briefing item before it is sent to the user.
+
+Parameters
+$response (array) A single briefing item
+$post->ID (int) ID of post object
+$post (Object) Post object
+
+#### voicewp_post_types
+
+```php
+apply_filters( 'voicewp_post_types', array $post_types );
+```
+
+Allows for filtering the post-types used within the news functionality. By default, the 'Post' post-type is used. Used for adding custom post types, and/or removing the default Post post-type.
+
+Example:
+
+```php
+function my_voicewp_post_types( $post_types ) {
+    $post_types[] = 'article';
+    return $post_types;
+}
+add_filter( 'voicewp_post_types', 'my_voicewp_post_types' );
+```
 
 ## Credits
 
