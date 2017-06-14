@@ -52,8 +52,8 @@ Join us on [Gitter](https://gitter.im/voicewp/Lobby) for general discussions or 
 ## Documentation
 
 - [Skills](#skills)
-- [Amazon Developer Console](#amazon-developer-console)
 - [Settings](#settings)
+- [Amazon Developer Console](#amazon-developer-console)
 - [Creating your own custom skills](#creating-your-own-custom-skills)
 - [Filter reference](#hookfilter-reference)
 
@@ -80,9 +80,9 @@ This news/content skill will currently read the 5 latest headlines from your Wor
 The endpoint for this will be at:
 `https://yourdomain.com/wp-json/voicewp/v1/skill/news`
 
-### Amazon Developer Console
-
 ### Settings
+
+### Amazon Developer Console
 
 ### Creating your own custom skills
 
