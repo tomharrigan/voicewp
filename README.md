@@ -207,8 +207,6 @@ After the boilerplate is the main functionality of the skill. In this simple exa
 
 The response is sent back to the user. Alexa will say 'Hello World!', in the users' app, there will be an app card that says 'Hello from {your site name}'. That's it, simple!
 
-A more advanced version of the above sample skill with additional details is [included here](/docs-examples/class-hello-world-example.php).
-
 ### Filter reference
 
 #### voicewp_briefing_source_options
