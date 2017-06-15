@@ -32,12 +32,12 @@ For more on how Alexa skills work in general, [see here](https://developer.amazo
 	- __Flash Briefings__: Deliver original content to users as part of their flash briefing. For more on Flash Briefings, [see here](https://developer.amazon.com/alexa-skills-kit/flash-briefing).
 	- __News__: Allow users to listen to your content/posts
 		- Fully editable 'Welcome', 'Help', and 'Stop' messaging
-		- Presents users with a list of posts to select from
+		- Presents users with a list of posts from which to select
 		- Selected content/post is read in full
 		- Users can ask for content from a specific category/taxonomy
 		- Full SSML support within post content
-		- Full utterances/intent schema provided as starting point to easily copy/paste into theh Amazon Developer console
-		- Does your site use acronyms or other abbreviations? Settings screen provides an interface for defining items Alexa should pronounce a certain way (For example, a site may want all instances of 'DoT' within text to be read as 'Department of transportation' )
+		- Full utterances/intent schema provided as starting point to easily copy/paste into the Amazon Developer console
+		- Does your site use acronyms or other abbreviations? Settings screen provides an interface for defining items Alexa should pronounce a certain way (For example, a site may want all instances of 'DoT' within text to be read as 'Department of Transportation' )
 	- __Facts/Quotes__: Create simple skills for serving facts or quotes on your favorite topics. For example, 'Cat Facts', or 'Developer Quotes'.
 		- Ability to include custom images as part of the app cards.
 		- Ability to include this as a subset of functionality within the main News skill.
@@ -45,7 +45,7 @@ For more on how Alexa skills work in general, [see here](https://developer.amazo
 
 ## Contribute
 
-All development of VoiceWP happens transparently on Github. [Github Issues](https://github.com/alleyinteractive/voicewp/issues) are used for identifying and discussing bugs and features. Code contributions, whether fixes or enhancements, should be submitted as Pull Requests.
+All development of VoiceWP happens transparently on Github. [Github Issues](https://github.com/alleyinteractive/voicewp/issues) are used for identifying and discussing bugs and features. Code contributions, whether fixes or enhancements, should be submitted as pull requests.
 
 Join us on [Gitter](https://gitter.im/voicewp/Lobby) for general discussions or questions.
 
@@ -90,7 +90,7 @@ The most important field that needs to be filled in for the news functionality t
 
 ![skill_id](https://user-images.githubusercontent.com/784167/27146948-11a683cc-5109-11e7-9afc-502b85696cfa.png)
 
-The top of the settings screen provides the ability to set and customize a number of messages used in the skill. The Welcome message is triggered when a user opens your skill, for example 'Alexa, open Developer Quotes'. (This occurs by Alexa sending a 'LanchIntent' to your skill). The welcome message can prompt the user to take a certain action, or give them a brief intro to the skill.
+The top of the settings screen provides the ability to set and customize a number of messages used in the skill. The welcome message is triggered when a user opens your skill, for example 'Alexa, open Developer Quotes'. (This occurs by Alexa sending a 'LanchIntent' to your skill). The welcome message can prompt the user to take a certain action, or give them a brief intro to the skill.
 
 The Help message should provide information for the different actions a user can take and occurs when the user asks for help. This occurs by Alexa sending a 'AMAZON.HelpIntent' to your skill.
 e
@@ -98,7 +98,7 @@ The Stop message is completely optional. When a user asks the skill to stop or c
 
 ![intent_messages](https://user-images.githubusercontent.com/784167/27147008-496cb858-5109-11e7-8565-91d288aab637.png)
 
-Many sites have a set of abreviations, acronyms, etc. That should be spoken differently by Alexa than how they appear in text. For example, the state abbreviation 'TN' should be pronounced as 'Tennessee'. A meta box with repeating field is available for you to define these words and phrases. Simply add the item in the first field, and how it should be read by Alexa in the second field.
+Many sites have a set of abbreviations, acronyms, etc. That should be spoken differently by Alexa than how they appear in text. For example, the state abbreviation 'TN' should be pronounced as 'Tennessee'. A meta box with repeating field is available for you to define these words and phrases. Simply add the item in the first field, and how it should be read by Alexa in the second field.
 
 ![dictionary](https://user-images.githubusercontent.com/784167/27150410-23d9ebb8-5115-11e7-8938-e75fb4c4e2c1.png)
 
