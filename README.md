@@ -10,7 +10,7 @@ VoiceWP is a WordPress plugin that integrates with Amazon Alexa to create and en
 
 VoiceWP creates REST endpoints using the WordPress REST API. These endpoints handle all of the logic of your Alexa skills. When a user interacts with your skill, it sends a Request to an endpoint, which is processed by this plugin, and sends the Response back to the user.
 
-This plugin provides a settings screen for configuring your skills within the WordPress admin dashboard.
+Yourk skills and settings can easily be created and configured within the WordPress admin dashboard via the provided settings screen and meta fields.
 
 For more on how Alexa skills work in general, [see here](https://developer.amazon.com/alexa-skills-kit).
 
@@ -24,7 +24,7 @@ For more on how Alexa skills work in general, [see here](https://developer.amazo
 ## Installation
 
 - Install and activate [Fieldmanager](https://github.com/alleyinteractive/wordpress-fieldmanager/archive/1.0.0.zip).
-- Download the .zip file of this repo and upload to your WordPress site by navigating to WP Admin and navigating to **Plugins -> Add New**. Select the 'Upload Plugin' button near the top of the top of the screen to upload the .zip file.
+- Download the .zip file of this repo and upload to your WordPress site by going to WP Admin and navigating to **Plugins -> Add New**. Select the 'Upload Plugin' button near the top of the top of the screen to upload the .zip file.
 
 ## Features
 
@@ -102,11 +102,51 @@ Many sites have a set of abreviations, acronyms, etc. That should be spoken diff
 
 ![dictionary](https://user-images.githubusercontent.com/784167/27150410-23d9ebb8-5115-11e7-8938-e75fb4c4e2c1.png)
 
-Defining the interaction model can be tedious phase in skill creation. To get you up and running quickly, the settings screen provides utterances, custom slot types, and an intent schema. The content of these fields can be quickly copied and pasted into the 'Interaction Model' tab for your skill in the Amazon Developer Console.
+The tedious phase of creating your interaction model has been made simple by our plugin. To get you up and running quickly, the settings screen provides utterances, custom slot types, and an intent schema. The content of these fields can be quickly copied and pasted into the 'Interaction Model' tab for your skill in the Amazon Developer Console.
 
 ![interaction_model](https://user-images.githubusercontent.com/784167/27150639-fef6fcae-5115-11e7-8f47-8c776d37402f.png)
 
 ### Amazon Developer Console
+
+First, head over to [https://developer.amazon.com] and sign in or create an account.
+
+![amazon_developer_services](https://user-images.githubusercontent.com/784167/27160213-8735fac8-5140-11e7-8b9d-025ac1532d8b.png)
+
+Then click on the Alexa item in the navigation
+
+![amazon_apps___services_developer_portal](https://user-images.githubusercontent.com/784167/27160221-a10376c4-5140-11e7-9ff9-9d7b80a6dcfe.png)
+
+Then Alexa Skills Kit
+
+![amazon_apps___services_developer_portal 2](https://user-images.githubusercontent.com/784167/27160254-d2119192-5140-11e7-8c67-47149f0af49b.png)
+
+On the right side, click the 'Add New Skill' button
+
+![amazon_apps___services_developer_portal 3](https://user-images.githubusercontent.com/784167/27160260-da44110a-5140-11e7-88c0-bd1f6a935841.png)
+
+For the Skill Type, if you're setting up a Flash Briefing skill, select 'Flash Briefing Skill API', otherwise select 'Custom Interaction Model'.
+
+![amazon_apps___services_developer_portal 4](https://user-images.githubusercontent.com/784167/27160270-f085218e-5140-11e7-834c-0f829403dcb2.png)
+
+Now, go to the next tab, Interaction Model. This is where, if creating a custom skill, you add your intents, custom slots and utterances. For the News skill, this is where the info we've included in the plugins' Alexa Skill Settings page come in, you can copy/paste the items into these field like so:
+
+![interation_model_dev](https://user-images.githubusercontent.com/784167/27160313-36726d28-5141-11e7-9315-063abb6430a8.png)
+
+Next up is the Configuration tab. Choose HTTPS as the endpoint type. Select the appropriate region (North America or Europe), and then paste the endpoint URL. (For the news skill, this is `https://yourdomain.com/wp-json/voicewp/v1/skill/news`).
+
+Last up is the SSL certificate tab:
+
+![amazon_apps___services_developer_portal 6](https://user-images.githubusercontent.com/784167/27160391-eb83b8fc-5141-11e7-9605-5524e0145e5f.png)
+
+Now you're ready to test! Head over to the 'Test' tab, switch the toggle so that testing is enabled. Within the Service Similator, you can type in some utterances to make sure everything is working. For the news skill, try asking `what're the latest stories?`. Then hit the 'Listen' button in the lower right to hear Alexa deliver that response.
+
+![amazon_apps___services_developer_portal 7](https://user-images.githubusercontent.com/784167/27160473-97f23c3a-5142-11e7-9067-a9d98ad21ff1.png)
+
+That's it, fill out the Publishing Information and Privacy & Compliance tabs as desired, and you're ready to rock.
+
+A final note, when in this screen, the Skill ID is conveniently located at the top, for custom skills make sure you've added this to your settings within WordPress.
+
+![amazon_apps___services_developer_portal 8](https://user-images.githubusercontent.com/784167/27160539-07066452-5143-11e7-9510-93dccddb0749.png)
 
 ### Creating your own custom skills
 
