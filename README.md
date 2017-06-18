@@ -1,10 +1,12 @@
-# VoiceWP
+![VoiceWP](https://user-images.githubusercontent.com/784167/27168238-d3e88570-5172-11e7-827e-0c9b10f1dfa5.png)
 
 Create Alexa Skills through WordPress
 
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/voicewp/Lobby)
 
 VoiceWP is a WordPress plugin that integrates with Amazon Alexa to create and enable the creation of Alexa skills.
+
+<a href="https://www.alleyinteractive.com/"><img src="https://user-images.githubusercontent.com/784167/27171097-4f7baa18-517e-11e7-8ed8-bccf9494b653.png"></a>
 
 ## How it Works
 
