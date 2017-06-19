@@ -43,7 +43,7 @@ class Briefing {
 			$response = array(
 				'uid' => get_post_meta( $post->ID, 'voicewp_briefing_uuid', true ),
 				'updateDate' => get_post_modified_time( 'Y-m-d\TH:i:s.\0\Z', true, $post ),
-				'titleText' => get_the_title( $post ),
+				'titleText' => $post->post_title,
 				'mainText' => '',
 				'redirectionUrl' => home_url(),
 			);
