@@ -1,5 +1,5 @@
 <?php
-
+namespace Alexa;
 use Alexa\Request\Request as AlexaRequest;
 use Alexa\Response\Response as AlexaResponse;
 

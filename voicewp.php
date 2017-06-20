@@ -26,7 +26,7 @@ function voicewp_deactivate() {
 /**
  * Compatibility requirements.
  */
-require_once( VOICEWP_PATH . '/compat.php' );
+require_once( VOICEWP_PATH . '/inc/compat.php' );
 
 /**
  * Post Type Base Class
@@ -48,15 +48,15 @@ require_once( VOICEWP_PATH . '/post-types/class-voicewp-post-type-briefing.php' 
  */
 function voicewp_load_fieldmanager_fields() {
 	if ( defined( 'FM_VERSION' ) ) {
-		require_once( VOICEWP_PATH . '/voicewp-fieldmanager-content-textarea.php' );
-		require_once( VOICEWP_PATH . '/fields.php' );
+		require_once( VOICEWP_PATH . '/inc/voicewp-fieldmanager-content-textarea.php' );
+		require_once( VOICEWP_PATH . '/inc/fields.php' );
 	}
 }
 add_action( 'init', 'voicewp_load_fieldmanager_fields' );
 
-require_once( VOICEWP_PATH . '/class-voicewp-setup.php' );
+require_once( VOICEWP_PATH . '/inc/class-voicewp-setup.php' );
 
-require_once( VOICEWP_PATH . '/class-voicewp.php' );
+require_once( VOICEWP_PATH . '/inc/class-voicewp.php' );
 
 add_action( 'init', array( 'Voicewp', 'get_instance' ), 0 );
 
