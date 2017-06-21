@@ -145,7 +145,7 @@ class Voicewp {
 	 */
 	public function voicewp_news_request( WP_REST_Request $request ) {
 
-		$alexa_settings = get_option( 'alexawp-settings' );
+		$alexa_settings = get_option( 'voicewp-settings' );
 		// The main amazon Application ID
 		$app_id = $alexa_settings['news_id'];
 
