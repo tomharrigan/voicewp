@@ -64,6 +64,12 @@ class News {
 						}
 					}
 				case 'Latest':
+					/* Since the above switch statement doesn't break,
+					 * it will continue running into this block,
+					 * which allows the below $tax_query var to be set,
+					 * so at first glance it may look slightly confusing,
+					 * but this keeps the code DRY
+					 */
 
 					$args = array(
 						'post_type' => voicewp_news_post_types(),
