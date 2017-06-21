@@ -68,8 +68,11 @@ class News {
 					$args = array(
 						'post_type' => voicewp_news_post_types(),
 						'posts_per_page' => 5,
-						'tax_query' => isset( $tax_query ) ? array( $tax_query ) : array(),
 					);
+
+					if ( isset( $tax_query ) ) {
+						$args['tax_query'] = array( $tax_query );
+					}
 
 					$result = $this->endpoint_content( $args );
 
