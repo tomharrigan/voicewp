@@ -68,7 +68,7 @@ class News {
 					$args = array(
 						'post_type' => voicewp_news_post_types(),
 						'posts_per_page' => 5,
-						'tax_query' => isset( $tax_query ) ? $tax_query : array(),
+						'tax_query' => isset( $tax_query ) ? array( $tax_query ) : array(),
 					);
 
 					$result = $this->endpoint_content( $args );
@@ -214,7 +214,7 @@ class News {
 	 * @return array array of post IDs and titles
 	 */
 	public function endpoint_content( $args ) {
-		$transient_key = isset( $args['tax_query']['terms'][0] ) ? 'voicewp_latest_' . $args['tax_query']['terms'][0] : 'voicewp_latest';
+		$transient_key = isset( $args['tax_query'][0]['terms'][0] ) ? 'voicewp_latest_' . $args['tax_query'][0]['terms'][0] : 'voicewp_latest';
 		if ( false === ( $result = get_transient( $transient_key ) ) ) {
 			$news_posts = get_posts( array_merge( $args, array(
 				'no_found_rows' => true,
