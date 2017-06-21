@@ -390,7 +390,7 @@ if ( function_exists( 'fm_register_submenu_page' ) ) {
  */
 function voicewp_fm_submenu_presave_data( $data ) {
 	if ( empty( $data['user_dictionary']['dictionary'] ) || ! is_array( $data['user_dictionary']['dictionary'] ) ) {
-		return;
+		return $data;
 	}
 
 	$dictionary = get_option( 'voicewp_user_dictionary', array() );
