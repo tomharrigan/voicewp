@@ -294,27 +294,19 @@ function voicewp_fm_alexa_settings() {
 		),
 	) );
 
-	$children['news_utterances'] = new Fieldmanager_TextArea( array(
-		'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'voicewp' ),
-		'default_value' => file_get_contents( __DIR__ . '/../speechAssets/news/Utterances.txt', FILE_USE_INCLUDE_PATH ),
-		'skip_save' => true,
-		'attributes' => array_merge(
-			$readonly,
-			array( 'style' => 'width: 95%; height: 300px;' )
-		),
-	) );
+	$interaction_model = array();
 
-	$children['news_intent_schema'] = new \Fieldmanager_TextArea( array(
+	$interaction_model['news_intent_schema'] = new \Fieldmanager_TextArea( array(
 		'label' => __( 'The Intent Schema for your News skill. Add this to your news skill in the Amazon developer portal.', 'voicewp' ),
 		'default_value' => file_get_contents( __DIR__ . '/../speechAssets/news/IntentSchema.json', FILE_USE_INCLUDE_PATH ),
 		'skip_save' => true,
 		'attributes' => array_merge(
 			$readonly,
-			array( 'style' => 'width: 95%; height: 300px; font-family: monospace;' )
+			array( 'style' => 'width: 100%; height: 300px; font-family: monospace;' )
 		),
 	) );
 
-	$children['custom_slot_types'] = new \Fieldmanager_Group( array(
+	$interaction_model['custom_slot_types'] = new \Fieldmanager_Group( array(
 		'label' => __( 'Custom Slot Types', 'voicewp' ),
 		'children' => array(
 			new \Fieldmanager_Group( array(
@@ -368,6 +360,22 @@ function voicewp_fm_alexa_settings() {
 			) ),
 		),
 		'skip_save' => true,
+	) );
+
+	$interaction_model['news_utterances'] = new Fieldmanager_TextArea( array(
+		'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'voicewp' ),
+		'default_value' => file_get_contents( __DIR__ . '/../speechAssets/news/Utterances.txt', FILE_USE_INCLUDE_PATH ),
+		'skip_save' => true,
+		'attributes' => array_merge(
+			$readonly,
+			array( 'style' => 'width: 100%; height: 300px;' )
+		),
+	) );
+
+	$children['interaction_model'] = new \Fieldmanager_Group( array(
+		'label' => __( 'Interaction Model', 'voicewp' ),
+		'collapsible' => true,
+		'children' => $interaction_model,
 	) );
 
 	$fm = new Fieldmanager_Group( array(
