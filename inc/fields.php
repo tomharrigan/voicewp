@@ -297,7 +297,8 @@ function voicewp_fm_alexa_settings() {
 	$interaction_model = array();
 
 	$interaction_model['news_intent_schema'] = new \Fieldmanager_TextArea( array(
-		'label' => __( 'The Intent Schema for your News skill. Add this to your news skill in the Amazon developer portal.', 'voicewp' ),
+		'label' => __( 'The Intent Schema for your News skill. Add this to your news skill in the <a href="https://developer.amazon.com" target="_blank">Amazon developer console</a>.', 'voicewp' ),
+		'escape' => array( 'label' => 'wp_kses_post' ),
 		'default_value' => file_get_contents( __DIR__ . '/../speechAssets/news/IntentSchema.json', FILE_USE_INCLUDE_PATH ),
 		'skip_save' => true,
 		'attributes' => array_merge(
@@ -363,7 +364,8 @@ function voicewp_fm_alexa_settings() {
 	) );
 
 	$interaction_model['news_utterances'] = new Fieldmanager_TextArea( array(
-		'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'voicewp' ),
+		'label' => __( 'Here\'s a starting point for your skill\'s Sample Utterances. You can add these to your news skill in the <a href="https://developer.amazon.com" target="_blank">Amazon developer console</a>.', 'voicewp' ),
+		'escape' => array( 'label' => 'wp_kses_post' ),
 		'default_value' => file_get_contents( __DIR__ . '/../speechAssets/news/Utterances.txt', FILE_USE_INCLUDE_PATH ),
 		'skip_save' => true,
 		'attributes' => array_merge(
