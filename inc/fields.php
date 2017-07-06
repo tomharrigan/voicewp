@@ -296,7 +296,7 @@ function voicewp_fm_alexa_settings() {
 
 	$children['news_utterances'] = new Fieldmanager_TextArea( array(
 		'label' => __( "Here's a starting point for your skill's Sample Utterances. You can add these to your news skill in the Amazon developer portal.", 'voicewp' ),
-		'default_value' => file_get_contents( 'speechAssets/news/Utterances.txt', FILE_USE_INCLUDE_PATH ),
+		'default_value' => file_get_contents( __DIR__ . '/../speechAssets/news/Utterances.txt', FILE_USE_INCLUDE_PATH ),
 		'skip_save' => true,
 		'attributes' => array_merge(
 			$readonly,
@@ -306,7 +306,7 @@ function voicewp_fm_alexa_settings() {
 
 	$children['news_intent_schema'] = new \Fieldmanager_TextArea( array(
 		'label' => __( 'The Intent Schema for your News skill. Add this to your news skill in the Amazon developer portal.', 'voicewp' ),
-		'default_value' => file_get_contents( 'speechAssets/news/IntentSchema.json', FILE_USE_INCLUDE_PATH ),
+		'default_value' => file_get_contents( __DIR__ . '/../speechAssets/news/IntentSchema.json', FILE_USE_INCLUDE_PATH ),
 		'skip_save' => true,
 		'attributes' => array_merge(
 			$readonly,
