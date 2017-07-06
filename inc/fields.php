@@ -232,6 +232,13 @@ function voicewp_fm_alexa_settings() {
 	);
 
 	$children = array(
+		'skill_name' => new Fieldmanager_TextField( array(
+			'label' => __( 'Skill name', 'voicewp' ),
+			'description' => __( 'Optional name of skill. If empty, site name will be used instead.', 'voicewp' ),
+			'attributes' => array(
+				'style' => 'width: 95%;',
+			),
+		) ),
 		'launch_request' => new Fieldmanager_TextArea( array(
 			'label' => __( 'Welcome message', 'voicewp' ),
 			'description' => __( 'This is the message a person hears when they open your skill with an utterance such as "Alexa, open {your skill name}"', 'voicewp' ),
