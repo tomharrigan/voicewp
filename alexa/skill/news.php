@@ -88,7 +88,7 @@ class News {
 					$response
 						->respond( $result['content'] )
 						/* translators: %s: site title */
-						->with_card( sprintf( __( 'Latest from %s', 'voicewp' ), $skill_name ), $result['card_content'] )
+						->with_card( sprintf( __( 'Latest from %s', 'voicewp' ), $skill_name ), ( ( ! empty( $result['card_content'] ) ) ? $result['card_content'] : '' ) )
 						->add_session_attribute( 'post_ids', $result['ids'] );
 					break;
 				case 'ReadPost':
