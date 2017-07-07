@@ -82,10 +82,13 @@ class News {
 
 					$result = $this->endpoint_content( $args );
 
+					$voicewp_settings = get_option( 'voicewp-settings' );
+					$skill_name = ( ! empty( $voicewp_settings['skill_name'] ) ) ? $voicewp_settings['skill_name'] : get_bloginfo( 'name' );
+
 					$response
 						->respond( $result['content'] )
 						/* translators: %s: site title */
-						->with_card( sprintf( __( 'Latest on %s', 'voicewp' ), get_bloginfo( 'name' ) ) )
+						->with_card( sprintf( __( 'Latest from %s', 'voicewp' ), $skill_name ), ( ( ! empty( $result['card_content'] ) ) ? $result['card_content'] : '' ) )
 						->add_session_attribute( 'post_ids', $result['ids'] );
 					break;
 				case 'ReadPost':
@@ -230,7 +233,7 @@ class News {
 				'post_status' => 'publish',
 			) ) );
 
-			$content = '';
+			$content = $card_content = '';
 			$ids = array();
 			if ( ! empty( $news_posts ) && ! is_wp_error( $news_posts ) ) {
 
@@ -238,6 +241,7 @@ class News {
 					// Appending 'th' to any number results in proper ordinal pronunciation
 					// TODO: Sounds a little strange when there's only one result.
 					$content .= ( $key + 1 ) . 'th, ' . $news_post->post_title . '. ';
+					$card_content .= ( $key + 1 ) . '. ' . $news_post->post_title . "\n";
 					$ids[] = $news_post->ID;
 				}
 			}
@@ -245,6 +249,7 @@ class News {
 			$result = array(
 				'content' => $content,
 				'ids' => $ids,
+				'card_content' => $card_content,
 			);
 			/**
 			 * If this is the main latest feed, the content will be cleared

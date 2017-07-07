@@ -110,7 +110,7 @@ class Voicewp {
 		}
 
 		$response_object = new \Alexa\Response\Response;
-		$event = new AlexaEvent( $alexa_request, $response_object );
+		$event = new \Alexa\AlexaEvent( $alexa_request, $response_object );
 
 		return array(
 			$event->get_request(),
