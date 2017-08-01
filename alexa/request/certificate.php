@@ -168,8 +168,10 @@ class Certificate {
 		} else if ( static::SIGNATURE_VALID_HOSTNAME !== $url['host'] ) {
 			throw new InvalidArgumentException( __( "Certificate isn't from Amazon. Request isn't from Alexa.", 'voicewp' ) );
 		} else if ( 0 !== strpos( $url['path'], static::SIGNATURE_VALID_PATH ) ) {
+			/* translators: %s: folder path */
 			throw new InvalidArgumentException( sprintf( esc_html__( "Certificate isn't in '%s' folder. Request isn't from Alexa.", 'voicewp' ), static::SIGNATURE_VALID_PATH ) );
 		} else if ( isset( $url['port'] ) && static::SIGNATURE_VALID_PORT !== $url['port'] ) {
+			/* translators: %s: port number */
 			throw new InvalidArgumentException( sprintf( esc_html__( "Port isn't %s. Request isn't from Alexa.", 'voicewp' ), static::SIGNATURE_VALID_PORT ) );
 		}
 	}
