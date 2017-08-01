@@ -301,6 +301,16 @@ function voicewp_fm_alexa_settings() {
 		),
 	) );
 
+	require_once( VOICEWP_PATH . '/speechAssets/utterances.php' );
+
+	$intent_schema = '';
+
+	foreach ( $news_utterances as $intent => $utterances ) {
+		foreach ( $utterances as $utterance ) {
+			$intent_schema .= $intent . ' ' . $utterance . "\n";
+		}
+	}
+
 	$interaction_model = array();
 
 	$interaction_model['news_intent_schema'] = new \Fieldmanager_TextArea( array(
@@ -331,7 +341,7 @@ function voicewp_fm_alexa_settings() {
 					) ),
 					new \Fieldmanager_TextArea( __( 'Values', 'voicewp' ), array(
 						'name' => 'VOICEWP_POST_NUMBER_WORD_values',
-						'default_value' => "first\nsecond\nthird\nfourth\nfifth",
+						'default_value' => implode( "\n", $ordinals ),
 						'attributes' => array_merge(
 							$readonly,
 							array( 'style' => 'width: 50%; height: 150px; font-family: monospace;' )
@@ -373,7 +383,7 @@ function voicewp_fm_alexa_settings() {
 	$interaction_model['news_utterances'] = new Fieldmanager_TextArea( array(
 		'label' => __( 'Here\'s a starting point for your skill\'s Sample Utterances. You can add these to your news skill in the <a href="https://developer.amazon.com" target="_blank">Amazon developer console</a>.', 'voicewp' ),
 		'escape' => array( 'label' => 'wp_kses_post' ),
-		'default_value' => file_get_contents( __DIR__ . '/../speechAssets/news/Utterances.txt', FILE_USE_INCLUDE_PATH ),
+		'default_value' => html_entity_decode( $intent_schema, ENT_QUOTES ),
 		'skip_save' => true,
 		'attributes' => array_merge(
 			$readonly,
