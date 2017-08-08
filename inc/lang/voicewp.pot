@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: VoiceWP\n"
-"POT-Creation-Date: 2017-07-31 21:32-0400\n"
-"PO-Revision-Date: 2017-07-31 21:31-0400\n"
+"POT-Creation-Date: 2017-08-08 18:58-0400\n"
+"PO-Revision-Date: 2017-08-08 18:58-0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -75,9 +75,29 @@ msgstr ""
 msgid "Latest from %s"
 msgstr ""
 
-#: alexa/skill/news.php:214
+#: alexa/skill/news.php:219
 msgid ""
 "Sorry! I couldn't find any news about that topic. Try asking something else!"
+msgstr ""
+
+#: alexa/skill/news.php:232 speechAssets/utterances.php:8
+msgid "first"
+msgstr ""
+
+#: alexa/skill/news.php:233 speechAssets/utterances.php:9
+msgid "second"
+msgstr ""
+
+#: alexa/skill/news.php:234 speechAssets/utterances.php:10
+msgid "third"
+msgstr ""
+
+#: alexa/skill/news.php:235 speechAssets/utterances.php:11
+msgid "fourth"
+msgstr ""
+
+#: alexa/skill/news.php:236 speechAssets/utterances.php:12
+msgid "fifth"
 msgstr ""
 
 #: inc/class-voicewp.php:40
@@ -441,26 +461,6 @@ msgstr ""
 
 #: post-types/class-voicewp-post-type-skill.php:45
 msgid "Parent Skill:"
-msgstr ""
-
-#: speechAssets/utterances.php:8
-msgid "first"
-msgstr ""
-
-#: speechAssets/utterances.php:9
-msgid "second"
-msgstr ""
-
-#: speechAssets/utterances.php:10
-msgid "third"
-msgstr ""
-
-#: speechAssets/utterances.php:11
-msgid "fourth"
-msgstr ""
-
-#: speechAssets/utterances.php:12
-msgid "fifth"
 msgstr ""
 
 #: speechAssets/utterances.php:17
