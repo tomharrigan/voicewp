@@ -63,7 +63,16 @@ class Voicewp_Post_Type_Briefing extends Voicewp_Post_Type {
 
 		$briefing = new \Alexa\Skill\Briefing();
 		// Set long cache time instead of 0 to prevent autoload
-		set_transient( $this->name, $briefing->briefing_request(), WEEK_IN_SECONDS );
+		$briefing_response = $briefing->briefing_request();
+		set_transient( $this->name, $briefing_response, WEEK_IN_SECONDS );
+
+		$briefing_categories = get_the_terms( $post_id, 'voicewp-briefing-category' );
+		if ( ! empty( $briefing_categories ) && ! is_wp_error( $briefing_categories ) ) {
+			foreach ( $briefing_categories as $briefing_category ) {
+				set_transient( $this->name . '-' . $briefing_category->slug, $briefing_response, WEEK_IN_SECONDS );
+				error_log( $briefing_category->slug );
+			}
+		}
 	}
 }
 
