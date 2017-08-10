@@ -44,6 +44,16 @@ require_once( VOICEWP_PATH . '/inc/post-types/class-voicewp-post-type-skill.php'
 require_once( VOICEWP_PATH . '/inc/post-types/class-voicewp-post-type-briefing.php' );
 
 /**
+ * Taxonomy Base Class
+ */
+require_once( VOICEWP_PATH . '/inc/taxonomies/class-voicewp-taxonomy.php' );
+
+/**
+ * Briefing Category Taxonomy
+ */
+require_once( VOICEWP_PATH . '/inc/taxonomies/class-voicewp-briefing-category.php' );
+
+/**
  * Fieldmanager custom fields
  */
 function voicewp_load_fieldmanager_fields() {
