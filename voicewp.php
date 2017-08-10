@@ -31,17 +31,27 @@ require_once( VOICEWP_PATH . '/inc/compat.php' );
 /**
  * Post Type Base Class
  */
-require_once( VOICEWP_PATH . '/post-types/class-voicewp-post-type.php' );
+require_once( VOICEWP_PATH . '/inc/post-types/class-voicewp-post-type.php' );
 
 /**
  * Skill Post Type
  */
-require_once( VOICEWP_PATH . '/post-types/class-voicewp-post-type-skill.php' );
+require_once( VOICEWP_PATH . '/inc/post-types/class-voicewp-post-type-skill.php' );
 
 /**
  * Flash Briefing Post Type
  */
-require_once( VOICEWP_PATH . '/post-types/class-voicewp-post-type-briefing.php' );
+require_once( VOICEWP_PATH . '/inc/post-types/class-voicewp-post-type-briefing.php' );
+
+/**
+ * Taxonomy Base Class
+ */
+require_once( VOICEWP_PATH . '/inc/taxonomies/class-voicewp-taxonomy.php' );
+
+/**
+ * Briefing Category Taxonomy
+ */
+require_once( VOICEWP_PATH . '/inc/taxonomies/class-voicewp-briefing-category.php' );
 
 /**
  * Fieldmanager custom fields
