@@ -15,7 +15,7 @@ class Briefing {
 	 *
 	 * @return array Response for Flash Briefing
 	 */
-	public function briefing_request() {
+	public function briefing_request( $briefing_category = null ) {
 		/**
 		 * Allows briefing content to be overridden for customization purposes.
 		 *
@@ -29,15 +29,27 @@ class Briefing {
 			return $responses;
 		}
 
+		$args = array(
+			'no_found_rows' => true,
+			'post_status' => 'publish',
+			'post_type' => 'voicewp-briefing',
+			'posts_per_page' => 1,
+			'suppress_filters' => false,
+		);
+
+		if ( ! empty( $briefing_category ) ) {
+			$args['tax_query'] = array(
+				array(
+					'taxonomy' => 'voicewp-briefing-category',
+					'field' => 'slug',
+					'terms' => $briefing_category,
+				),
+			);
+		}
+
 		// This logic could be both abstracted and used with array_map().
 		foreach (
-			get_posts( array(
-				'no_found_rows' => true,
-				'post_status' => 'publish',
-				'post_type' => 'voicewp-briefing',
-				'posts_per_page' => 1,
-				'suppress_filters' => false,
-			) )
+			get_posts( $args )
 			as $post
 		) {
 			$response = array(
