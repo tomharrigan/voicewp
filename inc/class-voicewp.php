@@ -51,6 +51,10 @@ class Voicewp {
 			'callback' => array( $this, 'briefing_request' ),
 			'methods' => array( 'GET' ),
 		) );
+		register_rest_route( 'voicewp/v1', '/skill/briefing/(?P<id>\d+)', array(
+			'callback' => array( $this, 'briefing_category_request' ),
+			'methods' => array( 'GET' ),
+		) );
 		// Endpoint for News skill
 		register_rest_route( 'voicewp/v1', '/skill/news', array(
 			'callback' => array( $this, 'voicewp_news_request' ),
@@ -168,6 +172,22 @@ class Voicewp {
 			$result = $briefing->briefing_request();
 			// Set long cache time instead of 0 to prevent autoload
 			set_transient( 'voicewp-briefing', $result, WEEK_IN_SECONDS );
+		}
+		return new WP_REST_Response( $result );
+	}
+
+	/**
+	 * Returns a flash briefing from a specific category
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function briefing_category_request( WP_REST_Request $request ) {
+		$category = absint( $request['id'] );
+		if ( false === ( $result = get_transient( 'voicewp-briefing-' . $category ) ) ) {
+			$briefing = new \Alexa\Skill\Briefing;
+			$result = $briefing->briefing_request( $category );
+			// Set long cache time instead of 0 to prevent autoload
+			set_transient( 'voicewp-briefing-' . $category, $result, WEEK_IN_SECONDS );
 		}
 		return new WP_REST_Response( $result );
 	}
