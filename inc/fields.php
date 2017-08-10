@@ -420,3 +420,17 @@ function voicewp_fm_submenu_presave_data( $data ) {
 	return $data;
 }
 add_filter( 'fm_submenu_presave_data', 'voicewp_fm_submenu_presave_data' );
+
+/*
+ * Display a readonly field with URL of category briefing
+ */
+function voicewp_briefing_category_url() {
+	$id = ( isset( $_GET['tag_ID'] ) ) ? absint( $_GET['tag_ID'] ) : 0;
+	$fm = new Fieldmanager_TextField( array(
+		'name' => 'briefing_url',
+		'default_value' => home_url( '/wp-json/voicewp/v1/skill/briefing/' . $id ),
+		'attributes' => array( 'readonly' => 'readonly' ),
+	) );
+	$fm->add_term_meta_box( __( 'Flash Briefing URL', 'voicewp' ), array( 'voicewp-briefing-category' ) );
+}
+add_action( 'fm_term_voicewp-briefing-category', 'voicewp_briefing_category_url' );
