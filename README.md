@@ -12,7 +12,7 @@ VoiceWP is a WordPress plugin that integrates with Amazon Alexa to create and en
 
 VoiceWP creates REST endpoints using the WordPress REST API. These endpoints handle all of the logic of your Alexa skills. When a user interacts with your skill, it sends a Request to an endpoint, which is processed by this plugin, and sends the Response back to the user.
 
-Yourk skills and settings can easily be created and configured within the WordPress admin dashboard via the provided settings screen and meta fields.
+Your skills and settings can easily be created and configured within the WordPress admin dashboard via the provided settings screen and meta fields.
 
 For more on how Alexa skills work in general, [see here](https://developer.amazon.com/alexa-skills-kit).
 
