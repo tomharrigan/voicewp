@@ -63,6 +63,7 @@ class News {
 							break;
 						}
 					}
+					// No break. Logic continues into Latest case
 				case 'Latest':
 					/* Since the above switch statement doesn't break,
 					 * it will continue running into this block,

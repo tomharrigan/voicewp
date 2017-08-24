@@ -150,7 +150,7 @@ class Voicewp_Setup {
 			// tilda character denotes rendering as span rather than div
 			$settings['custom_elements'] .= ',~' . $tag;
 			if ( ! empty( $attributes ) ) {
-				$settings['extended_valid_elements'] .= ',' . $tag . '['. implode( '|', array_keys( $attributes ) ) . ']';
+				$settings['extended_valid_elements'] .= ',' . $tag . '[' . implode( '|', array_keys( $attributes ) ) . ']';
 			}
 		}
 		$settings['extended_valid_elements'] = ltrim( $settings['extended_valid_elements'], ',' );

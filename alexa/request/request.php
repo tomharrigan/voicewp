@@ -75,8 +75,9 @@ class Request {
 
 		// Instantiate a new Certificate validator if none is injected
 		// as our dependency.
-		if ( ! isset( $this->certificate ) ) {
-			$this->certificate = new Certificate( $_SERVER['HTTP_SIGNATURECERTCHAINURL'], $_SERVER['HTTP_SIGNATURE'] );
+		if ( ! isset( $this->certificate ) && ( isset( $_SERVER ) && isset( $_SERVER['HTTP_SIGNATURECERTCHAINURL'] ) && isset( $_SERVER['HTTP_SIGNATURE'] ) ) ) {
+			$this->certificate = new Certificate( esc_url_raw( wp_unslash( $_SERVER['HTTP_SIGNATURECERTCHAINURL'] ) ), sanitize_text_field( wp_unslash( $_SERVER['HTTP_SIGNATURE'] ) )
+			);
 		}
 		if ( ! isset( $this->application ) ) {
 			$this->application = new Application( $this->application_id );
