@@ -85,7 +85,6 @@ class News {
 
 					$voicewp_settings = get_option( 'voicewp-settings' );
 					$skill_name = ( ! empty( $voicewp_settings['skill_name'] ) ) ? $voicewp_settings['skill_name'] : get_bloginfo( 'name' );
-
 					$prompt = ( ! empty( $voicewp_settings['list_prompt'] ) ) ? $voicewp_settings['list_prompt'] : __( 'Which article would you like to hear?', 'voicewp' );
 
 					$response
