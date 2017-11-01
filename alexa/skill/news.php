@@ -86,8 +86,10 @@ class News {
 					$voicewp_settings = get_option( 'voicewp-settings' );
 					$skill_name = ( ! empty( $voicewp_settings['skill_name'] ) ) ? $voicewp_settings['skill_name'] : get_bloginfo( 'name' );
 
+					$prompt = ( ! empty( $voicewp_settings['list_prompt'] ) ) ? $voicewp_settings['list_prompt'] : __( 'Which article would you like to hear?', 'voicewp' );
+
 					$response
-						->respond( $result['content'] )
+						->respond( $result['content'] . $prompt )
 						/* translators: %s: site title */
 						->with_card( sprintf( __( 'Latest from %s', 'voicewp' ), $skill_name ), ( ( ! empty( $result['card_content'] ) ) ? $result['card_content'] : '' ) )
 						->add_session_attribute( 'post_ids', $result['ids'] );
