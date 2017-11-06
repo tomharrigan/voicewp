@@ -54,7 +54,6 @@ class Voicewp_Post_Type_Briefing extends Voicewp_Post_Type {
 		if (
 			empty( $post_id )
 			|| wp_is_post_revision( $post_id )
-			|| ( defined( 'WP_IMPORTING' ) && WP_IMPORTING === true )
 			|| ( $post->post_type !== $this->name )
 			|| 'publish' !== get_post_status( $post_id )
 		) {
