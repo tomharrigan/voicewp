@@ -110,11 +110,15 @@ class News {
 
 					if ( ! empty( $request->session->attributes['post_ids'] ) && ! empty( $post_number ) ) {
 						$post_id = $this->get_post_id( $request->session->attributes['post_ids'], $post_number );
-						$result = $this->endpoint_single_post( $post_id );
-						$response
-							->respond_ssml( $result['content'] )
-							->with_card( $result['title'], '', $result['image'] )
-							->end_session();
+						if ( ! $post_id ) {
+							$this->message( $response, 'number_slot_error', $request );
+						} else {
+							$result = $this->endpoint_single_post( $post_id );
+							$response
+								->respond_ssml( $result['content'] )
+								->with_card( $result['title'], '', $result['image'] )
+								->end_session();
+						}
 					} else {
 						$this->message( $response );
 					}
@@ -200,6 +204,9 @@ class News {
 	 */
 	private function get_post_id( $ids, $number ) {
 		$number = absint( $number ) - 1;
+		if ( ! array_key_exists( $number, $ids ) ) {
+			return;
+		}
 		return absint( $ids[ $number ] );
 	}
 
@@ -208,10 +215,14 @@ class News {
 	 * @param AlexaResponse $response
 	 * @param string $case The type of message to return
 	 */
-	private function message( $response, $case = 'missing' ) {
+	private function message( $response, $case = 'missing', $request = false ) {
 		$voicewp_settings = get_option( 'voicewp-settings' );
 		if ( isset( $voicewp_settings[ $case ] ) ) {
 			$response->respond( $voicewp_settings[ $case ] );
+		} elseif ( 'number_slot_error' == $case ) {
+			$response
+				->respond( __( 'You can select between one and five, please select an item within that range.', 'voicewp' ) )
+				->add_session_attribute( 'post_ids', $request->session->get_attribute( 'post_ids' ) );
 		} else {
 			$response->respond( __( "Sorry! I couldn't find any news about that topic. Try asking something else!", 'voicewp' ) );
 		}
