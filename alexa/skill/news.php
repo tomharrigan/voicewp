@@ -178,7 +178,14 @@ class News {
 	public function format_single_post( $id, $single_post ) {
 		$voicewp_instance = \Voicewp_Setup::get_instance();
 		// Strip shortcodes and markup other than SSML
-		$post_content = html_entity_decode( preg_replace( '|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', '', wp_kses( strip_shortcodes( $single_post->post_content ), $voicewp_instance::$ssml ) ) );
+		$post_content = html_entity_decode( wp_kses( strip_shortcodes( preg_replace(
+			array(
+				'|^(\s*)(https?://[^\s<>"]+)(\s*)$|im',
+				'/<script\b[^>]*>(.*?)<\/script>/is',
+			),
+			'',
+			$single_post->post_content
+		) ), $voicewp_instance::$ssml ) );
 		// Apply user defined dictionary to content as ssml
 		$dictionary = get_option( 'voicewp_user_dictionary', array() );
 		if ( ! empty( $dictionary ) ) {
