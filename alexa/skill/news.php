@@ -34,6 +34,7 @@ class News {
 			switch ( $intent ) {
 				case 'LatestTerm':
 					$term_slot = strtolower( sanitize_text_field( $request->getSlot( 'TermName' ) ) );
+					$term_slot = apply_filters( 'voicewp_filter_term_slot_result', $term_slot );
 					if ( $term_slot ) {
 						$news_taxonomies = voicewp_news_taxonomies();
 
