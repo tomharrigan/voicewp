@@ -1,0 +1,12 @@
+
+{
+  "name": "alleyinteractive/voicewp",
+  "description": "Create Alexa Skills through WordPress",
+  "authors": [
+    {
+      "name": "Tom Harrigan",
+      "email": "tom@alleyintearctive.com"
+    }
+  ],
+  "type": "wordpress-plugin"
+}
