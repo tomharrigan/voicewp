@@ -3,6 +3,7 @@ Tom Harrigan - Plugin author
 David Herrera ( dlh01 )
 Sam Turner ( digiltd )
 Chris Scott ( chrisscott )
+Davis Shaver ( davisshaver )
 
 Jakub Suchy, Emanuele Corradini, Mathias Hansen - Wrote and contributed to ‘Amazon Alexa PHP’, a library included in and modified in this codebase
 Chris Hamper - The Drupal project linked below, which was also used as a starting point
