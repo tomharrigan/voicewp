@@ -240,6 +240,25 @@ class News {
 	}
 
 	/**
+	 * Turn a number into a proper English ordinal
+	 *
+	 * @param int $num
+	 * @return string
+	 */
+	private function ordinal( $num ) {
+		if ( ( $num % 100 == 11 ) || ( $num % 100 == 12 ) ) {
+			// 11 and 12 are special
+			return "{$num}th";
+		} elseif ( $num % 10 == 1 ) {
+			return "{$num}st";
+		} elseif ( $num % 10 == 2 ) {
+			return "{$num}nd";
+		} else {
+			return "{$num}th";
+		}
+	}
+
+	/**
 	 * Creates output when a user asks for a list of posts.
 	 * Delivers an array containing a numbered list of post titles
 	 * to choose from and a subarray of IDs that get set in an attribute
@@ -261,7 +280,7 @@ class News {
 				foreach ( $news_posts as $key => $news_post ) {
 					// Appending 'th' to any number results in proper ordinal pronunciation
 					// TODO: Sounds a little strange when there's only one result.
-					$content .= ( $key + 1 ) . 'th, ' . $news_post->post_title . '. ';
+					$content .= $this->ordinal( $key + 1 ) . ', ' . $news_post->post_title . '. ';
 					$card_content .= ( $key + 1 ) . '. ' . $news_post->post_title . "\n";
 					$ids[] = $news_post->ID;
 				}
