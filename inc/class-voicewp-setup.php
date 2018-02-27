@@ -71,6 +71,15 @@ class Voicewp_Setup {
 			add_action( 'publish_' . $post_type, array( $this, 'publish_clear_cache' ), 10, 2 );
 		}
 
+		$news_post_types = voicewp_news_post_types();
+		// All public taxonomies associated with news post types. Could be abstracted into a function.
+		$eligible_news_taxonomy_objects = array_filter(
+			get_taxonomies( array( 'public' => true ), 'objects' ),
+			function ( $taxonomy ) use ( $news_post_types ) {
+				return ( $taxonomy->label && array_intersect( $news_post_types, $taxonomy->object_type ) );
+			}
+		);
+
 		// Add settings.
 		new VoiceWp\Settings(
 			'options',
@@ -113,6 +122,43 @@ class Voicewp_Setup {
 					'description' => __( 'You can optionally provide a message when a person is done with your skill.', 'voicewp' ),
 					'default_value' => __( 'Thanks for listening!', 'voicewp' ),
 					'attributes' => array( 'style' => 'width: 95%; height: 50px;' ),
+				),
+				'news_id' => array(
+					'label' => __( 'News skill ID', 'voicewp' ),
+					'description' => __( 'Add the application ID given by Amazon', 'voicewp' ),
+					'attributes' => array(
+						'style' => 'width: 95%;',
+					),
+				),
+				'latest_taxonomies' => array(
+					'label' => __( 'Allow people to ask for content from specific:', 'voicewp' ),
+					'options' => wp_list_pluck( $eligible_news_taxonomy_objects, 'label', 'name' ),
+				),
+				'user_dictionary' => array(
+					'type' => 'group',
+					'label' => __( 'Word Pronunciation Substitutions', 'voicewp' ),
+					'description' => __( "This allows you to define a global dictionary of words, phrases, abbreviations that Alexa should pronounce a certain way. For example, perhaps every occurrance of the state abreviation 'TN' should be pronounced as 'Tennessee', or 'NYC should be read as 'New York City' or the chemical 'Mg' read as 'Magnesium'. ", 'voicewp' ),
+					'children' => array(
+						'dictionary' => array(
+							'type' => 'group',
+							'label' => __( 'Phrase / Word / Abbreviation', 'voicewp' ),
+							'description' => __( "This allows you to define a global dictionary of words, phrases, abbreviations that Alexa should pronounce a certain way. For example, perhaps every occurrance of the state abreviation 'TN' should be pronounced as 'Tennessee', or 'NYC should be read as 'New York City' or the chemical 'Mg' read as 'Magnesium'. ", 'voicewp' ),
+							'children' => array(
+								'search' => array(
+									'description' => __( 'Phrase to pronounce differently', 'voicewp' ),
+									'attributes' => array(
+										'style' => 'width: 45%;',
+									),
+								),
+								'replace' => array(
+									'description' => __( 'How the above phrase should be pronounced.', 'voicewp' ),
+									'attributes' => array(
+										'style' => 'width: 45%;',
+									),
+								),
+							),
+						),
+					),
 				),
 			),
 			array(

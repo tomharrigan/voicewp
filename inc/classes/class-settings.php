@@ -126,12 +126,36 @@ class Settings {
 			$this->_name
 		);
 
-		foreach ( (array) $this->_fields as $name => $setting ) {
+		$this->add_options_field( $this->_name, $this->_fields );
+	}
+
+	public function add_options_field( $option_name, $fields ) {
+		if ( empty( $fields ) || ! is_array( $fields ) ) {
+			return;
+		}
+
+		foreach ( $fields as $name => $field ) {
+			// Ensure we have the default strucuture.
+			$field = wp_parse_args( $field, array(
+				'name' => $name,
+				'type' => 'text',
+			) );
+
+			// Group field.
+			if (
+				'group' === $field['type']
+				&& ! empty( $field['children'] )
+				&& is_array( $field['children'] )
+			) {
+				$this->add_options_field( $this->get_field_name( $option_name, $field ), $field['children'] );
+				continue;
+			}
+
 			add_settings_field(
 				$name,
-				$setting['label'],
-				function () use ( $name ) {
-					$this->render_field( $name );
+				$field['label'] ?? '',
+				function () use ( $option_name, $field ) {
+					$this->render_field( $this->get_field_name( $option_name, $field ), $field );
 				},
 				$this->_name,
 				$this->get_options_section_name()
@@ -142,11 +166,10 @@ class Settings {
 	/**
 	 * Renders the field.
 	 *
-	 * @param string $field_name The field name to be rendered.
+	 * @param string $name  The field name.
+	 * @param string $field The field to be rendered.
 	 */
-	public function render_field( $field_name ) {
-		$field = $this->get_field( $field_name );
-
+	public function render_field( $name, $field ) {
 		if ( empty( $field ) ) {
 			return;
 		}
@@ -156,7 +179,7 @@ class Settings {
 			case 'textarea':
 				printf(
 					'<textarea name="%1$s" id="%1$s" rows="5" cols="20" %3$s>%2$s</textarea>',
-					esc_attr( $this->get_field_name( $field ) ),
+					esc_attr( $name ),
 					esc_html( $this->get_field_value( $field ) ),
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
 				); // WPCS XSS okay.
@@ -165,7 +188,7 @@ class Settings {
 			default:
 				printf(
 					'<input type="text" name="%1$s" id="%1$s" value="%2$s" %3$s />',
-					esc_attr( $this->get_field_name( $field ) ),
+					esc_attr( $name ),
 					esc_attr( $this->get_field_value( $field ) ),
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
 				); // WPCS XSS okay.
@@ -211,19 +234,6 @@ class Settings {
 	}
 
 	/**
-	 * Get a field by name.
-	 *
-	 * @param string $field_name The field name.
-	 * @return array The field array.
-	 */
-	public function get_field( $field_name ) {
-		return wp_parse_args( $this->get_fields()[ $field_name ], array(
-			'name' => $field_name,
-			'type' => 'text',
-		) ) ?? null;
-	}
-
-	/**
 	 * Get the entire field data.
 	 *
 	 * @return mixed The field data.
@@ -241,16 +251,17 @@ class Settings {
 	/**
 	 * Get the field name.
 	 *
-	 * @param array $field The field.
+	 * @param string $name  The field name.
+	 * @param array  $field The field.
 	 * @return mixed The field name.
 	 */
-	public function get_field_name( $field ) {
+	public function get_field_name( $name, $field ) {
 		// No name.
-		if ( empty( $field['name'] ) ) {
+		if ( empty( $name ) && empty( $field['name'] ) ) {
 			return null;
 		}
 
-		return $this->_name . "[{$field['name']}]";
+		return $name . "[{$field['name']}]";
 	}
 
 	/**
