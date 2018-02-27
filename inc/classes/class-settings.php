@@ -129,6 +129,12 @@ class Settings {
 		$this->add_options_field( $this->_name, $this->_fields );
 	}
 
+	/**
+	 * Add an options field.
+	 *
+	 * @param string $option_name The option name.
+	 * @param array  $fields      The array of fields.
+	 */
 	public function add_options_field( $option_name, $fields ) {
 		if ( empty( $fields ) || ! is_array( $fields ) ) {
 			return;

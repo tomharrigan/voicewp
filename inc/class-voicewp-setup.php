@@ -160,11 +160,102 @@ class Voicewp_Setup {
 						),
 					),
 				),
+				'interaction_model' => array(
+					'type' => 'group',
+					'label' => __( 'Interaction Model', 'voicewp' ),
+					'children' => array(
+						'news_intent_schema' => array(
+							'type' => 'textarea',
+							'label' => __( 'The Intent Schema for your News skill. Add this to your news skill in the <a href="https://developer.amazon.com" target="_blank">Amazon developer console</a>.', 'voicewp' ),
+							'escape' => array( 'label' => 'wp_kses_post' ),
+							'default_value' => file_get_contents( __DIR__ . '/../speechAssets/news/IntentSchema.json', FILE_USE_INCLUDE_PATH ),
+							'attributes' => array(
+								'readonly' => 'readonly',
+								'style' => 'width: 100%; height: 300px; font-family: monospace;',
+							),
+						),
+						'custom_slot_types' => array(
+							'type' => 'group',
+							'label' => __( 'Custom Slot Types', 'voicewp' ),
+							'children' => array(
+								'custom_slot_type_children' => array(
+									'type' => 'group',
+									'description' => __( 'These slot types must be added to your news skill in the Amazon developer portal.', 'voicewp' ),
+									'children' => array(
+										'VOICEWP_POST_NUMBER_WORD' => array(
+											'label' => __( 'Type', 'voicewp' ),
+											'default_value' => 'VOICEWP_POST_NUMBER_WORD',
+											'attributes' => array(
+												'readonly' => 'readonly',
+												'style' => 'width: 50%; font-family: monospace;',
+											),
+										),
+										'VOICEWP_POST_NUMBER_WORD_values' => array(
+											'type' => 'textarea',
+											'label' => __( 'Values', 'voicewp' ),
+											'default_value' => "first\nsecond\nthird\nfourth\nfifth",
+											'attributes' => array(
+												'readonly' => 'readonly',
+												'style' => 'width: 50%; height: 150px; font-family: monospace;',
+											),
+										),
+										'VOICEWP_TERM_NAME' => array(
+											'label' => __( 'Type', 'voicewp' ),
+											'default_value' => 'VOICEWP_TERM_NAME',
+											'attributes' => array(
+												'readonly' => 'readonly',
+												'style' => 'width: 50%; font-family: monospace;',
+											),
+										),
+										'VOICEWP_TERM_NAME_values' => array(
+											'type' => 'textarea',
+											'label' => __( 'Values', 'voicewp' ),
+											'default_value' => implode(
+												"\n",
+												// Generate sample terms from all available taxonomies.
+												// We want someone to add this slot even if they haven't
+												// turned on taxonomies so it's already there if they do.
+												array_values( array_unique( array_map( 'strtolower', wp_list_pluck( get_terms( array(
+													'number' => 100,
+													'order' => 'DESC',
+													'orderby' => 'count',
+													'taxonomy' => array_values( wp_list_pluck( $eligible_news_taxonomy_objects, 'name' ) ),
+												) ), 'name' ) ) ) )
+											),
+											'attributes' => array(
+												'readonly' => 'readonly',
+												'style' => 'width: 50%; height: 150px; font-family: monospace;',
+											),
+										),
+									),
+								),
+							),
+						),
+						'news_utterances' => array(
+							'type' => 'textarea',
+							'label' => __( 'Here\'s a starting point for your skill\'s Sample Utterances. You can add these to your news skill in the <a href="https://developer.amazon.com" target="_blank">Amazon developer console</a>.', 'voicewp' ),
+							'escape' => array( 'label' => 'wp_kses_post' ),
+							'default_value' => file_get_contents( __DIR__ . '/../speechAssets/news/Utterances.txt', FILE_USE_INCLUDE_PATH ),
+							'skip_save' => true,
+							'attributes' => array(
+								'readonly' => 'readonly',
+								'style' => 'width: 100%; height: 300px;',
+							),
+						),
+					),
+				),
 			),
 			array(
 				'parent_page' => 'tools.php',
 			)
 		);
+
+		// Add settings.
+		// new VoiceWp\Settings(
+		// 	'options',
+		// 	'voicewp-settings-new',
+		// 	__( 'Voice WP', 'voicewp' )
+		// );
 	}
 
 	/**
