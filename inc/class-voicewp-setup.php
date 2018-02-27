@@ -76,20 +76,48 @@ class Voicewp_Setup {
 			'options',
 			'voicewp-settings-new',
 			__( 'Voice WP', 'voicewp' ),
-			[
-				'example' => [
-					'label' => 'Example',
-				],
-				'example-1' => [
-					'label' => 'Example 1',
-				],
-				'example-2' => [
-					'label' => 'Example 2',
-				],
-			],
-			[
+			array(
+				'skill_name' => array(
+					'label' => __( 'Skill name', 'voicewp' ),
+					'description' => __( 'Optional name of skill. If empty, site name will be used instead.', 'voicewp' ),
+					'attributes' => array(
+						'style' => 'width: 95%;',
+					),
+				),
+				'launch_request' => array(
+					'type' => 'textarea',
+					'label' => __( 'Welcome message', 'voicewp' ),
+					'description' => __( 'This is the message a person hears when they open your skill with an utterance such as "Alexa, open {your skill name}"', 'voicewp' ),
+					'default_value' => __( 'Welcome to the {put your skill name here} Skill. This skill allows you to listen to content from {your site name}. You can ask questions like: What are the latest articles? ... Now, what can I help you with.', 'voicewp' ),
+					'attributes' => array(
+						'style' => 'width: 95%; height: 70px;',
+					),
+				),
+				'help_intent' => array(
+					'type' => 'textarea',
+					'label' => __( 'Help message', 'voicewp' ),
+					'description' => __( "This is the message a person hears when they ask your skill for 'help'", 'voicewp' ),
+					'default_value' => __( "{put your skill name here} provides you with the latest content from {your site name}. You can ask me for the latest articles, and then select an item from the list by saying, for example, 'read the 3rd article' Or you can also say exit... What can I help you with?", 'voicewp' ),
+					'attributes' => array( 'style' => 'width: 95%; height: 70px;' ),
+				),
+				'list_prompt' => array(
+					'type' => 'textarea',
+					'label' => __( 'List Prompt', 'voicewp' ),
+					'description' => __( 'This message prompts the user to select a piece of content to be read after hearing the headlines.', 'voicewp' ),
+					'default_value' => __( 'Which article would you like to hear?', 'voicewp' ),
+					'attributes' => array( 'style' => 'width: 95%; height: 50px;' ),
+				),
+				'stop_intent' => array(
+					'type' => 'textarea',
+					'label' => __( 'Stop message', 'voicewp' ),
+					'description' => __( 'You can optionally provide a message when a person is done with your skill.', 'voicewp' ),
+					'default_value' => __( 'Thanks for listening!', 'voicewp' ),
+					'attributes' => array( 'style' => 'width: 95%; height: 50px;' ),
+				),
+			),
+			array(
 				'parent_page' => 'tools.php',
-			]
+			)
 		);
 	}
 

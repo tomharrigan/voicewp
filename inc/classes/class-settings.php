@@ -37,7 +37,7 @@ class Settings {
 	 *
 	 * @var array
 	 */
-	private $_fields = [];
+	private $_fields = array();
 
 	/**
 	 * The setting args.
@@ -62,7 +62,7 @@ class Settings {
 	 * @param array  $fields The settings fields.
 	 * @param array  $args   The settings args.
 	 */
-	public function __construct( $type, $name, $title, $fields, $args = [] ) {
+	public function __construct( $type, $name, $title, $fields, $args = array() ) {
 		$this->_type   = $type;
 		$this->_name   = $name;
 		$this->_title  = $title;
@@ -73,8 +73,8 @@ class Settings {
 		$this->get_data();
 
 		if ( 'options' === $this->_type ) {
-			add_action( 'admin_menu', [ $this, 'add_options_page' ] );
-			add_action( 'admin_init', [ $this, 'add_options_fields' ] );
+			add_action( 'admin_menu', array( $this, 'add_options_page' ) );
+			add_action( 'admin_init', array( $this, 'add_options_fields' ) );
 		}
 	}
 
@@ -153,16 +153,46 @@ class Settings {
 
 		// Render the correct field type.
 		switch ( $field['type'] ) {
+			case 'textarea':
+				printf(
+					'<textarea name="%1$s" id="%1$s" rows="5" cols="20" %3$s>%2$s</textarea>%4$s',
+					esc_attr( $this->_name . '[' . $field_name . ']' ),
+					esc_attr( $this->get_field_value( $field ) ),
+					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '',
+					! empty( $field['description'] ) ? '<p class="description">' . esc_html( $field['description'] ) . '</p>' : ''
+				);
+				break;
 			case 'text':
 			default:
 				printf(
-					'<input type="text" name="%1$s" id="%1$s" value="%2$s" />%3$s',
+					'<input type="text" name="%1$s" id="%1$s" value="%2$s" %3$s />%4$s',
 					esc_attr( $this->_name . '[' . $field_name . ']' ),
-					esc_attr( $this->get_field_value( $field_name ) ),
+					esc_attr( $this->get_field_value( $field ) ),
+					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '',
 					! empty( $field['description'] ) ? '<p class="description">' . esc_html( $field['description'] ) . '</p>' : ''
 				);
 				break;
 		}
+	}
+
+	/**
+	 * Get all of the field attributes.
+	 *
+	 * @param array $attributes The field attributes.
+	 * @return string $html The field attributes HTML.
+	 */
+	public function add_attributes( $attributes ) {
+		if ( empty( $attributes ) ) {
+			return '';
+		}
+
+		$html = '';
+
+		foreach ( (array) $attributes as $key => $content ) {
+			$html .= esc_attr( $key ) . '="' . esc_attr( $content ) . '" ';
+		}
+
+		return $html;
 	}
 
 	/**
@@ -181,9 +211,10 @@ class Settings {
 	 * @return array The field array.
 	 */
 	public function get_field( $field_name ) {
-		return wp_parse_args( $this->get_fields()[ $field_name ], [
+		return wp_parse_args( $this->get_fields()[ $field_name ], array(
+			'name' => $field_name,
 			'type' => 'text',
-		] ) ?? null;
+		) ) ?? null;
 	}
 
 	/**
@@ -204,11 +235,23 @@ class Settings {
 	/**
 	 * Get the field value by name.
 	 *
-	 * @param string $field_name The field name.
+	 * @param array $field The field.
 	 * @return mixed The field value.
 	 */
-	public function get_field_value( $field_name ) {
-		return $this->_retrieved_data[ $field_name ] ?? null;
+	public function get_field_value( $field ) {
+		// No name.
+		if ( empty( $field['name'] ) ) {
+			return null;
+		}
+
+		$value = $this->_retrieved_data[ $field['name'] ] ?? null;
+
+		// If empty use the default value.
+		if ( empty( $value ) && ! empty( $field['default_value'] ) ) {
+			$value = $field['default_value'];
+		}
+
+		return $value;
 	}
 
 	/**
