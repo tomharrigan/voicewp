@@ -73,8 +73,8 @@ class Voicewp_Setup {
 
 		// Add settings.
 		new VoiceWp\Settings(
+			'options',
 			'voicewp-settings-new',
-			'tools.php',
 			__( 'Voice WP', 'voicewp' ),
 			[
 				'example' => [
@@ -86,6 +86,9 @@ class Voicewp_Setup {
 				'example-2' => [
 					'label' => 'Example 2',
 				],
+			],
+			[
+				'parent_page' => 'tools.php',
 			]
 		);
 	}
