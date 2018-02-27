@@ -146,6 +146,7 @@ class Settings {
 			$field = wp_parse_args( $field, array(
 				'name' => $name,
 				'type' => 'text',
+				'limit' => 1,
 			) );
 
 			// Group field.
@@ -194,6 +195,21 @@ class Settings {
 
 		// Render the correct field type.
 		switch ( $field['type'] ) {
+			case 'checkboxes':
+				if ( empty( $field['options'] ) ) {
+					break;
+				}
+
+				foreach ( $field['options'] as $value => $label ) {
+					printf(
+						'<p><input type="checkbox" name="%1$s[]" value="%2$s" %3$s /><label>%4$s</label></p>',
+						esc_attr( $name ),
+						esc_html( $this->get_field_value( $field ) ),
+						! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '', // Escaped internally.
+						esc_html( $label )
+					); // WPCS XSS okay.
+				}
+				break;
 			case 'textarea':
 				printf(
 					'<textarea name="%1$s" id="%1$s" rows="5" cols="20" %3$s>%2$s</textarea>',

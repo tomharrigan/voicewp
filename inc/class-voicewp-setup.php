@@ -131,6 +131,7 @@ class Voicewp_Setup {
 					),
 				),
 				'latest_taxonomies' => array(
+					'type' => 'checkboxes',
 					'label' => __( 'Allow people to ask for content from specific:', 'voicewp' ),
 					'options' => wp_list_pluck( $eligible_news_taxonomy_objects, 'label', 'name' ),
 				),
@@ -141,7 +142,7 @@ class Voicewp_Setup {
 					'children' => array(
 						'dictionary' => array(
 							'type' => 'group',
-							'label' => __( 'Phrase / Word / Abbreviation', 'voicewp' ),
+							'limit' => 0,
 							'description' => __( "This allows you to define a global dictionary of words, phrases, abbreviations that Alexa should pronounce a certain way. For example, perhaps every occurrance of the state abreviation 'TN' should be pronounced as 'Tennessee', or 'NYC should be read as 'New York City' or the chemical 'Mg' read as 'Magnesium'. ", 'voicewp' ),
 							'children' => array(
 								'search' => array(
