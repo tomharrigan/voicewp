@@ -155,23 +155,29 @@ class Settings {
 		switch ( $field['type'] ) {
 			case 'textarea':
 				printf(
-					'<textarea name="%1$s" id="%1$s" rows="5" cols="20" %3$s>%2$s</textarea>%4$s',
-					esc_attr( $this->_name . '[' . $field_name . ']' ),
-					esc_attr( $this->get_field_value( $field ) ),
-					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '',
-					! empty( $field['description'] ) ? '<p class="description">' . esc_html( $field['description'] ) . '</p>' : ''
-				);
+					'<textarea name="%1$s" id="%1$s" rows="5" cols="20" %3$s>%2$s</textarea>',
+					esc_attr( $this->get_field_name( $field ) ),
+					esc_html( $this->get_field_value( $field ) ),
+					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
+				); // WPCS XSS okay.
 				break;
 			case 'text':
 			default:
 				printf(
-					'<input type="text" name="%1$s" id="%1$s" value="%2$s" %3$s />%4$s',
-					esc_attr( $this->_name . '[' . $field_name . ']' ),
+					'<input type="text" name="%1$s" id="%1$s" value="%2$s" %3$s />',
+					esc_attr( $this->get_field_name( $field ) ),
 					esc_attr( $this->get_field_value( $field ) ),
-					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '',
-					! empty( $field['description'] ) ? '<p class="description">' . esc_html( $field['description'] ) . '</p>' : ''
-				);
+					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
+				); // WPCS XSS okay.
 				break;
+		}
+
+		// The field description.
+		if ( ! empty( $field['description'] ) ) {
+			printf(
+				'<p class="description">%1$s</p>',
+				esc_html( $field['description'] )
+			);
 		}
 	}
 
@@ -233,7 +239,22 @@ class Settings {
 	}
 
 	/**
-	 * Get the field value by name.
+	 * Get the field name.
+	 *
+	 * @param array $field The field.
+	 * @return mixed The field name.
+	 */
+	public function get_field_name( $field ) {
+		// No name.
+		if ( empty( $field['name'] ) ) {
+			return null;
+		}
+
+		return $this->_name . "[{$field['name']}]";
+	}
+
+	/**
+	 * Get the field value.
 	 *
 	 * @param array $field The field.
 	 * @return mixed The field value.
