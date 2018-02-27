@@ -23,6 +23,12 @@ function voicewp_deactivate() {
 	flush_rewrite_rules();
 }
 
+// Singleton.
+require_once VOICEWP_PATH . '/inc/traits/trait-singleton.php';
+
+// Settings.
+require_once VOICEWP_PATH . '/inc/classes/class-settings.php';
+
 /**
  * Compatibility requirements.
  */

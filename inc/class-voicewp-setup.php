@@ -70,6 +70,24 @@ class Voicewp_Setup {
 		foreach ( voicewp_news_post_types() as $post_type ) {
 			add_action( 'publish_' . $post_type, array( $this, 'publish_clear_cache' ), 10, 2 );
 		}
+
+		// Add settings.
+		new VoiceWp\Settings(
+			'voicewp-settings-new',
+			'tools.php',
+			__( 'Voice WP', 'voicewp' ),
+			[
+				'example' => [
+					'label' => 'Example',
+				],
+				'example-1' => [
+					'label' => 'Example 1',
+				],
+				'example-2' => [
+					'label' => 'Example 2',
+				],
+			]
+		);
 	}
 
 	/**
