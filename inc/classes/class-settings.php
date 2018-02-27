@@ -134,8 +134,9 @@ class Settings {
 	 *
 	 * @param string $option_name The option name.
 	 * @param array  $fields      The array of fields.
+	 * @param bool   $is_group    Whether or not this is a group.
 	 */
-	public function add_options_field( $option_name, $fields ) {
+	public function add_options_field( $option_name, $fields, $is_group = false ) {
 		if ( empty( $fields ) || ! is_array( $fields ) ) {
 			return;
 		}
@@ -153,9 +154,20 @@ class Settings {
 				&& ! empty( $field['children'] )
 				&& is_array( $field['children'] )
 			) {
-				$this->add_options_field( $this->get_field_name( $option_name, $field ), $field['children'] );
+				$full_option_name = $this->get_field_name( $option_name, $field );
+
+				add_settings_section(
+					$full_option_name . '-section',
+					$field['label'] ?? '',
+					'',
+					$this->_name
+				);
+
+				$this->add_options_field( $full_option_name, $field['children'], true );
 				continue;
 			}
+
+			$full_option_name = $this->get_field_name( $option_name, $field );
 
 			add_settings_field(
 				$name,
@@ -164,7 +176,7 @@ class Settings {
 					$this->render_field( $this->get_field_name( $option_name, $field ), $field );
 				},
 				$this->_name,
-				$this->get_options_section_name()
+				$is_group ? $option_name . '-section' : $this->get_options_section_name()
 			);
 		}
 	}
