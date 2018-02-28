@@ -508,7 +508,6 @@ $option_settings = new VoiceWp\Settings(
 		'user_dictionary' => array(
 			'type' => 'group',
 			'label' => __( 'Word Pronunciation Substitutions', 'voicewp' ),
-			'description' => __( "This allows you to define a global dictionary of words, phrases, abbreviations that Alexa should pronounce a certain way. For example, perhaps every occurrance of the state abreviation 'TN' should be pronounced as 'Tennessee', or 'NYC should be read as 'New York City' or the chemical 'Mg' read as 'Magnesium'. ", 'voicewp' ),
 			'children' => array(
 				'dictionary' => array(
 					'type' => 'group',

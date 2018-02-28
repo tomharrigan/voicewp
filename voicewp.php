@@ -11,6 +11,7 @@
  */
 
 define( 'VOICEWP_PATH', dirname( __FILE__ ) );
+define( 'VOICEWP_URL', plugins_url( '/', __FILE__ ) );
 
 register_activation_hook( __FILE__, 'voicewp_activate' );
 function voicewp_activate() {

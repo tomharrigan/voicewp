@@ -72,10 +72,20 @@ class Settings {
 		// Prime the cache.
 		$this->get_data();
 
+		// Add scripts.
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+
 		if ( 'options' === $this->_type ) {
 			add_action( 'admin_menu', array( $this, 'add_options_page' ) );
 			add_action( 'admin_init', array( $this, 'add_options_fields' ) );
 		}
+	}
+
+	/**
+	 * Add the scripts.
+	 */
+	public function admin_enqueue_scripts() {
+		wp_enqueue_script( 'voicewp-settings-js', VOICEWP_URL . '/client/js/admin/settings.js', [ 'jquery' ] );
 	}
 
 	/**
@@ -156,15 +166,23 @@ class Settings {
 				add_settings_section(
 					$full_option_name . '-section',
 					$field['label'] ?? '',
-					'',
+					function () use ( $full_option_name, $field ) {
+						// Add description.
+						if ( ! empty( $field['description'] ) ) {
+							echo '<p>' . esc_html( $field['description'] ) . '</p>';
+						}
+
+						// Check if this is a repeater field.
+						if ( 0 === $field['limit'] || 1 < $field['limit'] ) {
+							echo '<div class="voicewpjs-options-repeating-group"><div class="voicewp-wrapper"></div>' . $this->add_another( $full_option_name, $field ) . '</div>'; // WPCS: XSS okay.
+						}
+					},
 					$this->_name
 				);
 
 				$this->add_options_field( $full_option_name, $field['children'], true );
 				continue;
 			}
-
-			$full_option_name = $this->get_field_name( $option_name, $field );
 
 			add_settings_field(
 				$name,
@@ -186,11 +204,29 @@ class Settings {
 	 * @return array         The sanitized field array.
 	 */
 	public function sanitize_field( string $name, array $field ) : array {
-		return wp_parse_args( $field, array(
-			'name'  => $name,
-			'type'  => 'text',
-			'limit' => 1,
+		$field = wp_parse_args( $field, array(
+			'name'           => $name,
+			'type'           => 'text',
+			'limit'          => 1,
+			'add_more_label' => __( 'Add field', 'voicewp' ),
+			'is_group'       => false,
+			'group_repeater' => false,
 		) );
+
+		if ( isset( $field['type'] ) && 'group' === $field['type'] ) {
+			$field['is_group']       = true;
+			$field['add_more_label'] = __( 'Add group', 'voicewp' );
+
+			if ( 0 === $field['limit'] || 1 < $field['limit'] ) {
+				if ( ! empty( $field['children'] ) && is_array( $field['children'] ) ) {
+					foreach ( $field['children'] as &$child ) {
+						$child['group_repeater'] = true;
+					}
+				}
+			}
+		}
+
+		return $field;
 	}
 
 	/**
@@ -204,6 +240,8 @@ class Settings {
 			return;
 		}
 
+		$field_html = '';
+
 		// Render the correct field type.
 		switch ( $field['type'] ) {
 			case 'checkboxes':
@@ -214,7 +252,7 @@ class Settings {
 				$current_values = $this->get_field_value( $field );
 
 				foreach ( $field['options'] as $value => $label ) {
-					printf(
+					$field_html .= sprintf(
 						'<p><input type="checkbox" name="%1$s[]" value="%2$s" %3$s %4$s /><label>%5$s</label></p>',
 						esc_attr( $name ),
 						esc_attr( $value ),
@@ -225,7 +263,7 @@ class Settings {
 				}
 				break;
 			case 'textarea':
-				printf(
+				$field_html .= sprintf(
 					'<textarea name="%1$s" id="%1$s" rows="5" cols="20" %3$s>%2$s</textarea>',
 					esc_attr( $name ),
 					esc_html( $this->get_field_value( $field ) ),
@@ -234,7 +272,7 @@ class Settings {
 				break;
 			case 'text':
 			default:
-				printf(
+				$field_html .= sprintf(
 					'<input type="text" name="%1$s" id="%1$s" value="%2$s" %3$s />',
 					esc_attr( $name ),
 					esc_attr( $this->get_field_value( $field ) ),
@@ -245,11 +283,76 @@ class Settings {
 
 		// The field description.
 		if ( ! empty( $field['description'] ) ) {
-			printf(
+			$field_html .= sprintf(
 				'<p class="description">%1$s</p>',
 				esc_html( $field['description'] )
 			);
 		}
+
+		// Wrap the field with tools as needed.
+		$field_html = $this->wrap_with_multi_tools( $field, $field_html );
+
+		echo $field_html; // WPCS XSS okay.
+	}
+
+	/**
+	 * Wrap a chunk of HTML with "remove" and "move" buttons if applicable.
+	 *
+	 * @param  array  $field   The current field.
+	 * @param  string $html    HTML to wrap.
+	 * @param  array  $classes An array of classes.
+	 * @return string Wrapped HTML.
+	 */
+	public function wrap_with_multi_tools( $field, $html, $classes = array() ) {
+		$classes[] = 'voicewpjs-removable';
+		$out = sprintf( '<div class="%s">', implode( ' ', $classes ) );
+
+		$out .= '<div class="voicewpjs-removable-element">';
+		$out .= $html;
+		$out .= '</div>';
+
+		if ( 0 === $field['limit'] ) {
+			$out .= $this->get_remove_handle();
+		}
+
+		$out .= '</div>';
+		return $out;
+	}
+
+	/**
+	 * Return HTML for the remove handle (multi-tools); a separate function to override.
+	 *
+	 * @return string
+	 */
+	public function get_remove_handle() {
+		return sprintf( '<a href="#" class="voicewpjs-remove" title="%1$s"><span class="screen-reader-text">%1$s</span></a>', esc_attr__( 'Remove', 'voicewp' ) );
+	}
+
+	/**
+	 * Generates HTML for the "Add Another" button.
+	 *
+	 * @param string $name  The field name.
+	 * @param array  $field The field.
+	 * @return string Button HTML.
+	 */
+	public function add_another( $name, $field ) {
+		$classes = array( 'voicewp-add-another', 'voicewp-' . $name . '-add-another', 'button-secondary' );
+		if ( empty( $field['add_more_label'] ) ) {
+			$field['add_more_label'] = $field['is_group'] ? __( 'Add group', 'voicewp' ) : __( 'Add field', 'voicewp' );
+		}
+
+		$out = '<div class="voicewp-add-another-wrapper">';
+		$out .= sprintf(
+			'<input type="button" class="%s" value="%s" name="%s" data-related-element="%s" data-limit="%d" />',
+			esc_attr( implode( ' ', $classes ) ),
+			esc_attr( $field['add_more_label'] ),
+			esc_attr( 'fm_add_another_' . $name ),
+			esc_attr( $name ),
+			intval( $field['limit'] )
+		);
+
+		$out .= '</div>';
+		return $out;
 	}
 
 	/**
@@ -309,7 +412,12 @@ class Settings {
 			return null;
 		}
 
-		return $name . "[{$field['name']}]";
+		$repeater = '';
+		if ( ! empty( $field['group_repeater'] ) ) {
+			$repeater = '[0]';
+		}
+
+		return $name . $repeater . "[{$field['name']}]";
 	}
 
 	/**
