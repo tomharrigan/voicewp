@@ -85,6 +85,7 @@ class Settings {
 	 * Add the scripts.
 	 */
 	public function admin_enqueue_scripts() {
+		wp_enqueue_style( 'voicewp-settings-css', VOICEWP_URL . '/client/css/admin/settings.css' );
 		wp_enqueue_script( 'voicewp-settings-js', VOICEWP_URL . '/client/js/admin/settings.js', [ 'jquery' ] );
 	}
 
@@ -273,7 +274,7 @@ class Settings {
 
 		// Check if this is a repeater field.
 		if ( $repeater ) {
-			echo '<div class="voicewpjs-options-repeating-group">';
+			echo '<div class="voicewpjs-repeating-group" data-repeater-name="' . esc_attr( $name ) . '[voicewp-index]">';
 
 			if ( ! empty( $group_value ) && is_array( $group_value ) ) {
 				foreach ( $group_value as $index => $value ) {
@@ -297,19 +298,25 @@ class Settings {
 	 * @param array  $value The group value.
 	 */
 	public function render_group_children( $name, $group, $value ) {
+		ob_start();
 		foreach ( $group['children'] as $child ) {
 			if ( $child['is_group'] ) {
 				$this->render_group( $name, $child, $value );
 				continue;
 			}
 
-			// Get the proper child value.
 			$child['value'] = $this->get_field_value( $child, $value );
 
-			echo '<div class="voicewp-wrapper">';
 			$this->render_field( $this->get_field_name( $name, $child ), $child );
-			echo '</div>';
 		}
+
+		if ( 0 === $group['limit'] || 1 < $group['limit'] ) {
+			$repeater_html = $this->wrap_with_multi_tools( $group, ob_get_clean() );
+		}
+
+		echo '<div class="voicewp-wrapper">';
+		echo $repeater_html; // WPCS: XSS okay.
+		echo '</div>';
 	}
 
 	/**
@@ -323,9 +330,17 @@ class Settings {
 			return;
 		}
 
-		// If no field value is passed then try to get it.
 		if ( ! isset( $field['value'] ) ) {
-			$field['value'] = $this->get_field_value( $field );
+			$field_value = $this->get_field_value( $field );
+		} else {
+			$field_value = $field['value'];
+		}
+
+		// Get the base name.
+		if ( 0 === $field['limit'] || 1 < $field['limit'] ) {
+			$base_name = '';
+		} else {
+			$base_name = $field['name'];
 		}
 
 		$field_html = '';
@@ -339,10 +354,11 @@ class Settings {
 
 				foreach ( $field['options'] as $value => $label ) {
 					$field_html .= sprintf(
-						'<p><input type="checkbox" name="%1$s[]" value="%2$s" %3$s %4$s /><label>%5$s</label></p>',
+						'<p><input type="checkbox" name="%1$s[]" data-base-name="%2$s" class="voicewp-item" value="%3$s" %4$s %5$s /><label>%6$s</label></p>',
 						esc_attr( $name ),
+						esc_attr( $base_name ),
 						esc_attr( $value ),
-						! empty( $field['value'] ) && in_array( $value, $field['value'], true ) ? 'checked="checked"' : '',
+						! empty( $field_value ) && in_array( $value, $field_value, true ) ? 'checked="checked"' : '',
 						! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '', // Escaped internally.
 						esc_html( $label )
 					); // WPCS XSS okay.
@@ -350,18 +366,20 @@ class Settings {
 				break;
 			case 'textarea':
 				$field_html .= sprintf(
-					'<textarea name="%1$s" id="%1$s" rows="5" cols="20" %3$s>%2$s</textarea>',
+					'<textarea name="%1$s" id="%1$s" data-base-name="%2$s" class="voicewp-item" rows="5" cols="20" %4$s>%3$s</textarea>',
 					esc_attr( $name ),
-					esc_html( $field['value'] ),
+					esc_attr( $base_name ),
+					esc_html( $field_value ),
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
 				); // WPCS XSS okay.
 				break;
 			case 'text':
 			default:
 				$field_html .= sprintf(
-					'<input type="text" name="%1$s" id="%1$s" value="%2$s" %3$s />',
+					'<input type="text" name="%1$s" data-base-name="%2$s" id="%1$s" class="voicewp-item" value="%3$s" %4$s />',
 					esc_attr( $name ),
-					esc_attr( $field['value'] ),
+					esc_attr( $base_name ),
+					esc_attr( $field_value ),
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
 				); // WPCS XSS okay.
 
@@ -377,7 +395,9 @@ class Settings {
 		}
 
 		// Wrap the field with tools as needed.
-		$field_html = $this->wrap_with_multi_tools( $field, $field_html );
+		if ( 0 === $field['limit'] || 1 < $field['limit'] ) {
+			$field_html = $this->wrap_with_multi_tools( $field, $field_html );
+		}
 
 		echo $field_html; // WPCS XSS okay.
 	}

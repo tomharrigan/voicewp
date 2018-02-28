@@ -1,14 +1,43 @@
 voicewp_add_another = function( $element ) {
   const repeaterGroup = $element.parent().parent();
   const cloneElement = repeaterGroup.find( '.voicewp-wrapper' ).last().clone();
+  const items = repeaterGroup.find('.voicewp-wrapper');
 
   cloneElement.insertBefore( $element.parent() );
+
+  // Clear data.
+  const fields = cloneElement.find('.voicewp-item');
+  fields.each( function() {
+    jQuery( this ).val( '' );
+  });
+
+  voicewp_renumber( $element.closest( '.voicewpjs-repeating-group' ) );
 }
 
 voicewp_remove = function( $element ) {
-  $wrapper = $element.parents( '.voicewp-wrapper' ).first();
-  $element.parents( '.voicewp-item' ).first().remove();
-  voicewp_renumber( $wrapper );
+  const removedEl = $element.parent().parent();
+  const wrapper = removedEl.closest( '.voicewpjs-repeating-group' );
+  removedEl.remove();
+  voicewp_renumber( wrapper );
+}
+
+voicewp_renumber = function( $element ) {
+  const repeaterName = $element.data( 'repeater-name' );
+  const items = $element.find( '.voicewp-wrapper' );
+
+  // Update name and clear data.
+  items.each( function( index, value ) {
+    const fields = jQuery( this ).find('.voicewp-item');
+
+    fields.each( function() {
+      let groupName =
+        repeaterName.replace( 'voicewp-index', Math.max( 0, index ) )
+        + '[' + jQuery( this ).data( 'base-name' ) + ']';
+
+      jQuery( this ).attr( 'name', groupName );
+      jQuery( this ).attr( 'id', groupName );
+    });
+  });
 }
 
 jQuery( document ).ready( function ( $ ) {
@@ -23,13 +52,4 @@ jQuery( document ).ready( function ( $ ) {
     e.preventDefault();
     voicewp_remove( $( this ) );
   } );
-
-  // Special handling for Option pages.
-  if ( 0 !== $( 'form[action="options.php"]' ).length ) {
-
-    // Move table into repeating group.
-    $( '.voicewpjs-options-repeating-group' ).each( function () {
-      // $( this ).next( 'table.form-table' ).prependTo( $( this ).find( '.voicewp-wrapper' ) );
-    } );
-  }
 } );
