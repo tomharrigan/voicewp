@@ -143,11 +143,7 @@ class Settings {
 
 		foreach ( $fields as $name => $field ) {
 			// Ensure we have the default strucuture.
-			$field = wp_parse_args( $field, array(
-				'name' => $name,
-				'type' => 'text',
-				'limit' => 1,
-			) );
+			$field = $this->sanitize_field( $name, $field );
 
 			// Group field.
 			if (
@@ -183,6 +179,21 @@ class Settings {
 	}
 
 	/**
+	 * Sanitize a field to ensure it has a certain shape.
+	 *
+	 * @param  string $name  The field name.
+	 * @param  array  $field The field array.
+	 * @return array         The sanitized field array.
+	 */
+	public function sanitize_field( string $name, array $field ) : array {
+		return wp_parse_args( $field, array(
+			'name'  => $name,
+			'type'  => 'text',
+			'limit' => 1,
+		) );
+	}
+
+	/**
 	 * Renders the field.
 	 *
 	 * @param string $name  The field name.
@@ -200,11 +211,14 @@ class Settings {
 					break;
 				}
 
+				$current_values = $this->get_field_value( $field );
+
 				foreach ( $field['options'] as $value => $label ) {
 					printf(
-						'<p><input type="checkbox" name="%1$s[]" value="%2$s" %3$s /><label>%4$s</label></p>',
+						'<p><input type="checkbox" name="%1$s[]" value="%2$s" %3$s %4$s /><label>%5$s</label></p>',
 						esc_attr( $name ),
-						esc_html( $this->get_field_value( $field ) ),
+						esc_attr( $value ),
+						in_array( $value, $current_values, true ) ? 'checked="checked"' : '',
 						! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '', // Escaped internally.
 						esc_html( $label )
 					); // WPCS XSS okay.
