@@ -12,11 +12,11 @@ namespace VoiceWP;
  */
 class Settings {
 	/**
-	 * The setting type.
+	 * The setting context.
 	 *
 	 * @var string
 	 */
-	private $_type = '';
+	private $_context = '';
 
 	/**
 	 * The setting name.
@@ -56,18 +56,18 @@ class Settings {
 	/**
 	 * Setup the class.
 	 *
-	 * @param string $type   The settings type.
-	 * @param string $name   The settings name.
-	 * @param string $title  The settings title.
-	 * @param array  $fields The settings fields.
-	 * @param array  $args   The settings args.
+	 * @param string $context The settings type.
+	 * @param string $name    The settings name.
+	 * @param string $title   The settings title.
+	 * @param array  $fields  The settings fields.
+	 * @param array  $args    The settings args.
 	 */
-	public function __construct( $type, $name, $title, $fields, $args = array() ) {
-		$this->_type   = $type;
-		$this->_name   = $name;
-		$this->_title  = $title;
-		$this->_fields = $this->sanitize_fields( $fields );
-		$this->_args   = $args;
+	public function __construct( $context, $name, $title, $fields, $args = array() ) {
+		$this->_context = $context;
+		$this->_name    = $name;
+		$this->_title   = $title;
+		$this->_fields  = $this->sanitize_fields( $fields );
+		$this->_args    = $args;
 
 		// Prime the cache.
 		$this->get_data();
@@ -75,7 +75,7 @@ class Settings {
 		// Add scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
-		if ( 'options' === $this->_type ) {
+		if ( 'options' === $this->_context ) {
 			add_action( 'admin_menu', array( $this, 'add_options_page' ) );
 			add_action( 'admin_init', array( $this, 'add_options_fields' ) );
 		}
@@ -498,7 +498,7 @@ class Settings {
 	 */
 	public function get_data() {
 		if ( null === $this->_retrieved_data ) {
-			switch ( $this->_type ) {
+			switch ( $this->_context ) {
 				case 'options':
 					$this->_retrieved_data = get_option( $this->_name );
 					break;
