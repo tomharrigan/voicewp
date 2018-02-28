@@ -239,20 +239,6 @@ function voicewp_fm_submenu_presave_data( $data ) {
 }
 add_filter( 'fm_submenu_presave_data', 'voicewp_fm_submenu_presave_data' );
 
-/*
- * Display a readonly field with URL of category briefing
- */
-function voicewp_briefing_category_url() {
-	$id = ( isset( $_GET['tag_ID'] ) ) ? absint( $_GET['tag_ID'] ) : 0;
-	$fm = new Fieldmanager_TextField( array(
-		'name' => 'briefing_url',
-		'default_value' => home_url( '/wp-json/voicewp/v1/skill/briefing/' . $id ),
-		'attributes' => array( 'readonly' => 'readonly' ),
-	) );
-	$fm->add_term_meta_box( __( 'Flash Briefing URL', 'voicewp' ), array( 'voicewp-briefing-category' ) );
-}
-add_action( 'fm_term_voicewp-briefing-category', 'voicewp_briefing_category_url' );
-
 $news_post_types = voicewp_news_post_types();
 // All public taxonomies associated with news post types. Could be abstracted into a function.
 $eligible_news_taxonomy_objects = array_filter(
@@ -261,6 +247,23 @@ $eligible_news_taxonomy_objects = array_filter(
 		return ( $taxonomy->label && array_intersect( $news_post_types, $taxonomy->object_type ) );
 	}
 );
+
+/**
+ * Add the Flash Breifing URL.
+ */
+function voicewp_briefing_category_url() {
+	$id = ( isset( $_GET['tag_ID'] ) ) ? absint( $_GET['tag_ID'] ) : 0;
+	?>
+	<tr class="form-field">
+		<th scope="row" valign="top">
+		<label for="voicewp-briefing-url"><?php esc_html_e( 'Flash Briefing URL', 'voicewp' ); ?></label></th>
+		<td>
+			<input class="fm-element" type="text" name="voicewp-briefing-url" id="voicewp-briefing-url" value="<?php echo esc_url( home_url( '/wp-json/voicewp/v1/skill/briefing/' . $id ) ); ?>" readonly="readonly">
+		</td>
+	</tr>
+	<?php
+}
+add_action( 'voicewp-briefing-category_edit_form_fields', 'voicewp_briefing_category_url' );
 
 // Add Option settings.
 $option_settings = new VoiceWp\Settings(
