@@ -29,7 +29,7 @@ jQuery( document ).ready( function ( $ ) {
 
     // Move table into repeating group.
     $( '.voicewpjs-options-repeating-group' ).each( function () {
-      $( this ).next( 'table.form-table' ).prependTo( $( this ).find( '.voicewp-wrapper' ) );
+      // $( this ).next( 'table.form-table' ).prependTo( $( this ).find( '.voicewp-wrapper' ) );
     } );
   }
 } );

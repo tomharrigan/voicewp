@@ -66,7 +66,7 @@ class Settings {
 		$this->_type   = $type;
 		$this->_name   = $name;
 		$this->_title  = $title;
-		$this->_fields = $fields;
+		$this->_fields = $this->sanitize_fields( $fields );
 		$this->_args   = $args;
 
 		// Prime the cache.
@@ -136,24 +136,23 @@ class Settings {
 			$this->_name
 		);
 
-		$this->add_options_field( $this->_name, $this->_fields );
+		$this->add_options_field( $this->_name, $this->_fields, false, $this->get_data() );
 	}
 
 	/**
 	 * Add an options field.
 	 *
-	 * @param string $option_name The option name.
-	 * @param array  $fields      The array of fields.
-	 * @param bool   $is_group    Whether or not this is a group.
+	 * @param string $option_name   The option name.
+	 * @param array  $fields        The array of fields.
+	 * @param bool   $is_group      Whether or not this is a group.
+	 * @param mixed  $current_value The current value of the field.
 	 */
-	public function add_options_field( $option_name, $fields, $is_group = false ) {
+	public function add_options_field( $option_name, $fields, $is_group = false, $current_value = null ) {
 		if ( empty( $fields ) || ! is_array( $fields ) ) {
 			return;
 		}
 
 		foreach ( $fields as $name => $field ) {
-			// Ensure we have the default strucuture.
-			$field = $this->sanitize_field( $name, $field );
 
 			// Group field.
 			if (
@@ -171,16 +170,26 @@ class Settings {
 						if ( ! empty( $field['description'] ) ) {
 							echo '<p>' . esc_html( $field['description'] ) . '</p>';
 						}
-
-						// Check if this is a repeater field.
-						if ( 0 === $field['limit'] || 1 < $field['limit'] ) {
-							echo '<div class="voicewpjs-options-repeating-group"><div class="voicewp-wrapper"></div>' . $this->add_another( $full_option_name, $field ) . '</div>'; // WPCS: XSS okay.
-						}
 					},
 					$this->_name
 				);
 
-				$this->add_options_field( $full_option_name, $field['children'], true );
+				// Only add the children as separate fields if this group is a not
+				// repeater group.
+				if ( 0 === $field['limit'] || 1 < $field['limit'] ) {
+					add_settings_field(
+						$name,
+						$field['label'] ?? '',
+						function () use ( $full_option_name, $field, $current_value ) {
+							$this->render_group( $full_option_name, $field, $current_value );
+						},
+						$this->_name,
+						$full_option_name . '-section'
+					);
+				} else {
+					$this->add_options_field( $full_option_name, $field['children'], true, $this->get_field_value( $field, $current_value ) );
+				}
+
 				continue;
 			}
 
@@ -197,6 +206,32 @@ class Settings {
 	}
 
 	/**
+	 * Santizie the fields.
+	 *
+	 * @param array $fields The current fields.
+	 * @return array The sanitized fields.
+	 */
+	public function sanitize_fields( array $fields ) {
+		if ( empty( $fields ) || ! is_array( $fields ) ) {
+			return [];
+		}
+
+		foreach ( $fields as $name => &$field ) {
+			$field = $this->sanitize_field( $name, $field );
+
+			if (
+				'group' === $field['type']
+				&& ! empty( $field['children'] )
+				&& is_array( $field['children'] )
+			) {
+				$field['children'] = $this->sanitize_fields( $field['children'] );
+			}
+		}
+
+		return $fields;
+	}
+
+	/**
 	 * Sanitize a field to ensure it has a certain shape.
 	 *
 	 * @param  string $name  The field name.
@@ -208,25 +243,73 @@ class Settings {
 			'name'           => $name,
 			'type'           => 'text',
 			'limit'          => 1,
-			'add_more_label' => __( 'Add field', 'voicewp' ),
+			'add_more_label' => ( isset( $field['type'] ) && 'group' === $field['type'] ) ? __( 'Add group', 'voicewp' ) : __( 'Add field', 'voicewp' ),
 			'is_group'       => false,
-			'group_repeater' => false,
 		) );
 
-		if ( isset( $field['type'] ) && 'group' === $field['type'] ) {
-			$field['is_group']       = true;
-			$field['add_more_label'] = __( 'Add group', 'voicewp' );
-
-			if ( 0 === $field['limit'] || 1 < $field['limit'] ) {
-				if ( ! empty( $field['children'] ) && is_array( $field['children'] ) ) {
-					foreach ( $field['children'] as &$child ) {
-						$child['group_repeater'] = true;
-					}
-				}
-			}
+		if ( 'group' === $field['type'] ) {
+			$field['is_group'] = true;
 		}
 
 		return $field;
+	}
+
+	/**
+	 * Renders the field group.
+	 *
+	 * @param string $name        The field name.
+	 * @param string $group       The field to be rendered.
+	 * @param array  $group_value The current group value.
+	 */
+	public function render_group( $name, $group, $group_value ) {
+		if ( empty( $group['children'] ) || ! is_array( $group['children'] ) ) {
+			return '';
+		}
+
+		// Get the current group value.
+		$group_value = $this->get_field_value( $group, $group_value );
+
+		$repeater = ( 0 === $group['limit'] || 1 < $group['limit'] );
+
+		// Check if this is a repeater field.
+		if ( $repeater ) {
+			echo '<div class="voicewpjs-options-repeating-group">';
+
+			if ( ! empty( $group_value ) && is_array( $group_value ) ) {
+				foreach ( $group_value as $index => $value ) {
+					$this->render_group_children( $name . "[{$index}]", $group, $value );
+				}
+			} else {
+				$this->render_group_children( $name . '[0]', $group, $group_value );
+			}
+
+			echo $this->add_another( $name, $group ) . '</div>'; // WPCS: XSS okay.
+		} else {
+			$this->render_group_children( $name, $group, $group_value );
+		}
+	}
+
+	/**
+	 * Render the children fields in a group.
+	 *
+	 * @param string $name The field name.
+	 * @param array  $group The group.
+	 * @param array  $value The group value.
+	 */
+	public function render_group_children( $name, $group, $value ) {
+		foreach ( $group['children'] as $child ) {
+			if ( $child['is_group'] ) {
+				$this->render_group( $name, $child, $value );
+				continue;
+			}
+
+			// Get the proper child value.
+			$child['value'] = $this->get_field_value( $child, $value );
+
+			echo '<div class="voicewp-wrapper">';
+			$this->render_field( $this->get_field_name( $name, $child ), $child );
+			echo '</div>';
+		}
 	}
 
 	/**
@@ -240,6 +323,11 @@ class Settings {
 			return;
 		}
 
+		// If no field value is passed then try to get it.
+		if ( ! isset( $field['value'] ) ) {
+			$field['value'] = $this->get_field_value( $field );
+		}
+
 		$field_html = '';
 
 		// Render the correct field type.
@@ -249,14 +337,12 @@ class Settings {
 					break;
 				}
 
-				$current_values = $this->get_field_value( $field );
-
 				foreach ( $field['options'] as $value => $label ) {
 					$field_html .= sprintf(
 						'<p><input type="checkbox" name="%1$s[]" value="%2$s" %3$s %4$s /><label>%5$s</label></p>',
 						esc_attr( $name ),
 						esc_attr( $value ),
-						in_array( $value, $current_values, true ) ? 'checked="checked"' : '',
+						! empty( $field['value'] ) && in_array( $value, $field['value'], true ) ? 'checked="checked"' : '',
 						! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '', // Escaped internally.
 						esc_html( $label )
 					); // WPCS XSS okay.
@@ -266,7 +352,7 @@ class Settings {
 				$field_html .= sprintf(
 					'<textarea name="%1$s" id="%1$s" rows="5" cols="20" %3$s>%2$s</textarea>',
 					esc_attr( $name ),
-					esc_html( $this->get_field_value( $field ) ),
+					esc_html( $field['value'] ),
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
 				); // WPCS XSS okay.
 				break;
@@ -275,9 +361,10 @@ class Settings {
 				$field_html .= sprintf(
 					'<input type="text" name="%1$s" id="%1$s" value="%2$s" %3$s />',
 					esc_attr( $name ),
-					esc_attr( $this->get_field_value( $field ) ),
+					esc_attr( $field['value'] ),
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
 				); // WPCS XSS okay.
+
 				break;
 		}
 
@@ -412,27 +499,27 @@ class Settings {
 			return null;
 		}
 
-		$repeater = '';
-		if ( ! empty( $field['group_repeater'] ) ) {
-			$repeater = '[0]';
-		}
-
-		return $name . $repeater . "[{$field['name']}]";
+		return $name . "[{$field['name']}]";
 	}
 
 	/**
 	 * Get the field value.
 	 *
-	 * @param array $field The field.
+	 * @param array $field       The field.
+	 * @param array $search_data The data to search through.
 	 * @return mixed The field value.
 	 */
-	public function get_field_value( $field ) {
+	public function get_field_value( $field, $search_data = null ) {
 		// No name.
 		if ( empty( $field['name'] ) ) {
 			return null;
 		}
 
-		$value = $this->_retrieved_data[ $field['name'] ] ?? null;
+		if ( null === $search_data ) {
+			$search_data = $this->_retrieved_data;
+		}
+
+		$value = $search_data[ $field['name'] ] ?? null;
 
 		// If empty use the default value.
 		if ( empty( $value ) && ! empty( $field['default_value'] ) ) {
