@@ -253,7 +253,6 @@ $post_settings = new VoiceWp\Settings(
 	),
 	array(
 		'screen' => 'voicewp-skill',
-		'serialize_data' => false,
 		'add_to_prefix' => false,
 	)
 );

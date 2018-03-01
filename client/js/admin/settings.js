@@ -9,6 +9,7 @@ voicewp_add_another = function( $element ) {
   const fields = cloneElement.find('.voicewp-item');
   fields.each( function() {
     jQuery( this ).val( '' );
+    jQuery( this ).siblings( '.media-wrapper' ).html( '' );
   });
 
   voicewp_renumber( $element.closest( '.voicewpjs-repeating-group' ) );

@@ -66,7 +66,7 @@ class Settings {
 		$this->_context = $context;
 		$this->_name    = $name;
 		$this->_title   = $title;
-		$this->_fields  = $this->sanitize_fields( $fields );
+		$this->_fields  = $this->validate_fields( $fields );
 		$this->_args    = wp_parse_args( $args, array(
 			'serialize_data' => true,
 			'add_to_prefix'  => true,
@@ -80,7 +80,27 @@ class Settings {
 			add_action( 'admin_init', array( $this, 'add_options_fields' ) );
 		} elseif ( 'post' === $this->_context ) {
 			add_action( 'add_meta_boxes', array( $this, 'add_post_fields' ) );
+			add_action( 'save_post', array( $this, 'save_post_fields' ) );
 		}
+
+		if ( did_action( 'admin_print_scripts' ) ) {
+			$this->admin_print_scripts();
+		} else {
+			add_action( 'admin_print_scripts', array( $this, 'admin_print_scripts' ) );
+		}
+	}
+
+	/**
+	 * Hook into admin_print_scripts action to enqueue the media for the current
+	 * post
+	 */
+	public function admin_print_scripts() {
+		$post = get_post();
+		$args = array();
+		if ( ! empty( $post->ID ) ) {
+			$args['post'] = $post->ID;
+		}
+		wp_enqueue_media( $args ); // generally on post pages this will not have an impact.
 	}
 
 	/**
@@ -231,23 +251,24 @@ class Settings {
 			$this->_name,
 			$this->_title,
 			function ( $post ) {
+				// Add nonce.
+				wp_nonce_field( 'voicewp_post_fields_' . $this->_name, 'voicewp_nonce_' . $this->_name );
+
 				// Add the fields.
 				foreach ( $this->_fields as $name => $field ) {
-					$prefix = $this->_name;
-					if ( ! $this->_args['add_to_prefix'] ) {
-						$prefix = '';
-					}
+					$field_name = $this->_name;
 
-					$field_name = $this->get_field_name( $prefix, $field );
+					// No prefix.
+					if ( ! $this->_args['add_to_prefix'] ) {
+						$field_name = $name;
+					}
 
 					// Serialized data.
 					if ( ! $this->_args['serialize_data'] ) {
+						$field_name .= '_' . $field['name'];
+
 						$temp_field = $field;
-						if ( ! $this->_args['add_to_prefix'] ) {
-							$temp_field['name'] = $this->_name . $field['name'];
-						} else {
-							$temp_field['name'] = $this->_name . '_' . $field['name'];
-						}
+						$temp_field['name'] = $field_name;
 
 						$field['value'] = $this->get_field_value( $temp_field );
 					}
@@ -274,25 +295,107 @@ class Settings {
 	}
 
 	/**
-	 * Santizie the fields.
+	 * Save the post fields.
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	public function save_post_fields( $post_id ) {
+		// Do not save meta fields for revisions or autosaves.
+		if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		// Validate nonce.
+		check_admin_referer( 'voicewp_post_fields_' . $this->_name, 'voicewp_nonce_' . $this->_name );
+
+		// Add the fields.
+		foreach ( $this->_fields as $name => $field ) {
+			$field_name = $this->_name;
+
+			// No prefix.
+			if ( ! $this->_args['add_to_prefix'] ) {
+				$field_name = $name;
+			}
+
+			// Serialized data.
+			if ( ! $this->_args['serialize_data'] ) {
+				$field_name .= '_' . $field['name'];
+			}
+
+			if ( isset( $_POST[ $field_name ] ) ) {
+				update_post_meta( $post_id, $field_name, $this->sanitize_field( $field, $_POST[ $field_name ] ) ); // WPCS: Sanitization okay.
+			} else {
+				delete_post_meta( $post_id, $field_name );
+			}
+		}
+	}
+
+	/**
+	 * Sanitize field.
+	 *
+	 * @param array $field The field.
+	 * @param mixed $value The current field value.
+	 * @return mixed $value The sanitized field value.
+	 */
+	public function sanitize_field( $field, $value ) {
+		$value = wp_unslash( $value );
+
+		// Data is an array.
+		if ( is_array( $value ) && $field['is_group'] ) {
+			if ( 0 === $field['limit'] || 1 < $field['limit'] ) {
+				foreach ( $value as &$item ) {
+					foreach ( $field['children'] as $child ) {
+						$item[ $child['name'] ] = $this->sanitize_field( $child, $item[ $child['name'] ] );
+					}
+				}
+			} else {
+				foreach ( $field['children'] as $child ) {
+					$value[ $child['name'] ] = $this->sanitize_field( $child, $value[ $child['name'] ] );
+				}
+			}
+
+			return $value;
+		}
+
+		switch ( $field['type'] ) {
+			case 'media':
+				$value = absint( $value );
+				break;
+			case 'textarea':
+				$value = sanitize_textarea_field( $value );
+				break;
+			case 'checkbox':
+			case 'checkboxes':
+			case 'select':
+			case 'text':
+			default:
+				$value = sanitize_text_field( $value );
+				break;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Validate the fields.
 	 *
 	 * @param array $fields The current fields.
 	 * @return array The sanitized fields.
 	 */
-	public function sanitize_fields( array $fields ) {
+	public function validate_fields( array $fields ) {
 		if ( empty( $fields ) || ! is_array( $fields ) ) {
 			return [];
 		}
 
 		foreach ( $fields as $name => &$field ) {
-			$field = $this->sanitize_field( $name, $field );
+			$field = $this->validate_field( $name, $field );
 
 			if (
 				'group' === $field['type']
 				&& ! empty( $field['children'] )
 				&& is_array( $field['children'] )
 			) {
-				$field['children'] = $this->sanitize_fields( $field['children'] );
+				$field['children'] = $this->validate_fields( $field['children'] );
 			}
 		}
 
@@ -306,7 +409,7 @@ class Settings {
 	 * @param  array  $field The field array.
 	 * @return array         The sanitized field array.
 	 */
-	public function sanitize_field( string $name, array $field ) : array {
+	public function validate_field( string $name, array $field ) : array {
 		$field = wp_parse_args( $field, array(
 			'name'           => $name,
 			'label'          => '',
@@ -376,8 +479,10 @@ class Settings {
 			$child['value'] = $this->get_field_value( $child, $value );
 			$child_name = $this->get_field_name( $name, $child );
 
+			echo '<div class="voicewp-wrapper">';
 			$this->render_field_label( $child_name, $child );
 			$this->render_field( $child_name, $child );
+			echo '</div>';
 		}
 
 		if ( 0 === $group['limit'] || 1 < $group['limit'] ) {
@@ -419,10 +524,9 @@ class Settings {
 		switch ( $field['type'] ) {
 			case 'checkbox':
 				$field_html .= sprintf(
-					'<p><input type="checkbox" name="%1$s" data-base-name="%2$s" class="voicewp-item" value="%3$s" %4$s %5$s /><label>%6$s</label></p>',
+					'<p><input type="checkbox" name="%1$s" data-base-name="%2$s" class="voicewp-item" %3$s %4$s /><label>%5$s</label></p>',
 					esc_attr( $name ),
 					esc_attr( $base_name ),
-					esc_attr( $field_value ),
 					! empty( $field_value ) ? 'checked="checked"' : '',
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '', // Escaped internally.
 					esc_html( $field['label'] )
@@ -460,8 +564,8 @@ class Settings {
 				}
 
 				$field_html .= sprintf(
-					'<input type="button" class="voicewp-media-button button-secondary" value="%4$s" %6$s />
-					<input type="hidden" name="%1$s" data-base-name="%2$s" value="%3$s" class="voicewp-element voicewp-media-id" />
+					'<input type="button" class="voicewp-media-button button-secondary" value="%4$s" id="%1$s" %6$s />
+					<input type="hidden" name="%1$s" data-base-name="%2$s" value="%3$s" class="voicewp-item voicewp-media-id" />
 					<div class="media-wrapper">%5$s</div>',
 					esc_attr( $name ),
 					esc_attr( $base_name ),
@@ -661,23 +765,22 @@ class Settings {
 					// Get the current post ID.
 					$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
 
+					$field_name = $this->_name;
+
 					if ( ! $this->_args['serialize_data'] ) {
 						foreach ( $this->_fields as $name => $field ) {
-							if ( ! $this->_args['add_to_prefix'] ) {
-								$field_name = $field['name'];
-							} else {
-								$field_name = $this->_name . '_' . $field['name'];
-							}
-
-							$this->_retrieved_data[ $field_name ] = get_post_meta( $post_id, $field_name, true );
+							$child_name = $field_name . '_' . $field['name'];
+							$this->_retrieved_data[ $child_name ] = get_post_meta( $post_id, $child_name, true );
 						}
 					} else {
-						$this->_retrieved_data = get_post_meta( $post_id, $this->_name, true );
+						$this->_retrieved_data = get_post_meta( $post_id, $field_name, true );
 					}
 
 					break;
 			}
 		}
+
+		return $this->_retrieved_data;
 	}
 
 	/**
@@ -698,8 +801,6 @@ class Settings {
 			if ( $this->_args['add_to_prefix'] ) {
 				$name .= '_';
 			}
-
-			return $name . $field['name'];
 		}
 
 		return $name . "[{$field['name']}]";
@@ -718,8 +819,17 @@ class Settings {
 			return null;
 		}
 
+		// Use custom search data.
 		if ( null === $search_data ) {
 			$search_data = $this->_retrieved_data;
+		}
+
+		// This is a repeater group.
+		if (
+			is_array( $search_data )
+			&& array_keys( $search_data ) === range( 0, count( $search_data ) - 1 )
+		) {
+			return $search_data;
 		}
 
 		// This is a single field.
