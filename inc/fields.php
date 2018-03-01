@@ -11,71 +11,6 @@ $eligible_news_taxonomy_objects = array_filter(
 );
 
 /**
- * Add the Alexa app ID.
- * Populates the types of skills that can be created
- */
-function voicewp_fm_alexa_app_settings() {
-
-	$post_id = ( isset( $_GET['post'] ) ) ? absint( $_GET['post'] ) : 0;
-
-	$children = array(
-		new \Fieldmanager_Select( __( 'Skill Type', 'voicewp' ), array(
-			'name' => 'type',
-			'first_empty' => true,
-			'options' => array(
-				// Key is class name
-				'Quote' => __( 'Fact / Quote', 'voicewp' ),
-			),
-			'description' => __( 'What type of functionality is being added?', 'voicewp' ),
-		) ),
-		new \Fieldmanager_Media( __( 'Default App Card Image', 'voicewp' ), array(
-			'name' => 'default_image',
-			'description' => __( 'Image to be used when no other is provided. App cards can be displayed within the Alexa app when she responds to a user request.', 'voicewp' ),
-		) ),
-		new \Fieldmanager_Checkbox( array(
-			'name' => 'is_standalone',
-			'label' => __( 'This is a standalone skill', 'voicewp' ),
-			'description' => __( 'Will this be its own skill or is this part of another skill?', 'voicewp' ),
-		) ),
-		new \Fieldmanager_TextField( __( 'Alexa Application ID', 'voicewp' ), array(
-			'name' => 'app_id',
-			'description' => __( 'Add the application ID given by Amazon', 'voicewp' ),
-			'display_if' => array(
-				'src' => 'is_standalone',
-				'value' => true,
-			),
-		) ),
-	);
-
-	// If there's a post ID, output the REST endpoint for use in the amazon developer portal
-	if ( $post_id ) {
-		$children['readonly_skill_url'] = new \Fieldmanager_TextField( array(
-			'label' => __( 'This is the endpoint URL of your skill. Paste this within the configuration tab for your skill in the developer portal.', 'voicewp' ),
-			'default_value' => home_url( '/wp-json/voicewp/v1/skill/' ) . $post_id,
-			'skip_save' => true,
-			'attributes' => array(
-				'readonly' => 'readonly',
-				'style' => 'width: 95%;',
-			),
-			'display_if' => array(
-				'src' => 'is_standalone',
-				'value' => true,
-			),
-		) );
-	}
-
-	$fm = new \Fieldmanager_Group( array(
-		'name' => 'voicewp_skill',
-		'serialize_data' => false,
-		// Needs to be name => field for compat with FM's validation routines.
-		'children' => array_combine( wp_list_pluck( $children, 'name' ), $children ),
-	) );
-	$context = fm_get_context();
-	return $fm->add_meta_box( __( 'Skill Settings', 'voicewp' ), $context[1], 'normal', 'high' );
-}
-add_action( 'fm_post_voicewp-skill', 'voicewp_fm_alexa_app_settings' );
-
-/**
  * Fields for controlling flash briefing content.
  *
  * @return \Fieldmanager_Context_Post Post context.
@@ -269,15 +204,46 @@ function voicewp_briefing_category_url() {
 }
 add_action( 'voicewp-briefing-category_edit_form_fields', 'voicewp_briefing_category_url' );
 
+// Get the current post ID.
+$post_id = ( isset( $_GET['post'] ) ) ? absint( $_GET['post'] ) : 0;
+
 // Add Skill settings.
 $post_settings = new VoiceWp\Settings(
 	'post',
 	'voicewp_skill',
 	__( 'Skill Settings', 'voicewp' ),
 	array(
+		'type' => array(
+			'type' => 'select',
+			'label' => __( 'Skill Type', 'voicewp' ),
+			'first_empty' => true,
+			'options' => array(
+				// Key is class name.
+				'Quote' => __( 'Fact / Quote', 'voicewp' ),
+			),
+			'description' => __( 'What type of functionality is being added?', 'voicewp' ),
+		),
+		'default_image' => array(
+			'type' => 'media',
+			'label' => __( 'Default App Card Image', 'voicewp' ),
+			'description' => __( 'Image to be used when no other is provided. App cards can be displayed within the Alexa app when she responds to a user request.', 'voicewp' ),
+		),
+		'is_standalone' => array(
+			'type' => 'checkbox',
+			'label' => __( 'This is a standalone skill', 'voicewp' ),
+			'description' => __( 'Will this be its own skill or is this part of another skill?', 'voicewp' ),
+		),
 		'app_id' => array(
 			'label' => __( 'Alexa Application ID', 'voicewp' ),
 			'description' => __( 'Add the application ID given by Amazon', 'voicewp' ),
+		),
+		'readonly_skill_url' => array(
+			'label' => __( 'This is the endpoint URL of your skill. Paste this within the configuration tab for your skill in the developer portal.', 'voicewp' ),
+			'default_value' => home_url( '/wp-json/voicewp/v1/skill/' ) . $post_id,
+			'attributes' => array(
+				'readonly' => 'readonly',
+				'style' => 'width: 95%;',
+			),
 		),
 	),
 	array(

@@ -1,4 +1,9 @@
-.voicewp-wrapper {
+a.voicewp-delete {
+  color: #bc0b0b;
+  text-decoration: none;
+}
+
+.voicewp-group-wrapper {
   border: 1px solid #ddd;
   padding: 12px;
   background-color: #fff;

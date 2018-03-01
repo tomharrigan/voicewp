@@ -86,6 +86,7 @@ class Settings {
 	public function admin_enqueue_scripts() {
 		wp_enqueue_style( 'voicewp-settings-css', VOICEWP_URL . '/client/css/admin/settings.css' );
 		wp_enqueue_script( 'voicewp-settings-js', VOICEWP_URL . '/client/js/admin/settings.js', [ 'jquery' ] );
+		wp_enqueue_script( 'voicewp-settings-media-js', VOICEWP_URL . '/client/js/admin/settings-media.js', [ 'jquery' ] );
 	}
 
 	/**
@@ -250,8 +251,8 @@ class Settings {
 					$field_name = $this->get_field_name( $this->_name, $field );
 
 					// Render the field.
-					echo '<div>';
-					$this->render_field_label( $field['label'], $field_name );
+					echo '<div class="voicewp-wrapper">';
+					$this->render_field_label( $field_name, $field );
 					$this->render_field( $field_name, $field );
 					echo '</div>';
 				}
@@ -296,6 +297,7 @@ class Settings {
 	public function sanitize_field( string $name, array $field ) : array {
 		$field = wp_parse_args( $field, array(
 			'name'           => $name,
+			'label'          => '',
 			'type'           => 'text',
 			'limit'          => 1,
 			'add_more_label' => ( isset( $field['type'] ) && 'group' === $field['type'] ) ? __( 'Add group', 'voicewp' ) : __( 'Add field', 'voicewp' ),
@@ -360,15 +362,17 @@ class Settings {
 			}
 
 			$child['value'] = $this->get_field_value( $child, $value );
+			$child_name = $this->get_field_name( $name, $child );
 
-			$this->render_field( $this->get_field_name( $name, $child ), $child );
+			$this->render_field_label( $child_name );
+			$this->render_field( $child_name, $child );
 		}
 
 		if ( 0 === $group['limit'] || 1 < $group['limit'] ) {
 			$repeater_html = $this->wrap_with_multi_tools( $group, ob_get_clean() );
 		}
 
-		echo '<div class="voicewp-wrapper">';
+		echo '<div class="voicewp-group-wrapper">';
 		echo $repeater_html; // WPCS: XSS okay.
 		echo '</div>';
 	}
@@ -401,6 +405,17 @@ class Settings {
 
 		// Render the correct field type.
 		switch ( $field['type'] ) {
+			case 'checkbox':
+				$field_html .= sprintf(
+					'<p><input type="checkbox" name="%1$s" data-base-name="%2$s" class="voicewp-item" value="%3$s" %4$s %5$s /><label>%6$s</label></p>',
+					esc_attr( $name ),
+					esc_attr( $base_name ),
+					esc_attr( $field_value ),
+					! empty( $field_value ) ? 'checked="checked"' : '',
+					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '', // Escaped internally.
+					esc_html( $field['label'] )
+				); // WPCS XSS okay.
+				break;
 			case 'checkboxes':
 				if ( empty( $field['options'] ) ) {
 					break;
@@ -417,6 +432,65 @@ class Settings {
 						esc_html( $label )
 					); // WPCS XSS okay.
 				}
+				break;
+			case 'media':
+				// Generate the preview.
+				$preview = '';
+				if ( is_numeric( $field_value ) && $field_value > 0 ) {
+					$attachment = get_post( $field_value );
+
+					if ( strpos( $attachment->post_mime_type, 'image/' ) === 0 ) {
+						$preview .= esc_html__( 'Uploaded image:', 'voicewp' ) . '<br />';
+						$preview .= '<a href="#">' . wp_get_attachment_image( $field_value, 'thumbnail', false ) . '</a>';
+					}
+
+					$preview .= sprintf( '<br /><a href="#" class="voicewp-media-remove voicewp-delete">%s</a>', esc_html__( 'remove', 'voicewp' ) );
+				}
+
+				$field_html .= sprintf(
+					'<input type="button" class="voicewp-media-button button-secondary" id="%1$s" value="%4$s" %6$s />
+					<input type="hidden" name="%1$s" data-base-name="%2$s" value="%3$s" class="voicewp-element voicewp-media-id" />
+					<div class="media-wrapper">%5$s</div>',
+					esc_attr( $name ),
+					esc_attr( $base_name ),
+					esc_attr( $field_value ),
+					esc_attr__( 'Add Media', 'voicewp' ),
+					$preview,
+					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
+				); // WPCS XSS okay.
+
+				break;
+			case 'select':
+				if ( empty( $field['options'] ) ) {
+					break;
+				}
+
+				$field_html .= sprintf(
+					'<select name="%1$s" data-base-name="%2$s" class="voicewp-item" %3$s>',
+					esc_attr( $name ),
+					esc_attr( $base_name ),
+					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
+				); // WPCS XSS okay.
+
+				// Add empty first element.
+				if ( ! empty( $field['first_empty'] ) ) {
+					$field_html .= sprintf(
+						'<option value %1$s>&nbsp;</option>',
+						selected( '', $field_value, false )
+					);
+				}
+
+				// The options.
+				foreach ( $field['options'] as $value => $label ) {
+					$field_html .= sprintf(
+						'<option value="%1$s" %2$s>%3$s</option>',
+						esc_attr( $value ),
+						selected( $value, $field_value, false ),
+						esc_html( $label )
+					);
+				}
+
+				$field_html .= '</select>';
 				break;
 			case 'textarea':
 				$field_html .= sprintf(
@@ -459,11 +533,16 @@ class Settings {
 	/**
 	 * Render the field label.
 	 *
-	 * @param string $label The field label.
 	 * @param string $id    The field ID.
+	 * @param array  $field The field.
 	 */
-	public function render_field_label( $label, $id = '' ) {
-		echo '<div><label for="' . esc_attr( $id ) . '">' . esc_attr( $label ) . '</label></div>';
+	public function render_field_label( $id, $field ) {
+		// Do not render the label if this is a checkbox type.
+		if ( 'checkbox' === $field['type'] ) {
+			return;
+		}
+
+		echo '<div><label for="' . esc_attr( $id ) . '">' . esc_attr( $field['label'] ) . '</label></div>';
 	}
 
 	/**
