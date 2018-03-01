@@ -220,24 +220,26 @@ add_action( 'fm_post_voicewp-skill', 'voicewp_fm_skill_fact_quote' );
  * Creates option of user defined dictionary terms for replacement within
  * Alexa content. Uses the 'sub' element to specify pronunciations of words.
  *
- * @param array $data FM data
- * @return array
+ * @param array $new_value The new data.
+ * @param array $old_value The old data.
+ * @return array $new_value The new data.
  */
-function voicewp_fm_submenu_presave_data( $data ) {
-	if ( empty( $data['user_dictionary']['dictionary'] ) || ! is_array( $data['user_dictionary']['dictionary'] ) ) {
-		return $data;
+function voicewp_fm_submenu_presave_data( $new_value, $old_value ) {
+	if ( empty( $new_value['user_dictionary']['dictionary'] ) || ! is_array( $new_value['user_dictionary']['dictionary'] ) ) {
+		return $new_value;
 	}
 
 	$dictionary = get_option( 'voicewp_user_dictionary', array() );
-	foreach ( $data['user_dictionary']['dictionary'] as $key => $value ) {
+	foreach ( $new_value['user_dictionary']['dictionary'] as $key => $value ) {
 		if ( ! empty( $value['search'] ) ) {
 			$dictionary[ $value['search'] ] = sprintf( '<sub alias="%s">%s</sub>', $value['replace'], $value['search'] );
 		}
 	}
 	update_option( 'voicewp_user_dictionary', $dictionary );
-	return $data;
+
+	return $new_value;
 }
-add_filter( 'fm_submenu_presave_data', 'voicewp_fm_submenu_presave_data' );
+add_filter( 'pre_update_option_voicewp-settings', 'voicewp_fm_submenu_presave_data', 10, 2 );
 
 $news_post_types = voicewp_news_post_types();
 // All public taxonomies associated with news post types. Could be abstracted into a function.
