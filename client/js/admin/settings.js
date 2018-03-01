@@ -1,7 +1,7 @@
 voicewp_add_another = function( $element ) {
   const repeaterGroup = $element.parent().parent();
-  const cloneElement = repeaterGroup.find( '.voicewp-wrapper' ).last().clone();
-  const items = repeaterGroup.find('.voicewp-wrapper');
+  const cloneElement = repeaterGroup.find( '.voicewp-group-wrapper' ).last().clone();
+  const items = repeaterGroup.find('.voicewp-group-wrapper');
 
   cloneElement.insertBefore( $element.parent() );
 
@@ -23,7 +23,7 @@ voicewp_remove = function( $element ) {
 
 voicewp_renumber = function( $element ) {
   const repeaterName = $element.data( 'repeater-name' );
-  const items = $element.find( '.voicewp-wrapper' );
+  const items = $element.find( '.voicewp-group-wrapper' );
 
   // Update name and clear data.
   items.each( function( index, value ) {

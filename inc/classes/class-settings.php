@@ -67,7 +67,10 @@ class Settings {
 		$this->_name    = $name;
 		$this->_title   = $title;
 		$this->_fields  = $this->sanitize_fields( $fields );
-		$this->_args    = $args;
+		$this->_args    = wp_parse_args( $args, array(
+			'serialize_data' => true,
+			'add_to_prefix'  => true,
+		) );
 
 		// Add scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
@@ -230,6 +233,24 @@ class Settings {
 			function ( $post ) {
 				// Add the fields.
 				foreach ( $this->_fields as $name => $field ) {
+					$prefix = $this->_name;
+					if ( ! $this->_args['add_to_prefix'] ) {
+						$prefix = '';
+					}
+
+					$field_name = $this->get_field_name( $prefix, $field );
+
+					// Serialized data.
+					if ( ! $this->_args['serialize_data'] ) {
+						$temp_field = $field;
+						if ( ! $this->_args['add_to_prefix'] ) {
+							$temp_field['name'] = $this->_name . $field['name'];
+						} else {
+							$temp_field['name'] = $this->_name . '_' . $field['name'];
+						}
+
+						$field['value'] = $this->get_field_value( $temp_field );
+					}
 
 					// Group field.
 					if (
@@ -237,18 +258,9 @@ class Settings {
 						&& ! empty( $field['children'] )
 						&& is_array( $field['children'] )
 					) {
+						$this->render_group( $field_name, $field, $this->get_data() );
 						continue;
 					}
-
-					// Serialized data.
-					if ( isset( $this->_args['serialize_data'] ) && ! $this->_args['serialize_data'] ) {
-						$temp_field = $field;
-						$temp_field['name'] = $this->_name . '_' . $field['name'];
-
-						$field['value'] = $this->get_field_value( $temp_field );
-					}
-
-					$field_name = $this->get_field_name( $this->_name, $field );
 
 					// Render the field.
 					echo '<div class="voicewp-wrapper">';
@@ -364,7 +376,7 @@ class Settings {
 			$child['value'] = $this->get_field_value( $child, $value );
 			$child_name = $this->get_field_name( $name, $child );
 
-			$this->render_field_label( $child_name );
+			$this->render_field_label( $child_name, $child );
 			$this->render_field( $child_name, $child );
 		}
 
@@ -448,7 +460,7 @@ class Settings {
 				}
 
 				$field_html .= sprintf(
-					'<input type="button" class="voicewp-media-button button-secondary" id="%1$s" value="%4$s" %6$s />
+					'<input type="button" class="voicewp-media-button button-secondary" value="%4$s" %6$s />
 					<input type="hidden" name="%1$s" data-base-name="%2$s" value="%3$s" class="voicewp-element voicewp-media-id" />
 					<div class="media-wrapper">%5$s</div>',
 					esc_attr( $name ),
@@ -649,9 +661,14 @@ class Settings {
 					// Get the current post ID.
 					$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
 
-					if ( isset( $this->_args['serialize_data'] ) && ! $this->_args['serialize_data'] ) {
+					if ( ! $this->_args['serialize_data'] ) {
 						foreach ( $this->_fields as $name => $field ) {
-							$field_name = $this->_name . '_' . $field['name'];
+							if ( ! $this->_args['add_to_prefix'] ) {
+								$field_name = $field['name'];
+							} else {
+								$field_name = $this->_name . '_' . $field['name'];
+							}
+
 							$this->_retrieved_data[ $field_name ] = get_post_meta( $post_id, $field_name, true );
 						}
 					} else {
@@ -677,8 +694,12 @@ class Settings {
 		}
 
 		// The data is not serialized.
-		if ( isset( $this->_args['serialize_data'] ) && ! $this->_args['serialize_data'] ) {
-			return $name . '_' . $field['name'];
+		if ( ! $this->_args['serialize_data'] ) {
+			if ( $this->_args['add_to_prefix'] ) {
+				$name .= '_';
+			}
+
+			return $name . $field['name'];
 		}
 
 		return $name . "[{$field['name']}]";

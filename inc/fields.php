@@ -136,33 +136,6 @@ function voicewp_fm_briefing_content() {
 add_action( 'fm_post_voicewp-briefing', 'voicewp_fm_briefing_content' );
 
 /**
- * Add facts or skills.
- */
-function voicewp_fm_skill_fact_quote() {
-	$fm = new Fieldmanager_Group( array(
-		'name' => 'facts_quotes',
-		'limit' => 0,
-		'extra_elements' => 0,
-		'add_more_label' => __( 'Add another fact or quote', 'voicewp' ),
-		'children' => array(
-			'fact_quote' => new Fieldmanager_TextField( array(
-				'label' => __( 'Fact / Quote', 'voicewp' ),
-				'description' => __( 'Add a fact or quote', 'voicewp' ),
-			) ),
-			'attribution' => new Fieldmanager_TextField( array(
-				'label' => __( 'Attribution', 'voicewp' ),
-				'description' => __( 'Add attribution if applicable', 'voicewp' ),
-			) ),
-			'image' => new Fieldmanager_Media( array(
-				'label' => __( 'Alexa App Card Image', 'voicewp' ),
-			) ),
-		),
-	) );
-	$fm->add_meta_box( __( 'Facts / Quotes', 'voicewp' ), array( 'voicewp-skill' ) );
-}
-add_action( 'fm_post_voicewp-skill', 'voicewp_fm_skill_fact_quote' );
-
-/**
  * Creates option of user defined dictionary terms for replacement within
  * Alexa content. Uses the 'sub' element to specify pronunciations of words.
  *
@@ -249,6 +222,39 @@ $post_settings = new VoiceWp\Settings(
 	array(
 		'screen' => 'voicewp-skill',
 		'serialize_data' => false,
+	)
+);
+
+// Add Skill settings.
+$post_settings = new VoiceWp\Settings(
+	'post',
+	'facts_quotes',
+	__( 'Facts / Quotes', 'voicewp' ),
+	array(
+		'facts_quotes' => array(
+			'type' => 'group',
+			'limit' => 0,
+			'add_more_label' => __( 'Add another fact or quote', 'voicewp' ),
+			'children' => array(
+				'fact_quote' => array(
+					'label' => __( 'Fact / Quote', 'voicewp' ),
+					'description' => __( 'Add a fact or quote', 'voicewp' ),
+				),
+				'attribution' => array(
+					'label' => __( 'Attribution', 'voicewp' ),
+					'description' => __( 'Add attribution if applicable', 'voicewp' ),
+				),
+				'image' => array(
+					'type' => 'media',
+					'label' => __( 'Alexa App Card Image', 'voicewp' ),
+				),
+			),
+		),
+	),
+	array(
+		'screen' => 'voicewp-skill',
+		'serialize_data' => false,
+		'add_to_prefix' => false,
 	)
 );
 
