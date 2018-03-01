@@ -284,10 +284,7 @@ class Settings {
 					}
 
 					// Render the field.
-					echo '<div class="voicewp-wrapper">';
-					$this->render_field_label( $field_name, $field );
-					$this->render_field( $field_name, $field );
-					echo '</div>';
+					$this->render_complete_field( $field_name, $field );
 				}
 			},
 			$this->_args['screen']
@@ -302,6 +299,14 @@ class Settings {
 	public function save_post_fields( $post_id ) {
 		// Do not save meta fields for revisions or autosaves.
 		if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		// Do not save fields for this post type.
+		if (
+			( is_string( $this->_args['screen'] ) && get_post_type( $post_id ) !== $this->_args['screen'] )
+			|| ( is_array( $this->_args['screen'] ) && in_array( get_post_type( $post_id ), $this->_args['screen'], true ) )
+		) {
 			return;
 		}
 
@@ -417,6 +422,7 @@ class Settings {
 			'limit'          => 1,
 			'add_more_label' => ( isset( $field['type'] ) && 'group' === $field['type'] ) ? __( 'Add group', 'voicewp' ) : __( 'Add field', 'voicewp' ),
 			'is_group'       => false,
+			'mime_type'      => 'all',
 		) );
 
 		if ( 'group' === $field['type'] ) {
@@ -479,10 +485,7 @@ class Settings {
 			$child['value'] = $this->get_field_value( $child, $value );
 			$child_name = $this->get_field_name( $name, $child );
 
-			echo '<div class="voicewp-wrapper">';
-			$this->render_field_label( $child_name, $child );
-			$this->render_field( $child_name, $child );
-			echo '</div>';
+			$this->render_complete_field( $child_name, $child );
 		}
 
 		if ( 0 === $group['limit'] || 1 < $group['limit'] ) {
@@ -491,6 +494,19 @@ class Settings {
 
 		echo '<div class="voicewp-group-wrapper">';
 		echo $repeater_html; // WPCS: XSS okay.
+		echo '</div>';
+	}
+
+	/**
+	 * Render the complete field with a label.
+	 *
+	 * @param  string $field_name The field name.
+	 * @param  array  $field      The field.
+	 */
+	public function render_complete_field( $field_name, $field ) {
+		echo '<div class="voicewp-wrapper">';
+		$this->render_field_label( $field_name, $field );
+		$this->render_field( $field_name, $field );
 		echo '</div>';
 	}
 
@@ -564,13 +580,14 @@ class Settings {
 				}
 
 				$field_html .= sprintf(
-					'<input type="button" class="voicewp-media-button button-secondary" value="%4$s" id="%1$s" %6$s />
+					'<input type="button" class="voicewp-media-button button-secondary" value="%4$s" id="%1$s" data-mime-type="%5$s" %7$s />
 					<input type="hidden" name="%1$s" data-base-name="%2$s" value="%3$s" class="voicewp-item voicewp-media-id" />
-					<div class="media-wrapper">%5$s</div>',
+					<div class="media-wrapper">%6$s</div>',
 					esc_attr( $name ),
 					esc_attr( $base_name ),
 					esc_attr( $field_value ),
 					esc_attr__( 'Add Media', 'voicewp' ),
+					esc_attr( $field['mime_type'] ),
 					$preview,
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
 				); // WPCS XSS okay.

@@ -11,131 +11,6 @@ $eligible_news_taxonomy_objects = array_filter(
 );
 
 /**
- * Fields for controlling flash briefing content.
- *
- * @return \Fieldmanager_Context_Post Post context.
- */
-function voicewp_fm_briefing_content() {
-	$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;
-	$allowed_formats = array( 'mp3' );
-
-	$children = array(
-		// Display-if control.
-		'source' => new \Fieldmanager_Radios( __( 'Source', 'voicewp' ), array(
-			/**
-			 * Allows for filtering the available sources that
-			 * can be used for populating a flash briefing
-			 *
-			 * @since 1.1.0
-			 *
-			 * @param array Flash briefing source options
-			 */
-			'options' => apply_filters( 'voicewp_briefing_source_options', array(
-				'content' => __( 'Text', 'voicewp' ),
-				'audio_url' => __( 'HTTPS URL to an MP3', 'voicewp' ),
-				'attachment_id' => __( 'Uploaded MP3', 'voicewp' ),
-			) ),
-			/**
-			 * String defining the default content source of a flash briefing
-			 *
-			 * @since 1.1.0
-			 *
-			 * @param string default value
-			 */
-			'default_value' => apply_filters( 'voicewp_default_briefing_source', 'content' ),
-		) ),
-		'content' => new \VoiceWP_Fieldmanager_Content_TextArea( __( 'Text', 'voicewp' ), array(
-			'description' => __( 'Text should be under 4,500 characters.', 'voicewp' ),
-			'attributes' => array(
-				'style' => 'width: 100%; height: 400px',
-				'maxlength' => 4500,
-			),
-			'display_if' => array(
-				'src' => 'source',
-				'value' => 'content',
-			),
-		) ),
-		'audio_url' => new \Fieldmanager_Link( __( 'HTTPS URL to an MP3', 'voicewp' ), array(
-			'attributes' => array(
-				'style' => 'width: 100%;',
-			),
-			'display_if' => array(
-				'src' => 'source',
-				/**
-				 * Allow filtering of what sources an audio link is used with
-				 *
-				 * @since 1.1.0
-				 *
-				 * @param string Comma separated list of source options to display the field for
-				 */
-				'value' => apply_filters( 'voicewp_briefing_audio_url_display_if', 'audio_url' ),
-			),
-		) ),
-		'attachment_id' => new \Fieldmanager_Media( __( 'Uploaded MP3', 'voicewp' ), array(
-			'mime_type' => 'audio',
-			'button_label' => __( 'Select a File', 'voicewp' ),
-			'modal_button_label' => __( 'Select File', 'voicewp' ),
-			'modal_title' => __( 'Select a File', 'voicewp' ),
-			'display_if' => array(
-				'src' => 'source',
-				'value' => 'attachment_id',
-			),
-		) ),
-		'uuid' => new \Fieldmanager_Hidden( array() ),
-	);
-
-	if ( ! get_post_meta( $post_id, 'voicewp_briefing_uuid', true ) ) {
-		$children['uuid']->default_value = voicewp_generate_uuid4();
-	}
-
-	/**
-	 * Allow addition, removal, or modification of briefing fields
-	 *
-	 * @since 1.1.0
-	 *
-	 * @param array $children The Fieldmanager fields used with a flash briefing
-	 */
-	$children = apply_filters( 'voicewp_briefing_fields', $children );
-
-	$fm = new \Fieldmanager_Group( array(
-		'name' => 'voicewp_briefing',
-		'serialize_data' => false,
-		// Needs to be name => field for compat with FM's validation routines.
-		'children' => $children,
-	) );
-
-	// Help text.
-	if ( $post_id ) {
-		$existing_audio_url = get_post_meta( $post_id, 'voicewp_briefing_audio_url', true );
-
-		if ( ! $existing_audio_url || ! in_array( pathinfo( parse_url( $existing_audio_url, PHP_URL_PATH ), PATHINFO_EXTENSION ), $allowed_formats, true ) ) {
-			$fm->children['audio_url']->description = __( 'Please make sure this is a URL to an MP3 file.', 'voicewp' );
-		}
-
-		$existing_attachment_id = get_post_meta( $post_id, 'voicewp_briefing_attachment_id', true );
-
-		if ( $existing_attachment_id ) {
-			$attachment_metadata = wp_get_attachment_metadata( $existing_attachment_id );
-			$warnings = array();
-
-			if ( ! isset( $attachment_metadata['fileformat'] ) || ! in_array( $attachment_metadata['fileformat'], $allowed_formats, true ) ) {
-				$warnings[] = __( 'Please make sure this is an MP3 upload.', 'voicewp' );
-			}
-
-			if ( isset( $attachment_metadata['length'] ) && $attachment_metadata['length'] > ( 10 * MINUTE_IN_SECONDS ) ) {
-				$warnings[] = __( 'Audio should be under 10 minutes long.', 'voicewp' );
-			}
-
-			$fm->children['attachment_id']->description = implode( ' ', $warnings );
-		}
-	}
-
-	$context = fm_get_context();
-	return $fm->add_meta_box( __( 'Briefing Content', 'voicewp' ), $context[1], 'normal', 'high' );
-}
-add_action( 'fm_post_voicewp-briefing', 'voicewp_fm_briefing_content' );
-
-/**
  * Creates option of user defined dictionary terms for replacement within
  * Alexa content. Uses the 'sub' element to specify pronunciations of words.
  *
@@ -180,8 +55,75 @@ add_action( 'voicewp-briefing-category_edit_form_fields', 'voicewp_briefing_cate
 // Get the current post ID.
 $post_id = ( isset( $_GET['post'] ) ) ? absint( $_GET['post'] ) : 0;
 
+// Add Briefing settings.
+$briefing_settings = new VoiceWp\Settings(
+	'post',
+	'voicewp_briefing',
+	__( 'Briefing Settings', 'voicewp' ),
+	array(
+		'source' => array(
+			'type' => 'select',
+			'label' => __( 'Source', 'voicewp' ),
+			/**
+			 * Allows for filtering the available sources that
+			 * can be used for populating a flash briefing
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param array Flash briefing source options
+			 */
+			'options' => apply_filters( 'voicewp_briefing_source_options', array(
+				'content' => __( 'Text', 'voicewp' ),
+				'audio_url' => __( 'HTTPS URL to an MP3', 'voicewp' ),
+				'attachment_id' => __( 'Uploaded MP3', 'voicewp' ),
+			) ),
+			/**
+			 * String defining the default content source of a flash briefing
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param string default value
+			 */
+			'default_value' => apply_filters( 'voicewp_default_briefing_source', 'content' ),
+		),
+		'content' => array(
+			'type' => 'textarea',
+			'label' => __( 'Text', 'voicewp' ),
+			'description' => __( 'Text should be under 4,500 characters.', 'voicewp' ),
+			'attributes' => array(
+				'style' => 'width: 100%; height: 400px',
+				'maxlength' => 4500,
+			),
+		),
+		'audio_url' => array(
+			'type' => 'text',
+			'label' => __( 'HTTPS URL to an MP3', 'voicewp' ),
+			'description' => __( 'Please make sure this is a URL to an MP3 file.', 'voicewp' ),
+			'attributes' => array(
+				'style' => 'width: 100%;',
+			),
+		),
+		'attachment_id' => array(
+			'type' => 'media',
+			'label' => __( 'Uploaded MP3', 'voicewp' ),
+			'mime_type' => 'audio',
+		),
+		'uuid' => array(
+			'label' => __( 'UUID', 'voicewp' ),
+			'default_value' => ! get_post_meta( $post_id, 'voicewp_briefing_uuid', true ) ?: voicewp_generate_uuid4(),
+			'attributes' => array(
+				'readonly' => 'readonly',
+			),
+		),
+	),
+	array(
+		'screen' => 'voicewp-briefing',
+		'serialize_data' => false,
+	)
+);
+
 // Add Skill settings.
-$post_settings = new VoiceWp\Settings(
+$skill_settings = new VoiceWp\Settings(
 	'post',
 	'voicewp_skill',
 	__( 'Skill Settings', 'voicewp' ),
@@ -226,7 +168,7 @@ $post_settings = new VoiceWp\Settings(
 );
 
 // Add Skill settings.
-$post_settings = new VoiceWp\Settings(
+$skill_fact_quote_settings = new VoiceWp\Settings(
 	'post',
 	'facts_quotes',
 	__( 'Facts / Quotes', 'voicewp' ),

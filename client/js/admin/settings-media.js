@@ -23,10 +23,40 @@ var voicewp_media_frame = [];
       return;
     }
 
+    // If mime type has been restricted, make sure the library only shows that
+    // type.
+    if ( $el.data( 'mime-type' ) && 'all' !== $el.data( 'mime-type' ) ) {
+      library.type = $el.data( 'mime-type' );
+    }
+
     // Create the media frame.
     voicewp_media_frame[ $el.attr('id') ] = wp.media({
       library: library,
     });
+
+    // If mime type has been restricted, make sure the library doesn't autoselect
+    // an uploaded file if it's the wrong mime type
+    if ( $el.data( 'mime-type' ) && 'all' !== $el.data( 'mime-type' ) ) {
+      // This event is only fired when a file is uploaded.
+      // @see {wp.media.controller.Library:uploading()}
+      voicewp_media_frame[ $el.attr('id') ].on( 'library:selection:add', function() {
+        // This event gets fired for every frame that has ever been created on
+        // the current page, which causes errors. We only care about the visible
+        // frame. Also, FM can change the ID of buttons, which means some older
+        // frames may no longer be valid.
+        if ( 'undefined' === typeof voicewp_media_frame[ $el.attr('id') ] || ! voicewp_media_frame[ $el.attr('id') ].$el.is(':visible') ) {
+          return;
+        }
+
+        // Get the Selection object and the currently selected attachment.
+        var selection = voicewp_media_frame[ $el.attr('id') ].state().get('selection'),
+          attachment = selection.first();
+        // If the mime type is wrong, deselect the file.
+        if ( attachment.attributes.type !== $el.data( 'mime-type' ) ) {
+          selection.remove(attachment);
+        }
+      });
+    }
 
     // When an image is selected, run a callback.
     voicewp_media_frame[ $el.attr('id') ].on( 'select', function() {
