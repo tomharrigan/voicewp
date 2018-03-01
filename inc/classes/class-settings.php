@@ -69,15 +69,14 @@ class Settings {
 		$this->_fields  = $this->sanitize_fields( $fields );
 		$this->_args    = $args;
 
-		// Prime the cache.
-		$this->get_data();
-
 		// Add scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
 		if ( 'options' === $this->_context ) {
 			add_action( 'admin_menu', array( $this, 'add_options_page' ) );
 			add_action( 'admin_init', array( $this, 'add_options_fields' ) );
+		} elseif ( 'post' === $this->_context ) {
+			add_action( 'add_meta_boxes', array( $this, 'add_post_fields' ) );
 		}
 	}
 
@@ -204,6 +203,61 @@ class Settings {
 				$is_group ? $option_name . '-section' : $this->get_options_section_name()
 			);
 		}
+	}
+
+	/**
+	 * Add the post meta box.
+	 */
+	public function add_post_fields() {
+		// No screen.
+		if ( empty( $this->_args['screen'] ) ) {
+			$this->_args['screen'] = 'post';
+		}
+
+		// No fields.
+		if ( empty( $this->_fields ) || ! is_array( $this->_fields ) ) {
+			return;
+		}
+
+		// Prime the cache.
+		$this->get_data();
+
+		// Add the meta box.
+		add_meta_box(
+			$this->_name,
+			$this->_title,
+			function ( $post ) {
+				// Add the fields.
+				foreach ( $this->_fields as $name => $field ) {
+
+					// Group field.
+					if (
+						'group' === $field['type']
+						&& ! empty( $field['children'] )
+						&& is_array( $field['children'] )
+					) {
+						continue;
+					}
+
+					// Serialized data.
+					if ( isset( $this->_args['serialize_data'] ) && ! $this->_args['serialize_data'] ) {
+						$temp_field = $field;
+						$temp_field['name'] = $this->_name . '_' . $field['name'];
+
+						$field['value'] = $this->get_field_value( $temp_field );
+					}
+
+					$field_name = $this->get_field_name( $this->_name, $field );
+
+					// Render the field.
+					echo '<div>';
+					$this->render_field_label( $field['label'], $field_name );
+					$this->render_field( $field_name, $field );
+					echo '</div>';
+				}
+			},
+			$this->_args['screen']
+		);
 	}
 
 	/**
@@ -403,6 +457,16 @@ class Settings {
 	}
 
 	/**
+	 * Render the field label.
+	 *
+	 * @param string $label The field label.
+	 * @param string $id    The field ID.
+	 */
+	public function render_field_label( $label, $id = '' ) {
+		echo '<div><label for="' . esc_attr( $id ) . '">' . esc_attr( $label ) . '</label></div>';
+	}
+
+	/**
 	 * Wrap a chunk of HTML with "remove" and "move" buttons if applicable.
 	 *
 	 * @param  array  $field   The current field.
@@ -502,6 +566,20 @@ class Settings {
 				case 'options':
 					$this->_retrieved_data = get_option( $this->_name );
 					break;
+				case 'post':
+					// Get the current post ID.
+					$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
+
+					if ( isset( $this->_args['serialize_data'] ) && ! $this->_args['serialize_data'] ) {
+						foreach ( $this->_fields as $name => $field ) {
+							$field_name = $this->_name . '_' . $field['name'];
+							$this->_retrieved_data[ $field_name ] = get_post_meta( $post_id, $field_name, true );
+						}
+					} else {
+						$this->_retrieved_data = get_post_meta( $post_id, $this->_name, true );
+					}
+
+					break;
 			}
 		}
 	}
@@ -517,6 +595,11 @@ class Settings {
 		// No name.
 		if ( empty( $name ) && empty( $field['name'] ) ) {
 			return null;
+		}
+
+		// The data is not serialized.
+		if ( isset( $this->_args['serialize_data'] ) && ! $this->_args['serialize_data'] ) {
+			return $name . '_' . $field['name'];
 		}
 
 		return $name . "[{$field['name']}]";
@@ -537,6 +620,11 @@ class Settings {
 
 		if ( null === $search_data ) {
 			$search_data = $this->_retrieved_data;
+		}
+
+		// This is a single field.
+		if ( ! is_array( $search_data ) ) {
+			return $search_data;
 		}
 
 		$value = $search_data[ $field['name'] ] ?? null;

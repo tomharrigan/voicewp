@@ -1,4 +1,15 @@
 <?php
+
+$news_post_types = voicewp_news_post_types();
+
+// All public taxonomies associated with news post types. Could be abstracted into a function.
+$eligible_news_taxonomy_objects = array_filter(
+	get_taxonomies( array( 'public' => true ), 'objects' ),
+	function ( $taxonomy ) use ( $news_post_types ) {
+		return ( $taxonomy->label && array_intersect( $news_post_types, $taxonomy->object_type ) );
+	}
+);
+
 /**
  * Add the Alexa app ID.
  * Populates the types of skills that can be created
@@ -241,15 +252,6 @@ function voicewp_fm_submenu_presave_data( $new_value, $old_value ) {
 }
 add_filter( 'pre_update_option_voicewp-settings', 'voicewp_fm_submenu_presave_data', 10, 2 );
 
-$news_post_types = voicewp_news_post_types();
-// All public taxonomies associated with news post types. Could be abstracted into a function.
-$eligible_news_taxonomy_objects = array_filter(
-	get_taxonomies( array( 'public' => true ), 'objects' ),
-	function ( $taxonomy ) use ( $news_post_types ) {
-		return ( $taxonomy->label && array_intersect( $news_post_types, $taxonomy->object_type ) );
-	}
-);
-
 /**
  * Add the Flash Breifing URL.
  */
@@ -267,11 +269,28 @@ function voicewp_briefing_category_url() {
 }
 add_action( 'voicewp-briefing-category_edit_form_fields', 'voicewp_briefing_category_url' );
 
+// Add Skill settings.
+$post_settings = new VoiceWp\Settings(
+	'post',
+	'voicewp_skill',
+	__( 'Skill Settings', 'voicewp' ),
+	array(
+		'app_id' => array(
+			'label' => __( 'Alexa Application ID', 'voicewp' ),
+			'description' => __( 'Add the application ID given by Amazon', 'voicewp' ),
+		),
+	),
+	array(
+		'screen' => 'voicewp-skill',
+		'serialize_data' => false,
+	)
+);
+
 // Add Option settings.
 $option_settings = new VoiceWp\Settings(
 	'options',
 	'voicewp-settings',
-	__( 'Voice WP', 'voicewp' ),
+	__( 'VoiceWP', 'voicewp' ),
 	array(
 		'skill_name' => array(
 			'label' => __( 'Skill name', 'voicewp' ),
