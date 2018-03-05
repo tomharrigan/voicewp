@@ -504,7 +504,7 @@ class Settings {
 	 * @param  array  $field      The field.
 	 */
 	public function render_complete_field( $field_name, $field ) {
-		echo '<div class="voicewp-wrapper">';
+		echo '<div class="voicewp-wrapper voicewp-' . esc_attr( $field_name ) . '-wrapper">';
 		$this->render_field_label( $field_name, $field );
 		$this->render_field( $field_name, $field );
 		echo '</div>';
@@ -535,14 +535,31 @@ class Settings {
 		}
 
 		$field_html = '';
+		$field_classes = [
+			'voicewp-item',
+			'voicewp-element',
+		];
+
+		// Checks to see if element has display_if data values, and inserts the data attributes if it does.
+		if ( ! empty( $field['display_if'] ) ) {
+			$field_classes[] = 'voicewp-display-if';
+
+			// For backwards compatibility.
+			$field['attributes']['data-display-src'] = $field['display_if']['src'];
+			$field['attributes']['data-display-value'] = $field['display_if']['value'];
+		}
+
+		// Finalize the field classes.
+		$field_classes_attr = implode( ' ', array_map( 'sanitize_html_class', $field_classes ) );
 
 		// Render the correct field type.
 		switch ( $field['type'] ) {
 			case 'checkbox':
 				$field_html .= sprintf(
-					'<p><input type="checkbox" name="%1$s" data-base-name="%2$s" class="voicewp-item" %3$s %4$s /><label>%5$s</label></p>',
+					'<p><input type="checkbox" name="%1$s" data-base-name="%2$s" class="%3$s" value="true" %4$s %5$s /><label>%6$s</label></p>',
 					esc_attr( $name ),
 					esc_attr( $base_name ),
+					esc_attr( $field_classes_attr ),
 					! empty( $field_value ) ? 'checked="checked"' : '',
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '', // Escaped internally.
 					esc_html( $field['label'] )
@@ -555,9 +572,10 @@ class Settings {
 
 				foreach ( $field['options'] as $value => $label ) {
 					$field_html .= sprintf(
-						'<p><input type="checkbox" name="%1$s[]" data-base-name="%2$s" class="voicewp-item" value="%3$s" %4$s %5$s /><label>%6$s</label></p>',
+						'<p><input type="checkbox" name="%1$s[]" data-base-name="%2$s" class="%3$s" value="%4$s" %5$s %6$s /><label>%7$s</label></p>',
 						esc_attr( $name ),
 						esc_attr( $base_name ),
+						esc_attr( $field_classes_attr ),
 						esc_attr( $value ),
 						! empty( $field_value ) && in_array( $value, $field_value, true ) ? 'checked="checked"' : '',
 						! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '', // Escaped internally.
@@ -580,11 +598,12 @@ class Settings {
 				}
 
 				$field_html .= sprintf(
-					'<input type="button" class="voicewp-media-button button-secondary" value="%4$s" id="%1$s" data-mime-type="%5$s" %7$s />
-					<input type="hidden" name="%1$s" data-base-name="%2$s" value="%3$s" class="voicewp-item voicewp-media-id" />
-					<div class="media-wrapper">%6$s</div>',
+					'<input type="button" class="voicewp-media-button button-secondary" value="%5$s" id="%1$s" data-mime-type="%6$s" />
+					<input type="hidden" name="%1$s" data-base-name="%2$s" value="%4$s" class="%3$s voicewp-media-id" %8$s/>
+					<div class="media-wrapper">%7$s</div>',
 					esc_attr( $name ),
 					esc_attr( $base_name ),
+					esc_attr( $field_classes_attr ),
 					esc_attr( $field_value ),
 					esc_attr__( 'Add Media', 'voicewp' ),
 					esc_attr( $field['mime_type'] ),
@@ -599,9 +618,10 @@ class Settings {
 				}
 
 				$field_html .= sprintf(
-					'<select name="%1$s" data-base-name="%2$s" class="voicewp-item" %3$s>',
+					'<select name="%1$s" data-base-name="%2$s" class="%3$s" %4$s>',
 					esc_attr( $name ),
 					esc_attr( $base_name ),
+					esc_attr( $field_classes_attr ),
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
 				); // WPCS XSS okay.
 
@@ -627,9 +647,10 @@ class Settings {
 				break;
 			case 'textarea':
 				$field_html .= sprintf(
-					'<textarea name="%1$s" id="%1$s" data-base-name="%2$s" class="voicewp-item" rows="5" cols="20" %4$s>%3$s</textarea>',
+					'<textarea name="%1$s" id="%1$s" data-base-name="%2$s" class="%3$s" rows="5" cols="20" %5$s>%4$s</textarea>',
 					esc_attr( $name ),
 					esc_attr( $base_name ),
+					esc_attr( $field_classes_attr ),
 					esc_html( $field_value ),
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
 				); // WPCS XSS okay.
@@ -637,9 +658,10 @@ class Settings {
 			case 'text':
 			default:
 				$field_html .= sprintf(
-					'<input type="text" name="%1$s" data-base-name="%2$s" id="%1$s" class="voicewp-item" value="%3$s" %4$s />',
+					'<input type="text" name="%1$s" data-base-name="%2$s" id="%1$s" class="%3$s" value="%4$s" %5$s />',
 					esc_attr( $name ),
 					esc_attr( $base_name ),
+					esc_attr( $field_classes_attr ),
 					esc_attr( $field_value ),
 					! empty( $field['attributes'] ) ? $this->add_attributes( $field['attributes'] ) : '' // Escaped internally.
 				); // WPCS XSS okay.

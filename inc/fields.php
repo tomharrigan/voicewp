@@ -94,6 +94,10 @@ $briefing_settings = new VoiceWp\Settings(
 				'style' => 'width: 100%; height: 400px',
 				'maxlength' => 4500,
 			),
+			'display_if' => array(
+				'src' => 'voicewp_briefing_source',
+				'value' => 'content',
+			),
 		),
 		'audio_url' => array(
 			'type' => 'text',
@@ -102,11 +106,26 @@ $briefing_settings = new VoiceWp\Settings(
 			'attributes' => array(
 				'style' => 'width: 100%;',
 			),
+			'display_if' => array(
+				'src' => 'voicewp_briefing_source',
+				/**
+				 * Allow filtering of what sources an audio link is used with
+				 *
+				 * @since 1.1.0
+				 *
+				 * @param string Comma separated list of source options to display the field for
+				 */
+				'value' => apply_filters( 'voicewp_briefing_audio_url_display_if', 'audio_url' ),
+			),
 		),
 		'attachment_id' => array(
 			'type' => 'media',
 			'label' => __( 'Uploaded MP3', 'voicewp' ),
 			'mime_type' => 'audio',
+			'display_if' => array(
+				'src' => 'voicewp_briefing_source',
+				'value' => 'attachment_id',
+			),
 		),
 		'uuid' => array(
 			'label' => __( 'UUID', 'voicewp' ),
@@ -151,6 +170,10 @@ $skill_settings = new VoiceWp\Settings(
 		'app_id' => array(
 			'label' => __( 'Alexa Application ID', 'voicewp' ),
 			'description' => __( 'Add the application ID given by Amazon', 'voicewp' ),
+			'display_if' => array(
+				'src' => 'voicewp_skill_is_standalone',
+				'value' => true,
+			),
 		),
 		'readonly_skill_url' => array(
 			'label' => __( 'This is the endpoint URL of your skill. Paste this within the configuration tab for your skill in the developer portal.', 'voicewp' ),
@@ -158,6 +181,10 @@ $skill_settings = new VoiceWp\Settings(
 			'attributes' => array(
 				'readonly' => 'readonly',
 				'style' => 'width: 95%;',
+			),
+			'display_if' => array(
+				'src' => 'voicewp_skill_is_standalone',
+				'value' => true,
 			),
 		),
 	),
