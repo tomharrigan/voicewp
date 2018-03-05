@@ -52,6 +52,62 @@ function voicewp_briefing_category_url() {
 }
 add_action( 'voicewp-briefing-category_edit_form_fields', 'voicewp_briefing_category_url' );
 
+/**
+ * Make sure the briefing content is saved to the post object as well as post meta.
+ *
+ * @param  mixed    $value           The current meta value.
+ * @param  int      $post_id         The post ID.
+ * @param  string   $name            The meta name.
+ * @param  Settings $settings_object The settings object.
+ * @return mixed $value The new meta value.
+ */
+function voicewp_save_briefing_content( $value, $post_id, $name, $settings_object ) {
+	if (
+		'voicewp-briefing' === get_post_type( $post_id )
+		&& 'voicewp_briefing_content' === $name
+	) {
+		// Prevent infinite loops.
+		remove_action( 'save_post', array( $settings_object, 'save_post_fields' ) );
+
+		// Update the post's content.
+		wp_update_post( array(
+			'ID' => $post_id,
+			'post_content' => $value,
+		) );
+
+		// Re-add the filter.
+		add_action( 'save_post', array( $settings_object, 'save_post_fields' ) );
+	}
+
+	return $value;
+}
+add_filter( 'voicewp_update_post_meta', 'voicewp_save_briefing_content', 10, 4 );
+
+/**
+ * Get the briefing content value from the post object content.
+ *
+ * @param  mixed    $value           The current meta value.
+ * @param  int      $post_id         The post ID.
+ * @param  string   $name            The meta name.
+ * @param  Settings $settings_object The settings object.
+ * @return mixed $value The new meta value.
+ */
+function voicewp_get_briefing_content( $value, $post_id, $name, $settings_object ) {
+	if (
+		'voicewp-briefing' === get_post_type( $post_id )
+		&& 'voicewp_briefing_content' === $name
+	) {
+		$post_object = get_post( $post_id );
+
+		if ( $post_object instanceof \WP_Post ) {
+			return $post_object->post_content;
+		}
+	}
+
+	return $value;
+}
+add_filter( 'voicewp_get_post_meta', 'voicewp_get_briefing_content', 10, 4 );
+
 // Get the current post ID.
 $post_id = ( isset( $_GET['post'] ) ) ? absint( $_GET['post'] ) : 0;
 

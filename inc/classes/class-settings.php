@@ -327,9 +327,24 @@ class Settings {
 				$field_name .= '_' . $field['name'];
 			}
 
+			$new_value = null;
+
 			if ( isset( $_POST[ $field_name ] ) ) {
-				update_post_meta( $post_id, $field_name, $this->sanitize_field( $field, $_POST[ $field_name ] ) ); // WPCS: Sanitization okay.
+				/**
+				 * Filters the new value to be saved as post meta.
+				 *
+				 * @param mixed    $new_value       The new meta value.
+				 * @param int      $post_id         The post ID.
+				 * @param string   $field_name      The field name to be saved.
+				 * @param Settings $settings_object The current settings object.
+				 */
+				$new_value = apply_filters( 'voicewp_update_post_meta', $this->sanitize_field( $field, $_POST[ $field_name ] ), $post_id, $field_name, $this ); // WPCS: Sanitization okay.
+			}
+
+			if ( isset( $new_value ) ) {
+				update_post_meta( $post_id, $field_name, $new_value );
 			} else {
+				// Delete the meta value if no data was found in the form.
 				delete_post_meta( $post_id, $field_name );
 			}
 		}
@@ -809,10 +824,10 @@ class Settings {
 					if ( ! $this->_args['serialize_data'] ) {
 						foreach ( $this->_fields as $name => $field ) {
 							$child_name = $field_name . '_' . $field['name'];
-							$this->_retrieved_data[ $child_name ] = get_post_meta( $post_id, $child_name, true );
+							$this->_retrieved_data[ $child_name ] = $this->get_post_meta_value( $post_id, $child_name );
 						}
 					} else {
-						$this->_retrieved_data = get_post_meta( $post_id, $field_name, true );
+						$this->_retrieved_data = $this->get_post_meta_value( $post_id, $field_name );
 					}
 
 					break;
@@ -820,6 +835,25 @@ class Settings {
 		}
 
 		return $this->_retrieved_data;
+	}
+
+	/**
+	 * Get the post meta data value.
+	 *
+	 * @param int    $post_id    The post ID.
+	 * @param string $field_name The meta key.
+	 * @return mixed The meta value.
+	 */
+	public function get_post_meta_value( $post_id, $field_name ) {
+		/**
+		 * Filters the post meta data retrieved.
+		 *
+		 * @param mixed    $value           The post meta value.
+		 * @param int      $post_id         The post ID.
+		 * @param string   $field_name      The meta key.
+		 * @param Settings $settings_object The current settings object.
+		 */
+		return apply_filters( 'voicewp_get_post_meta', get_post_meta( $post_id, $field_name, true ), $post_id, $field_name, $this );
 	}
 
 	/**
