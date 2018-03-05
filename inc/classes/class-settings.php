@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains logice related to creating the custom submenu settings page.
+ * This file contains the `\VoiceWP\Settings` class.
  *
  * @package VoiceWP
  */
@@ -8,7 +8,7 @@
 namespace VoiceWP;
 
 /**
- * Settings class use to create a new settings page.
+ * Gives developers an easy way to add new settings to posts and submenus.
  */
 class Settings {
 	/**
