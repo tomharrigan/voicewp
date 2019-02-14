@@ -232,7 +232,7 @@ class Voicewp {
 				),
 				'sessionAttributes' => array(),
 			),
-			200 // @todo this is for debug purposes, make dynamic
+			400
 		);
 	}
 }
