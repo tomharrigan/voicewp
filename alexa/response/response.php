@@ -104,6 +104,7 @@ class Response {
 	 */
 	public function add_session_attribute( $key, $value ) {
 		$this->session_attributes[ $key ] = $value;
+		return $this;
 	}
 
 	/**
