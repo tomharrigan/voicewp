@@ -5,12 +5,14 @@
  * Plugin URI: https://github.com/tomharrigan/
  * Author: TomHarrigan
  * Author URI: https://voicewp.com
- * Version: 1.0.0
+ * Version: 1.1.0
+ * Requires PHP: 5.4
  * Text Domain: voicewp
  * License: MIT
  */
 
 define( 'VOICEWP_PATH', dirname( __FILE__ ) );
+define( 'VOICEWP_URL', plugins_url( '/', __FILE__ ) );
 
 register_activation_hook( __FILE__, 'voicewp_activate' );
 function voicewp_activate() {
@@ -22,6 +24,12 @@ register_deactivation_hook( __FILE__, 'voicewp_deactivate' );
 function voicewp_deactivate() {
 	flush_rewrite_rules();
 }
+
+// Singleton.
+require_once VOICEWP_PATH . '/inc/traits/trait-singleton.php';
+
+// Settings.
+require_once VOICEWP_PATH . '/inc/classes/class-settings.php';
 
 /**
  * Compatibility requirements.

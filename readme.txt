@@ -3,7 +3,7 @@ Contributors: tomharrigan, dlh
 Tags: Alexa, Amazon, fieldmanager
 Requires at least: 4.4
 Tested up to: 4.7.5
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: MIT
 
 WordPress + Amazon Alexa integration
@@ -36,11 +36,13 @@ The endpoint for this will be at: `https://yourdomain.com/wp-json/voicewp/v1/ski
 
 == Installation ==
 
-1. Install the Fieldmanager plugin
-2. Have a valid SSL certificate installed
-3. Upload and/or activate the VoiceWP plugin
+1. Have a valid SSL certificate installed
+2. Upload and/or activate the VoiceWP plugin
 
 == Changelog ==
+
+= 1.1.0 =
+* Removed Fieldmanager dependency.
 
 = 1.0.0 =
 * Renamed to VoiceWP

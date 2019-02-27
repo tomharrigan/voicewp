@@ -18,14 +18,12 @@ For more on how Alexa skills work in general, [see here](https://developer.amazo
 
 ## Requirements
 
-- [Fieldmanager](http://fieldmanager.org).
 - SSL certificate.
-- Minimum version of PHP: 5.3.
+- Minimum version of PHP: 5.4.
 - Minimum version of WordPress: 4.4.
 
 ## Installation
 
-- Install and activate [Fieldmanager](https://github.com/alleyinteractive/wordpress-fieldmanager/archive/1.0.0.zip).
 - Download the .zip file of this repo and upload to your WordPress site by going to WP Admin and navigating to **Plugins -> Add New**. Select the 'Upload Plugin' button near the top of the top of the screen to upload the .zip file.
 
 ## Features

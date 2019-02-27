@@ -7,7 +7,7 @@ class Voicewp_Setup {
 	 * @var string
 	 * @access public
 	 */
-	public static $version = '1.0.0';
+	public static $version = '1.1.0';
 
 	protected static $instance;
 

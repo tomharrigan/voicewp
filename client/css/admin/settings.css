@@ -1,0 +1,49 @@
+a.voicewp-delete {
+  color: #bc0b0b;
+  text-decoration: none;
+}
+
+.voicewp-group-wrapper {
+  border: 1px solid #ddd;
+  padding: 12px;
+  background-color: #fff;
+  margin-bottom: 12px;
+  border: solid 1px #dfdfdf;
+  -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.04);
+  box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.voicewpjs-removable {
+  position: relative;
+}
+
+.voicewpjs-remove:before {
+  font-family: dashicons;
+  font-size: 15px;
+  line-height: 1;
+  color: #a0a5aa;
+}
+
+.voicewpjs-remove {
+  margin: 4px 0 0 5px;
+  display: block;
+  height: 15px;
+  width: 15px;
+  float: left;
+  text-decoration: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.voicewpjs-remove:before {
+  content: "\f153";
+}
+
+.voicewpjs-remove:hover {
+  cursor: pointer;
+}
+
+.voicewpjs-remove:hover:before {
+  color: #d54e21;
+}
