@@ -89,6 +89,7 @@ class Request {
 
 		$request_type = $data['request']['type'];
 		if ( ! class_exists( '\\Alexa\\Request\\' . $request_type ) ) {
+			/* translators: %s: type of Alexa request being made */
 			throw new RuntimeException( sprintf( esc_html__( 'Unknown request type: %s', 'voicewp' ), $request_type ) );
 		}
 

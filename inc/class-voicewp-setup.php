@@ -167,6 +167,8 @@ class Voicewp_Setup {
 	 * @since 1.0.0
 	 */
 	public function plugins_loaded() {
+		// Load translation files
+		load_plugin_textdomain( 'voicewp', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 		// Determine if the database version and code version are the same.
 		$current_version = get_option( 'voicewp_version' );
 		if ( version_compare( $current_version, self::$version, '>=' ) ) {

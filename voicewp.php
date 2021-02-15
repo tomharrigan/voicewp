@@ -7,6 +7,7 @@
  * Author URI: https://voicewp.com
  * Version: 1.0.0
  * Text Domain: voicewp
+ * Domain Path: /inc/lang
  * License: MIT
  */
 

@@ -102,8 +102,13 @@ class News {
 							* unlike the case for all other numbers.
 							*/
 							$post_number = 2;
+						} elseif ( is_numeric( $maybe_post_number = substr( $post_number, 0, -2 ) ) ) {
+							$post_number = $maybe_post_number;
 						} else {
-							$post_number = substr( $post_number, 0, -2 );
+							$ordinals = array_flip( $this->get_ordinals() );
+							if ( isset( $ordinals[ $post_number ] ) ) {
+								$post_number = $ordinals[ $post_number ];
+							}
 						}
 					} else {
 						$post_number = $request->getSlot( 'PostNumber' );
@@ -240,6 +245,20 @@ class News {
 	}
 
 	/**
+	 * Returns an array of ordinal strings that correspond to their array keys
+	 * @return array Array of translateable ordinal strings
+	 */
+	public function get_ordinals() {
+		return array(
+			1 => esc_html__( 'first', 'voicewp' ),
+			2 => esc_html__( 'second', 'voicewp' ),
+			3 => esc_html__( 'third', 'voicewp' ),
+			4 => esc_html__( 'fourth', 'voicewp' ),
+			5 => esc_html__( 'fifth', 'voicewp' ),
+		);
+	}
+
+	/**
 	 * Creates output when a user asks for a list of posts.
 	 * Delivers an array containing a numbered list of post titles
 	 * to choose from and a subarray of IDs that get set in an attribute
@@ -256,12 +275,13 @@ class News {
 
 			$content = $card_content = '';
 			$ids = array();
+			$ordinals = $this->get_ordinals();
 			if ( ! empty( $news_posts ) && ! is_wp_error( $news_posts ) ) {
 
 				foreach ( $news_posts as $key => $news_post ) {
 					// Appending 'th' to any number results in proper ordinal pronunciation
 					// TODO: Sounds a little strange when there's only one result.
-					$content .= ( $key + 1 ) . 'th, ' . $news_post->post_title . '. ';
+					$content .= $ordinals[ $key + 1 ] . ', ' . $news_post->post_title . '. ';
 					$card_content .= ( $key + 1 ) . '. ' . $news_post->post_title . "\n";
 					$ids[] = $news_post->ID;
 				}

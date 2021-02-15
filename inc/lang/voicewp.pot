@@ -1,0 +1,829 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: VoiceWP\n"
+"POT-Creation-Date: 2017-08-08 18:58-0400\n"
+"PO-Revision-Date: 2017-08-08 18:58-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.3\n"
+"X-Poedit-Basepath: ../..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: voicewp.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: alexa/request/application.php:33
+msgid "Application Id not matched"
+msgstr ""
+
+#: alexa/request/certificate.php:101
+msgid "Request timestamp was too old. Possible replay attack."
+msgstr ""
+
+#: alexa/request/certificate.php:114
+msgid ""
+"The remote certificate doesn't contain a valid SANs in the signature or is "
+"expired."
+msgstr ""
+
+#: alexa/request/certificate.php:129
+msgid "Request signature could not be verified"
+msgstr ""
+
+#: alexa/request/certificate.php:167
+msgid "Protocol isn't secure. Request isn't from Alexa."
+msgstr ""
+
+#: alexa/request/certificate.php:169
+msgid "Certificate isn't from Amazon. Request isn't from Alexa."
+msgstr ""
+
+#. translators: %s: folder path
+#: alexa/request/certificate.php:172
+#, php-format
+msgid "Certificate isn't in '%s' folder. Request isn't from Alexa."
+msgstr ""
+
+#. translators: %s: port number
+#: alexa/request/certificate.php:175
+#, php-format
+msgid "Port isn't %s. Request isn't from Alexa."
+msgstr ""
+
+#: alexa/request/request.php:31
+msgid "Alexa Request requires the raw JSON data to validate request signature"
+msgstr ""
+
+#. translators: %s: type of Alexa request being made
+#: alexa/request/request.php:93
+#, php-format
+msgid "Unknown request type: %s"
+msgstr ""
+
+#. translators: %s: site title
+#: alexa/skill/news.php:91
+#, php-format
+msgid "Latest from %s"
+msgstr ""
+
+#: alexa/skill/news.php:219
+msgid ""
+"Sorry! I couldn't find any news about that topic. Try asking something else!"
+msgstr ""
+
+#: alexa/skill/news.php:232 speechAssets/utterances.php:8
+msgid "first"
+msgstr ""
+
+#: alexa/skill/news.php:233 speechAssets/utterances.php:9
+msgid "second"
+msgstr ""
+
+#: alexa/skill/news.php:234 speechAssets/utterances.php:10
+msgid "third"
+msgstr ""
+
+#: alexa/skill/news.php:235 speechAssets/utterances.php:11
+msgid "fourth"
+msgstr ""
+
+#: alexa/skill/news.php:236 speechAssets/utterances.php:12
+msgid "fifth"
+msgstr ""
+
+#: inc/class-voicewp.php:40
+msgid "To test your skill, use an Alexa enabled device or Echosim.io"
+msgstr ""
+
+#: inc/class-voicewp.php:97
+msgid "Request body is empty"
+msgstr ""
+
+#. translators: 1: minimum WordPress version, 2: current WordPress version
+#: inc/compat.php:28
+#, php-format
+msgid ""
+"VoiceWP requires at least WordPress version %1$s. You are currently running "
+"version %2$s."
+msgstr ""
+
+#: inc/compat.php:36
+msgid "VoiceWP requires the WordPress REST API."
+msgstr ""
+
+#: inc/compat.php:40
+msgid "VoiceWP requires the WordPress Fieldmanager plugin."
+msgstr ""
+
+#. translators: 1: minimum Fieldmanager version, 2: current Fieldmanager version
+#: inc/compat.php:48
+#, php-format
+msgid ""
+"VoiceWP requires at least Fieldmanager version %1$s. You are currently "
+"running version %2$s."
+msgstr ""
+
+#: inc/fields.php:11
+msgid "Skill Type"
+msgstr ""
+
+#: inc/fields.php:16 inc/fields.php:203
+msgid "Fact / Quote"
+msgstr ""
+
+#: inc/fields.php:18
+msgid "What type of functionality is being added?"
+msgstr ""
+
+#: inc/fields.php:20
+msgid "Default App Card Image"
+msgstr ""
+
+#: inc/fields.php:22
+msgid ""
+"Image to be used when no other is provided. App cards can be displayed "
+"within the Alexa app when she responds to a user request."
+msgstr ""
+
+#: inc/fields.php:26
+msgid "This is a standalone skill"
+msgstr ""
+
+#: inc/fields.php:27
+msgid "Will this be its own skill or is this part of another skill?"
+msgstr ""
+
+#: inc/fields.php:29
+msgid "Alexa Application ID"
+msgstr ""
+
+#: inc/fields.php:31 inc/fields.php:262
+msgid "Add the application ID given by Amazon"
+msgstr ""
+
+#: inc/fields.php:42
+msgid ""
+"This is the endpoint URL of your skill. Paste this within the configuration "
+"tab for your skill in the developer portal."
+msgstr ""
+
+#: inc/fields.php:63
+msgid "Skill Settings"
+msgstr ""
+
+#: inc/fields.php:78
+msgid "Source"
+msgstr ""
+
+#: inc/fields.php:88 inc/fields.php:101
+msgid "Text"
+msgstr ""
+
+#: inc/fields.php:89 inc/fields.php:112
+msgid "HTTPS URL to an MP3"
+msgstr ""
+
+#: inc/fields.php:90 inc/fields.php:128
+msgid "Uploaded MP3"
+msgstr ""
+
+#: inc/fields.php:102
+msgid "Text should be under 4,500 characters."
+msgstr ""
+
+#: inc/fields.php:130 inc/fields.php:132
+msgid "Select a File"
+msgstr ""
+
+#: inc/fields.php:131
+msgid "Select File"
+msgstr ""
+
+#: inc/fields.php:166
+msgid "Please make sure this is a URL to an MP3 file."
+msgstr ""
+
+#: inc/fields.php:176
+msgid "Please make sure this is an MP3 upload."
+msgstr ""
+
+#: inc/fields.php:180
+msgid "Audio should be under 10 minutes long."
+msgstr ""
+
+#: inc/fields.php:188
+msgid "Briefing Content"
+msgstr ""
+
+#: inc/fields.php:200
+msgid "Add another fact or quote"
+msgstr ""
+
+#: inc/fields.php:204
+msgid "Add a fact or quote"
+msgstr ""
+
+#: inc/fields.php:207
+msgid "Attribution"
+msgstr ""
+
+#: inc/fields.php:208
+msgid "Add attribution if applicable"
+msgstr ""
+
+#: inc/fields.php:211
+msgid "Alexa App Card Image"
+msgstr ""
+
+#: inc/fields.php:215
+msgid "Facts / Quotes"
+msgstr ""
+
+#: inc/fields.php:236
+msgid "Skill name"
+msgstr ""
+
+#: inc/fields.php:237
+msgid "Optional name of skill. If empty, site name will be used instead."
+msgstr ""
+
+#: inc/fields.php:243
+msgid "Welcome message"
+msgstr ""
+
+#: inc/fields.php:244
+msgid ""
+"This is the message a person hears when they open your skill with an "
+"utterance such as \"Alexa, open {your skill name}\""
+msgstr ""
+
+#: inc/fields.php:245
+msgid ""
+"Welcome to the {put your skill name here} Skill. This skill allows you to "
+"listen to content from {your site name}. You can ask questions like: What "
+"are the latest articles? ... Now, what can I help you with."
+msgstr ""
+
+#: inc/fields.php:249
+msgid "Help message"
+msgstr ""
+
+#: inc/fields.php:250
+msgid "This is the message a person hears when they ask your skill for 'help'"
+msgstr ""
+
+#: inc/fields.php:251
+msgid ""
+"{put your skill name here} provides you with the latest content from {your "
+"site name}. You can ask me for the latest articles, and then select an item "
+"from the list by saying, for example, 'read the 3rd article' Or you can also "
+"say exit... What can I help you with?"
+msgstr ""
+
+#: inc/fields.php:255
+msgid "Stop message"
+msgstr ""
+
+#: inc/fields.php:256
+msgid ""
+"You can optionally provide a message when a person is done with your skill."
+msgstr ""
+
+#: inc/fields.php:257
+msgid "Thanks for listening!"
+msgstr ""
+
+#: inc/fields.php:261
+msgid "News skill ID"
+msgstr ""
+
+#: inc/fields.php:268
+msgid "Allow people to ask for content from specific:"
+msgstr ""
+
+#: inc/fields.php:274
+msgid "Word Pronunciation Substitutions"
+msgstr ""
+
+#: inc/fields.php:276
+msgid ""
+"This allows you to define a global dictionary of words, phrases, "
+"abbreviations that Alexa should pronounce a certain way. For example, "
+"perhaps every occurrance of the state abreviation 'TN' should be pronounced "
+"as 'Tennessee', or 'NYC should be read as 'New York City' or the chemical "
+"'Mg' read as 'Magnesium'. "
+msgstr ""
+
+#: inc/fields.php:282
+msgid "Phrase / Word / Abbreviation"
+msgstr ""
+
+#: inc/fields.php:284
+msgid "Add another phrase, word, or abbreviation"
+msgstr ""
+
+#: inc/fields.php:288
+msgid "Phrase to pronounce differently"
+msgstr ""
+
+#: inc/fields.php:294
+msgid "How the above phrase should be pronounced."
+msgstr ""
+
+#: inc/fields.php:317
+msgid ""
+"The Intent Schema for your News skill. Add this to your news skill in the <a "
+"href=\"https://developer.amazon.com\" target=\"_blank\">Amazon developer "
+"console</a>."
+msgstr ""
+
+#: inc/fields.php:328
+msgid "Custom Slot Types"
+msgstr ""
+
+#: inc/fields.php:332
+msgid ""
+"These slot types must be added to your news skill in the Amazon developer "
+"portal."
+msgstr ""
+
+#: inc/fields.php:334 inc/fields.php:350
+msgid "Type"
+msgstr ""
+
+#: inc/fields.php:342 inc/fields.php:358
+msgid "Values"
+msgstr ""
+
+#: inc/fields.php:384
+msgid ""
+"Here's a starting point for your skill's Sample Utterances. You can add "
+"these to your news skill in the <a href=\"https://developer.amazon.com\" "
+"target=\"_blank\">Amazon developer console</a>."
+msgstr ""
+
+#: inc/fields.php:395
+msgid "Interaction Model"
+msgstr ""
+
+#: inc/fields.php:408
+msgid "Alexa Skill Settings"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-briefing.php:26
+#: post-types/class-voicewp-post-type-briefing.php:37
+msgid "Briefings"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-briefing.php:27
+msgid "Briefing"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-briefing.php:28
+#: post-types/class-voicewp-post-type-briefing.php:29
+msgid "Add New Briefing"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-briefing.php:30
+msgid "Edit Briefing"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-briefing.php:31
+msgid "New Briefing"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-briefing.php:32
+msgid "View Briefing"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-briefing.php:33
+msgid "Search Briefing"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-briefing.php:34
+msgid "No Briefings found"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-briefing.php:35
+msgid "No Briefings found in Trash"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-briefing.php:36
+msgid "Parent Briefing:"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-skill.php:35
+#: post-types/class-voicewp-post-type-skill.php:46
+msgid "Skills"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-skill.php:36
+msgid "Skill"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-skill.php:37
+#: post-types/class-voicewp-post-type-skill.php:38
+msgid "Add New Skill"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-skill.php:39
+msgid "Edit Skill"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-skill.php:40
+msgid "New Skill"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-skill.php:41
+msgid "View Skill"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-skill.php:42
+msgid "Search Skills"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-skill.php:43
+msgid "No Skills found"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-skill.php:44
+msgid "No Skills found in Trash"
+msgstr ""
+
+#: post-types/class-voicewp-post-type-skill.php:45
+msgid "Parent Skill:"
+msgstr ""
+
+#: speechAssets/utterances.php:17
+msgid "can I have the latest content"
+msgstr ""
+
+#: speechAssets/utterances.php:18
+msgid "can I have the latest articles"
+msgstr ""
+
+#: speechAssets/utterances.php:19
+msgid "can I have the latest stories"
+msgstr ""
+
+#: speechAssets/utterances.php:20
+msgid "can I have the latest news"
+msgstr ""
+
+#: speechAssets/utterances.php:21
+msgid "what is the latest content"
+msgstr ""
+
+#: speechAssets/utterances.php:22
+msgid "what are the latest articles"
+msgstr ""
+
+#: speechAssets/utterances.php:23
+msgid "what are the latest stories"
+msgstr ""
+
+#: speechAssets/utterances.php:24
+msgid "what is the latest news"
+msgstr ""
+
+#: speechAssets/utterances.php:25
+msgid "what's the latest content"
+msgstr ""
+
+#: speechAssets/utterances.php:26
+msgid "what're the latest articles"
+msgstr ""
+
+#: speechAssets/utterances.php:27
+msgid "what're the latest stories"
+msgstr ""
+
+#: speechAssets/utterances.php:28
+msgid "what's the latest news"
+msgstr ""
+
+#: speechAssets/utterances.php:29
+msgid "the latest content"
+msgstr ""
+
+#: speechAssets/utterances.php:30
+msgid "the latest articles"
+msgstr ""
+
+#: speechAssets/utterances.php:31
+msgid "the latest stories"
+msgstr ""
+
+#: speechAssets/utterances.php:32
+msgid "the latest news"
+msgstr ""
+
+#: speechAssets/utterances.php:33
+msgid "give me the latest content"
+msgstr ""
+
+#: speechAssets/utterances.php:34
+msgid "give me the latest articles"
+msgstr ""
+
+#: speechAssets/utterances.php:35
+msgid "give me the latest stories"
+msgstr ""
+
+#: speechAssets/utterances.php:36
+msgid "give me the latest news"
+msgstr ""
+
+#: speechAssets/utterances.php:37
+msgid "get the latest content"
+msgstr ""
+
+#: speechAssets/utterances.php:38
+msgid "get the latest articles"
+msgstr ""
+
+#: speechAssets/utterances.php:39
+msgid "get the latest stories"
+msgstr ""
+
+#: speechAssets/utterances.php:40
+msgid "get the latest news"
+msgstr ""
+
+#: speechAssets/utterances.php:41
+msgid "what's up"
+msgstr ""
+
+#: speechAssets/utterances.php:42
+msgid "what's new"
+msgstr ""
+
+#: speechAssets/utterances.php:43
+msgid "read the latest content"
+msgstr ""
+
+#: speechAssets/utterances.php:44
+msgid "read the latest articles"
+msgstr ""
+
+#: speechAssets/utterances.php:45
+msgid "read the latest stories"
+msgstr ""
+
+#: speechAssets/utterances.php:46
+msgid "read the latest news"
+msgstr ""
+
+#: speechAssets/utterances.php:47
+msgid "read me the latest content"
+msgstr ""
+
+#: speechAssets/utterances.php:48
+msgid "read me the latest articles"
+msgstr ""
+
+#: speechAssets/utterances.php:49
+msgid "read me the latest stories"
+msgstr ""
+
+#: speechAssets/utterances.php:50
+msgid "read me the latest news"
+msgstr ""
+
+#: speechAssets/utterances.php:51
+msgid "tell me the latest articles"
+msgstr ""
+
+#: speechAssets/utterances.php:52
+msgid "tell me the latest stories"
+msgstr ""
+
+#: speechAssets/utterances.php:53
+msgid "tell me the latest news"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:57
+#, php-format
+msgid "the latest %s articles"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:59
+#, php-format
+msgid "the latest %s content"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:61
+#, php-format
+msgid "the latest %s news"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:63
+#, php-format
+msgid "the latest %s stories"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:65
+#, php-format
+msgid "%s content"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:67
+#, php-format
+msgid "%s articles"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:69
+#, php-format
+msgid "%s stories"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:71
+#, php-format
+msgid "%s news"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:73
+#, php-format
+msgid "Get the latest %s articles"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:75
+#, php-format
+msgid "Get the latest %s content"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:77
+#, php-format
+msgid "Get the latest %s news"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:79
+#, php-format
+msgid "Get the latest %s stories"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:81
+#, php-format
+msgid "Get %s articles"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:83
+#, php-format
+msgid "Get %s content"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:85
+#, php-format
+msgid "Get %s news"
+msgstr ""
+
+#. translators: %s: taxonomy term used in Alexa utterance for latest content
+#: speechAssets/utterances.php:87
+#, php-format
+msgid "Get %s stories"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:91 speechAssets/utterances.php:113
+#, php-format
+msgid "Read the %s"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:93 speechAssets/utterances.php:115
+#, php-format
+msgid "Read the %s post"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:95 speechAssets/utterances.php:117
+#, php-format
+msgid "Read the %s article"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:97 speechAssets/utterances.php:119
+#, php-format
+msgid "Read the %s story"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:99 speechAssets/utterances.php:121
+#, php-format
+msgid "Read %s"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:101 speechAssets/utterances.php:141
+#, php-format
+msgid "Read %s to me"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:103 speechAssets/utterances.php:123
+#, php-format
+msgid "Read me the %s"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:105 speechAssets/utterances.php:125
+#, php-format
+msgid "Read me the %s post"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:107 speechAssets/utterances.php:127
+#, php-format
+msgid "Read me the %s article"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:109 speechAssets/utterances.php:129
+#, php-format
+msgid "Read me the %s story"
+msgstr ""
+
+#. translators: %s: number
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:111 speechAssets/utterances.php:131
+#, php-format
+msgid "Read me %s"
+msgstr ""
+
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:133
+#, php-format
+msgid "Read the %s to me"
+msgstr ""
+
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:135
+#, php-format
+msgid "Read the %s post to me"
+msgstr ""
+
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:137
+#, php-format
+msgid "Read the %s article to me"
+msgstr ""
+
+#. translators: %s: ordinal number
+#: speechAssets/utterances.php:139
+#, php-format
+msgid "Read the %s story to me"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "VoiceWP"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/tomharrigan/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Create Alexa skills using your WordPress site"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "TomHarrigan"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://voicewp.com"
+msgstr ""
